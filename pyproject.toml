@@ -1,0 +1,23 @@
+[project]
+name = "winamax-poker-tracker"
+version = "0.1.0"
+description = "Prototype desktop de detection Winamax pour un poker tracker live."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Codex" }
+]
+dependencies = ["Pillow>=10.0.0"]
+
+[project.scripts]
+poker-tracker = "poker_tracker.app:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
