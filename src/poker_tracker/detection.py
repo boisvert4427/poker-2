@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import ctypes
 import os
-import subprocess
 from ctypes import wintypes
 from dataclasses import dataclass
 from pathlib import Path
@@ -41,33 +40,19 @@ class HistoryLocation:
 
 
 def list_winamax_processes() -> list[WinamaxProcess]:
-    command = [
-        "powershell",
-        "-NoProfile",
-        "-Command",
-        (
-            "Get-Process Winamax -ErrorAction SilentlyContinue | "
-            "Select-Object Id,ProcessName,MainWindowTitle,Path | "
-            "ConvertTo-Json -Compress"
-        ),
-    ]
-
-    completed = subprocess.run(command, capture_output=True, text=True, check=False)
-    if completed.returncode != 0 or not completed.stdout.strip():
-        return []
-
-    import json
-
-    payload = json.loads(completed.stdout)
-    rows = payload if isinstance(payload, list) else [payload]
+    windows = list_winamax_windows()
     processes: list[WinamaxProcess] = []
-    for row in rows:
+    seen: set[int] = set()
+    for window in windows:
+        if window.pid in seen:
+            continue
+        seen.add(window.pid)
         processes.append(
             WinamaxProcess(
-                pid=int(row.get("Id", 0)),
-                name=str(row.get("ProcessName", "")),
-                window_title=str(row.get("MainWindowTitle", "")),
-                executable=str(row.get("Path", "")),
+                pid=window.pid,
+                name="Winamax",
+                window_title=window.title,
+                executable=_process_executable_for_pid(window.pid),
             )
         )
     return processes
@@ -127,7 +112,10 @@ def list_winamax_windows() -> list[WinamaxWindow]:
         pid = wintypes.DWORD()
         user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         process_name = process_name_for_pid(pid.value).lower()
-        if "winamax" not in process_name and "winamax" not in title.lower():
+        title_lower = title.lower()
+        if "poker tracker prototype" in title_lower:
+            return True
+        if "winamax" not in process_name and "winamax" not in title_lower:
             return True
 
         rect = wintypes.RECT()
@@ -293,3 +281,32 @@ def _history_details(path: Path) -> str:
 def _window_area(rect: tuple[int, int, int, int]) -> int:
     left, top, right, bottom = rect
     return max(0, right - left) * max(0, bottom - top)
+
+
+def _process_executable_for_pid(pid: int) -> str:
+    kernel32 = ctypes.windll.kernel32
+    kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel32.OpenProcess.restype = wintypes.HANDLE
+    kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel32.CloseHandle.restype = wintypes.BOOL
+
+    QueryFullProcessImageNameW = kernel32.QueryFullProcessImageNameW
+    QueryFullProcessImageNameW.argtypes = [
+        wintypes.HANDLE,
+        wintypes.DWORD,
+        wintypes.LPWSTR,
+        ctypes.POINTER(wintypes.DWORD),
+    ]
+    QueryFullProcessImageNameW.restype = wintypes.BOOL
+
+    handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+    if not handle:
+        return ""
+    try:
+        size = wintypes.DWORD(1024)
+        buffer = ctypes.create_unicode_buffer(size.value)
+        if QueryFullProcessImageNameW(handle, 0, buffer, ctypes.byref(size)):
+            return buffer.value
+        return ""
+    finally:
+        kernel32.CloseHandle(handle)

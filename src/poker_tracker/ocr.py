@@ -106,6 +106,13 @@ def _find_tesseract() -> str:
 
 
 def _run_tesseract(engine_path: str, image_path: str, psm: str) -> subprocess.CompletedProcess[str]:
+    startupinfo = None
+    creationflags = 0
+    if os.name == "nt":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
     return subprocess.run(
         [engine_path, image_path, "stdout", "--psm", psm],
         capture_output=True,
@@ -114,6 +121,8 @@ def _run_tesseract(engine_path: str, image_path: str, psm: str) -> subprocess.Co
         errors="replace",
         check=False,
         env={**os.environ, "OMP_THREAD_LIMIT": "1"},
+        startupinfo=startupinfo,
+        creationflags=creationflags,
     )
 
 
