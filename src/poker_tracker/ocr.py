@@ -136,8 +136,24 @@ def _run_zoned_ocr(engine_path: str, image_path: str) -> dict[str, OcrZoneResult
         cropped = image.crop(rect)
         if name in {"actions", "action_left", "action_center", "action_right"}:
             cropped = _preprocess_actions_zone(cropped)
-        elif name in {"pot", "hero"}:
+        elif name in {
+            "pot",
+            "pot_value",
+            "hero",
+            "hero_name",
+            "hero_stack",
+            "hero_status",
+            "top_left_name",
+            "top_left_stack",
+            "top_right_name",
+            "top_right_stack",
+            "right_name",
+            "right_stack",
+            "dealer_button",
+        }:
             cropped = _preprocess_text_zone(cropped)
+        elif name in {"board_card_1", "board_card_2", "board_card_3", "board_card_4", "board_card_5"}:
+            cropped = _preprocess_card_zone(cropped)
         zone_path = temp_dir / f"{Path(image_path).stem}_{name}.png"
         cropped.save(zone_path)
         completed = _run_tesseract(engine_path, str(zone_path), psm=psm)
@@ -152,9 +168,28 @@ def _zone_definitions(width: int, height: int) -> list[tuple[str, tuple[int, int
     zones = calibration.get("zones", {})
     return [
         ("top_bar", _scaled_rect(width, height, *zones["top_bar"]), "6"),
+        ("top_left_cards", _scaled_rect(width, height, *zones["top_left_cards"]), "6"),
+        ("top_left_name", _scaled_rect(width, height, *zones["top_left_name"]), "7"),
+        ("top_left_stack", _scaled_rect(width, height, *zones["top_left_stack"]), "7"),
+        ("top_right_cards", _scaled_rect(width, height, *zones["top_right_cards"]), "6"),
+        ("top_right_name", _scaled_rect(width, height, *zones["top_right_name"]), "7"),
+        ("top_right_stack", _scaled_rect(width, height, *zones["top_right_stack"]), "7"),
+        ("right_cards", _scaled_rect(width, height, *zones["right_cards"]), "6"),
+        ("right_name", _scaled_rect(width, height, *zones["right_name"]), "7"),
+        ("right_stack", _scaled_rect(width, height, *zones["right_stack"]), "7"),
         ("pot", _scaled_rect(width, height, *zones["pot"]), "6"),
+        ("pot_value", _scaled_rect(width, height, *zones["pot_value"]), "7"),
         ("board", _scaled_rect(width, height, *zones["board"]), "6"),
+        ("board_card_1", _scaled_rect(width, height, *zones["board_card_1"]), "10"),
+        ("board_card_2", _scaled_rect(width, height, *zones["board_card_2"]), "10"),
+        ("board_card_3", _scaled_rect(width, height, *zones["board_card_3"]), "10"),
+        ("board_card_4", _scaled_rect(width, height, *zones["board_card_4"]), "10"),
+        ("board_card_5", _scaled_rect(width, height, *zones["board_card_5"]), "10"),
         ("hero", _scaled_rect(width, height, *zones["hero"]), "6"),
+        ("hero_name", _scaled_rect(width, height, *zones["hero_name"]), "7"),
+        ("hero_stack", _scaled_rect(width, height, *zones["hero_stack"]), "7"),
+        ("hero_status", _scaled_rect(width, height, *zones["hero_status"]), "7"),
+        ("dealer_button", _scaled_rect(width, height, *zones["dealer_button"]), "10"),
         ("actions", _scaled_rect(width, height, *zones["actions"]), "6"),
         ("action_left", _scaled_rect(width, height, *zones["action_left"]), "8"),
         ("action_center", _scaled_rect(width, height, *zones["action_center"]), "8"),
@@ -172,11 +207,31 @@ def _scaled_rect(
     right_ratio: float,
     bottom_ratio: float,
 ) -> tuple[int, int, int, int]:
+    # Backward-compatible: if a zone was entered as (left, top, width, height),
+    # convert it on the fly instead of crashing the whole app.
+    if right_ratio <= left_ratio:
+        right_ratio = left_ratio + right_ratio
+    if bottom_ratio <= top_ratio:
+        bottom_ratio = top_ratio + bottom_ratio
+
+    right_ratio = min(1.0, right_ratio)
+    bottom_ratio = min(1.0, bottom_ratio)
+
+    left = max(0, int(width * left_ratio))
+    top = max(0, int(height * top_ratio))
+    right = min(width, int(width * right_ratio))
+    bottom = min(height, int(height * bottom_ratio))
+
+    if right <= left:
+        right = min(width, left + 1)
+    if bottom <= top:
+        bottom = min(height, top + 1)
+
     return (
-        max(0, int(width * left_ratio)),
-        max(0, int(height * top_ratio)),
-        min(width, int(width * right_ratio)),
-        min(height, int(height * bottom_ratio)),
+        left,
+        top,
+        right,
+        bottom,
     )
 
 
@@ -193,4 +248,13 @@ def _preprocess_text_zone(image: Image.Image) -> Image.Image:
     processed = image.convert("L")
     processed = ImageOps.autocontrast(processed)
     processed = processed.resize((processed.width * 2, processed.height * 2))
+    return processed
+
+
+def _preprocess_card_zone(image: Image.Image) -> Image.Image:
+    processed = image.convert("L")
+    processed = ImageOps.autocontrast(processed)
+    processed = processed.resize((processed.width * 3, processed.height * 3))
+    processed = processed.filter(ImageFilter.SHARPEN)
+    processed = processed.point(lambda p: 255 if p > 170 else 0)
     return processed

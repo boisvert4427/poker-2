@@ -103,16 +103,30 @@ class SessionRecorder:
     def list_snapshots(self, session_dir: Path) -> list[dict[str, Any]]:
         snapshots: list[dict[str, Any]] = []
         for metadata_path in sorted(session_dir.glob("snapshot_*.json")):
+            if metadata_path.name.endswith(".review.json"):
+                continue
             try:
                 payload = json.loads(metadata_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 continue
             image_path = metadata_path.with_suffix(".png")
+            review_path = metadata_path.with_name(metadata_path.stem + ".review.json")
+            review_payload = {}
+            if review_path.exists():
+                try:
+                    review_payload = json.loads(review_path.read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, OSError):
+                    review_payload = {}
             snapshots.append(
                 {
                     "metadata_path": str(metadata_path),
                     "image_path": str(image_path) if image_path.exists() else "",
                     "payload": payload,
+                    "review_path": str(review_path),
+                    "review": review_payload,
                 }
             )
         return snapshots
+
+    def save_snapshot_review(self, review_path: str, review_payload: dict[str, Any]) -> None:
+        Path(review_path).write_text(json.dumps(review_payload, indent=2, ensure_ascii=False), encoding="utf-8")

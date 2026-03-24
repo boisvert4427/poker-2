@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tkinter as tk
 import json
+from datetime import datetime
 from pathlib import Path
 from tkinter import messagebox, ttk
 
@@ -24,6 +25,54 @@ from .session_recorder import SessionRecorder
 
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
+REVIEW_FIELDS = [
+    "top_left_cards_visible",
+    "top_left_name",
+    "top_left_stack",
+    "top_right_cards_visible",
+    "top_right_name",
+    "top_right_stack",
+    "right_cards_visible",
+    "right_name",
+    "right_stack",
+    "hero_name",
+    "hero_stack",
+    "hero_status",
+    "pot_value",
+    "dealer_button",
+    "board_card_1",
+    "board_card_2",
+    "board_card_3",
+    "board_card_4",
+    "board_card_5",
+]
+REVIEW_CHOICES = ["unknown", "true", "false"]
+FIELD_LABELS = {
+    "top_left_cards_visible": "top_left_cards_visible",
+    "top_left_name": "top_left_name",
+    "top_left_stack": "top_left_stack",
+    "top_right_cards_visible": "top_right_cards_visible",
+    "top_right_name": "top_right_name",
+    "top_right_stack": "top_right_stack",
+    "right_cards_visible": "right_cards_visible",
+    "right_name": "right_name",
+    "right_stack": "right_stack",
+    "hero_name": "hero_name",
+    "hero_stack": "hero_stack",
+    "hero_status": "hero_status",
+    "pot_value": "pot_value",
+    "dealer_button": "dealer_owner",
+    "board_card_1": "board_card_1",
+    "board_card_2": "board_card_2",
+    "board_card_3": "board_card_3",
+    "board_card_4": "board_card_4",
+    "board_card_5": "board_card_5",
+}
+POSITION_HELP = (
+    "Positions utiles: top_left = joueur en haut a gauche, "
+    "top_right = joueur en haut a droite, right = joueur a droite, hero = toi en bas. "
+    "Pour dealer_owner, mets de preference le nom du joueur ou une de ces positions."
+)
 
 
 class PokerTrackerApp:
@@ -38,10 +87,14 @@ class PokerTrackerApp:
         self._after_id: str | None = None
         self._record_after_id: str | None = None
         self.calibration_entries: dict[str, list[tk.StringVar]] = {}
+        self._calibration_redraw_after_id: str | None = None
         self.calibration_preview_label: tk.Label | None = None
         self.calibration_preview_image: ImageTk.PhotoImage | None = None
         self.last_detected_window: WinamaxWindow | None = None
         self.last_preview_source_path: str | None = None
+        self.calibration_status_var = tk.StringVar(value="Aucune image de calibration chargée.")
+        self.calibration_snapshots: list[dict] = []
+        self.calibration_index = 0
         self.session_recorder = SessionRecorder(ROOT_DIR / "sessions")
         self.recording_session_var = tk.StringVar(value="Aucune session de capture.")
         self.record_interval_ms = 5000
@@ -51,6 +104,12 @@ class PokerTrackerApp:
         self.review_text: tk.Text | None = None
         self.review_snapshots: list[dict] = []
         self.review_index = 0
+        self.review_status_var = tk.StringVar(value="Aucune annotation sauvegardée.")
+        self.review_global_status_var = tk.StringVar(value="review_later")
+        self.review_note_var = tk.StringVar(value="")
+        self.review_field_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="unknown") for field in REVIEW_FIELDS}
+        self.review_expected_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="") for field in REVIEW_FIELDS}
+        self.review_detected_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="-") for field in REVIEW_FIELDS}
 
         self._build_layout()
         self.refresh()
@@ -186,8 +245,35 @@ class PokerTrackerApp:
             text="Zones relatives de la table Winamax (left, top, right, bottom).",
         ).grid(row=0, column=0, sticky="w")
 
-        grid = ttk.Frame(frame)
-        grid.grid(row=1, column=0, sticky="nw", pady=(10, 10))
+        controls_container = ttk.Frame(frame)
+        controls_container.grid(row=1, column=0, sticky="nsw", pady=(10, 10))
+        controls_container.columnconfigure(0, weight=1)
+        controls_container.rowconfigure(0, weight=1)
+
+        canvas = tk.Canvas(controls_container, width=470, highlightthickness=0)
+        canvas.grid(row=0, column=0, sticky="nsw")
+        scrollbar = ttk.Scrollbar(controls_container, orient="vertical", command=canvas.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        grid = ttk.Frame(canvas)
+        grid_window = canvas.create_window((0, 0), window=grid, anchor="nw")
+
+        def sync_calibration_scroll_region(_event: object) -> None:
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        def sync_calibration_width(_event: object) -> None:
+            canvas.itemconfigure(grid_window, width=_event.width)
+
+        grid.bind("<Configure>", sync_calibration_scroll_region)
+        canvas.bind("<Configure>", sync_calibration_width)
+
+        def _on_calibration_mousewheel(event: tk.Event[tk.Misc]) -> None:
+            delta = -1 * int(event.delta / 120) if event.delta else 0
+            if delta:
+                canvas.yview_scroll(delta, "units")
+
+        canvas.bind_all("<MouseWheel>", _on_calibration_mousewheel)
 
         calibration = load_calibration()
         zones = calibration.get("zones", {})
@@ -200,8 +286,20 @@ class PokerTrackerApp:
             vars_for_zone: list[tk.StringVar] = []
             for col, value in enumerate(values, start=1):
                 var = tk.StringVar(value=f"{value:.2f}")
-                entry = ttk.Entry(grid, textvariable=var, width=8)
-                entry.grid(row=row, column=col, padx=4, pady=2, sticky="w")
+                spin = ttk.Spinbox(
+                    grid,
+                    textvariable=var,
+                    from_=0.0,
+                    to=1.0,
+                    increment=0.01,
+                    width=8,
+                    command=self._schedule_calibration_redraw,
+                )
+                spin.grid(row=row, column=col, padx=4, pady=2, sticky="w")
+                spin.bind("<KeyRelease>", lambda _event: self._schedule_calibration_redraw())
+                spin.bind("<<Increment>>", lambda _event: self._schedule_calibration_redraw())
+                spin.bind("<<Decrement>>", lambda _event: self._schedule_calibration_redraw())
+                var.trace_add("write", self._on_calibration_var_changed)
                 vars_for_zone.append(var)
             self.calibration_entries[name] = vars_for_zone
 
@@ -218,6 +316,16 @@ class PokerTrackerApp:
         ttk.Button(buttons, text="Rafraichir preview", command=self._refresh_calibration_preview).grid(
             row=0, column=4, padx=(8, 0)
         )
+        ttk.Button(buttons, text="Charger dernière session", command=self._load_latest_calibration_session).grid(
+            row=0, column=5, padx=(8, 0)
+        )
+        ttk.Button(buttons, text="Image précédente", command=lambda: self._move_calibration_image(-1)).grid(
+            row=0, column=6, padx=(8, 0)
+        )
+        ttk.Button(buttons, text="Image suivante", command=lambda: self._move_calibration_image(1)).grid(
+            row=0, column=7, padx=(8, 0)
+        )
+        ttk.Label(buttons, textvariable=self.calibration_status_var).grid(row=1, column=0, columnspan=8, sticky="w", pady=(8, 0))
 
         preview_frame = ttk.Frame(frame)
         preview_frame.grid(row=1, column=1, rowspan=2, sticky="nsew", padx=(20, 0))
@@ -235,11 +343,12 @@ class PokerTrackerApp:
             bd=1,
         )
         self.calibration_preview_label.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        self.calibration_preview_label.bind("<Configure>", lambda _event: self._redraw_calibration_preview())
 
     def _create_review_tab(self, notebook: ttk.Notebook) -> None:
         frame = ttk.Frame(notebook, padding=12)
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(0, weight=3)
+        frame.columnconfigure(1, weight=2)
         frame.rowconfigure(1, weight=1)
         notebook.add(frame, text="Review")
 
@@ -254,6 +363,17 @@ class PokerTrackerApp:
         ttk.Button(controls, text="Snapshot suivant", command=lambda: self._move_review(1)).grid(
             row=0, column=2, padx=(0, 8)
         )
+        ttk.Label(controls, text="Statut global").grid(row=0, column=3, padx=(12, 6))
+        ttk.Combobox(
+            controls,
+            textvariable=self.review_global_status_var,
+            values=["review_later", "correct", "incorrect"],
+            width=14,
+            state="readonly",
+        ).grid(row=0, column=4, padx=(0, 8))
+        ttk.Button(controls, text="Valider les annotations", command=self._save_review_annotation).grid(
+            row=0, column=5, padx=(0, 8)
+        )
 
         self.review_image_label = tk.Label(
             frame,
@@ -266,9 +386,50 @@ class PokerTrackerApp:
         )
         self.review_image_label.grid(row=1, column=0, sticky="nsew", padx=(0, 12))
 
-        self.review_text = tk.Text(frame, wrap="word", font=("Consolas", 10))
+        self.review_text = tk.Text(frame, wrap="word", font=("Consolas", 10), width=48)
         self.review_text.grid(row=1, column=1, sticky="nsew")
         self.review_text.configure(state="disabled")
+
+        review_footer = ttk.Frame(frame)
+        review_footer.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        review_footer.columnconfigure(2, weight=1)
+        ttk.Label(review_footer, textvariable=self.review_status_var).grid(row=0, column=0, sticky="w", padx=(0, 10))
+        ttk.Label(review_footer, text="Note:").grid(row=0, column=1, sticky="w")
+        ttk.Entry(review_footer, textvariable=self.review_note_var, width=60).grid(row=0, column=2, sticky="ew", padx=(8, 0))
+        ttk.Label(review_footer, text=POSITION_HELP, wraplength=1200, foreground="#555555").grid(
+            row=1, column=0, columnspan=3, sticky="w", pady=(8, 0)
+        )
+
+        fields_frame = ttk.LabelFrame(frame, text="Validation par element", padding=8)
+        fields_frame.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        for base_col in (0, 4, 8):
+            ttk.Label(fields_frame, text="Champ").grid(row=0, column=base_col, sticky="w", padx=(0, 6), pady=4)
+            ttk.Label(fields_frame, text="Détecté").grid(row=0, column=base_col + 1, sticky="w", padx=(0, 6), pady=4)
+            ttk.Label(fields_frame, text="Etat").grid(row=0, column=base_col + 2, sticky="w", padx=(0, 6), pady=4)
+            ttk.Label(fields_frame, text="Valeur attendue").grid(
+                row=0, column=base_col + 3, sticky="w", padx=(0, 12), pady=4
+            )
+        for idx, field in enumerate(REVIEW_FIELDS):
+            group = idx // 6
+            local_row = (idx % 6) + 1
+            base_col = group * 4
+            ttk.Label(fields_frame, text=FIELD_LABELS.get(field, field)).grid(
+                row=local_row, column=base_col, sticky="w", padx=(0, 6), pady=4
+            )
+            ttk.Label(fields_frame, textvariable=self.review_detected_vars[field], width=16).grid(
+                row=local_row, column=base_col + 1, sticky="w", padx=(0, 10), pady=4
+            )
+            combo = ttk.Combobox(
+                fields_frame,
+                textvariable=self.review_field_vars[field],
+                values=REVIEW_CHOICES,
+                width=10,
+                state="readonly",
+            )
+            combo.grid(row=local_row, column=base_col + 2, sticky="w", padx=(0, 10), pady=4)
+            ttk.Entry(fields_frame, textvariable=self.review_expected_vars[field], width=24).grid(
+                row=local_row, column=base_col + 3, sticky="ew", padx=(0, 16), pady=4
+            )
 
     def refresh(self) -> None:
         detection = summarize_detection()
@@ -458,6 +619,7 @@ class PokerTrackerApp:
 
         if self.review_text is not None:
             payload = snapshot.get("payload", {})
+            review = snapshot.get("review", {})
             summary = {
                 "index": self.review_index + 1,
                 "total": len(self.review_snapshots),
@@ -465,11 +627,176 @@ class PokerTrackerApp:
                 "window": payload.get("window", {}),
                 "history_file": payload.get("history_file", ""),
                 "live_snapshot": payload.get("live_snapshot", {}),
+                "review": review,
             }
             self.review_text.configure(state="normal")
             self.review_text.delete("1.0", tk.END)
             self.review_text.insert("1.0", json.dumps(summary, indent=2, ensure_ascii=False))
             self.review_text.configure(state="disabled")
+
+        review = snapshot.get("review", {})
+        status = review.get("status", "non annoté")
+        note = review.get("note", "")
+        saved_at = review.get("saved_at", "")
+        if saved_at:
+            self.review_status_var.set(f"Annotation sauvegardée | statut: {status} | {saved_at}")
+        else:
+            self.review_status_var.set(f"Annotation: {status}")
+        self.review_global_status_var.set(review.get("status", "review_later"))
+        self.review_note_var.set(note)
+        detected = self._extract_detected_review_values(payload)
+        for field in REVIEW_FIELDS:
+            self.review_detected_vars[field].set(detected.get(field, "-"))
+        field_reviews = review.get("fields", {})
+        for field in REVIEW_FIELDS:
+            field_data = field_reviews.get(field, {})
+            if isinstance(field_data, str):
+                self.review_field_vars[field].set(field_data)
+                self.review_expected_vars[field].set("")
+            else:
+                self.review_field_vars[field].set(field_data.get("status", "unknown"))
+                self.review_expected_vars[field].set(field_data.get("expected", ""))
+
+    def _save_review_annotation(self) -> None:
+        if not self.review_snapshots:
+            return
+        snapshot = self.review_snapshots[self.review_index]
+        payload = snapshot.get("payload", {})
+        review_payload = {
+            "status": self.review_global_status_var.get(),
+            "note": self.review_note_var.get().strip(),
+            "timestamp": payload.get("timestamp", ""),
+            "saved_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "fields": {
+                field: {
+                    "status": self.review_field_vars[field].get(),
+                    "expected": self.review_expected_vars[field].get().strip(),
+                }
+                for field in REVIEW_FIELDS
+            },
+        }
+        self.session_recorder.save_snapshot_review(snapshot["review_path"], review_payload)
+        snapshot["review"] = review_payload
+        self.review_status_var.set("Annotations sauvegardées.")
+        self._render_review_snapshot()
+
+    @staticmethod
+    def _extract_detected_review_values(payload: dict) -> dict[str, str]:
+        live = payload.get("live_snapshot") or {}
+        ocr = payload.get("ocr") or {}
+        zones = ocr.get("zones") or {}
+
+        def zone_text(name: str) -> str:
+            return ((zones.get(name) or {}).get("text") or "").strip()
+
+        def zone_image_path(name: str) -> str:
+            return ((zones.get(name) or {}).get("image_path") or "").strip()
+
+        board_text = zone_text("board")
+        board_cards = PokerTrackerApp._extract_board_cards(board_text)
+        card_zone_values = [
+            PokerTrackerApp._normalize_card_value(zone_text("board_card_1")),
+            PokerTrackerApp._normalize_card_value(zone_text("board_card_2")),
+            PokerTrackerApp._normalize_card_value(zone_text("board_card_3")),
+            PokerTrackerApp._normalize_card_value(zone_text("board_card_4")),
+            PokerTrackerApp._normalize_card_value(zone_text("board_card_5")),
+        ]
+
+        def first_non_empty(*values: str) -> str:
+            for value in values:
+                if value and value != "-":
+                    return value
+            return ""
+
+        values = {
+            "top_left_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("top_left_cards")),
+            "top_left_name": PokerTrackerApp._clean_ocr_text(zone_text("top_left_name")),
+            "top_left_stack": PokerTrackerApp._clean_ocr_text(zone_text("top_left_stack")),
+            "top_right_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("top_right_cards")),
+            "top_right_name": PokerTrackerApp._clean_ocr_text(zone_text("top_right_name")),
+            "top_right_stack": PokerTrackerApp._clean_ocr_text(zone_text("top_right_stack")),
+            "right_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("right_cards")),
+            "right_name": PokerTrackerApp._clean_ocr_text(zone_text("right_name")),
+            "right_stack": PokerTrackerApp._clean_ocr_text(zone_text("right_stack")),
+            "hero_name": first_non_empty(
+                PokerTrackerApp._clean_ocr_text(zone_text("hero_name")),
+                live.get("hero_name", ""),
+            ),
+            "hero_stack": first_non_empty(
+                PokerTrackerApp._clean_ocr_text(zone_text("hero_stack")),
+                PokerTrackerApp._clean_ocr_text(zone_text("hero")),
+            ),
+            "hero_status": PokerTrackerApp._clean_ocr_text(zone_text("hero_status")),
+            "pot_value": first_non_empty(
+                PokerTrackerApp._clean_ocr_text(zone_text("pot_value")),
+                live.get("pot_text", ""),
+                PokerTrackerApp._clean_ocr_text(zone_text("pot")),
+            ),
+            "dealer_button": PokerTrackerApp._clean_ocr_text(zone_text("dealer_button")),
+            "board_card_1": first_non_empty(card_zone_values[0], board_cards[0] if len(board_cards) > 0 else ""),
+            "board_card_2": first_non_empty(card_zone_values[1], board_cards[1] if len(board_cards) > 1 else ""),
+            "board_card_3": first_non_empty(card_zone_values[2], board_cards[2] if len(board_cards) > 2 else ""),
+            "board_card_4": first_non_empty(card_zone_values[3], board_cards[3] if len(board_cards) > 3 else ""),
+            "board_card_5": first_non_empty(card_zone_values[4], board_cards[4] if len(board_cards) > 4 else ""),
+        }
+        return {key: (value if value else "-") for key, value in values.items()}
+
+    @staticmethod
+    def _detect_cards_visible(image_path: str) -> str:
+        if not image_path or not Path(image_path).exists():
+            return "-"
+        try:
+            image = Image.open(image_path).convert("RGB")
+        except OSError:
+            return "-"
+
+        pixels = list(image.getdata())
+        total = max(1, len(pixels))
+        red_ratio = sum(1 for r, g, b in pixels if r > 120 and r > g * 1.2 and r > b * 1.2) / total
+        bright_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 > 160) / total
+        dark_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 < 40) / total
+
+        if red_ratio > 0.06 or bright_ratio > 0.20:
+            return "visible"
+        if dark_ratio > 0.70:
+            return "not_visible"
+        return "uncertain"
+
+    @staticmethod
+    def _extract_board_cards(board_text: str) -> list[str]:
+        cleaned = (
+            board_text.replace("\n", " ")
+            .replace(",", " ")
+            .replace("|", " ")
+            .replace("10", "T")
+            .replace("O", "Q")
+        )
+        tokens = [token.strip() for token in cleaned.split() if token.strip()]
+
+        cards: list[str] = []
+        for token in tokens:
+            token = token.lower()
+            if len(token) == 2 and token[0] in "a23456789tjqk" and token[1] in "shdc":
+                cards.append(token)
+                continue
+            if len(token) == 1 and token in "a23456789tjqk":
+                cards.append(token)
+
+        while len(cards) < 5:
+            cards.append("")
+        return cards[:5]
+
+    @staticmethod
+    def _clean_ocr_text(value: str) -> str:
+        return " ".join(part.strip() for part in value.splitlines() if part.strip()).strip()
+
+    @staticmethod
+    def _normalize_card_value(value: str) -> str:
+        token = PokerTrackerApp._clean_ocr_text(value).lower().replace("10", "t")
+        token = token.replace(" ", "")
+        if len(token) >= 2 and token[0] in "a23456789tjqk" and token[1] in "shdc":
+            return token[:2]
+        return ""
 
     def _save_calibration(self) -> None:
         zones: dict[str, list[float]] = {}
@@ -502,6 +829,8 @@ class PokerTrackerApp:
         self._redraw_calibration_preview()
 
     def _refresh_calibration_preview(self) -> None:
+        self.calibration_snapshots = []
+        self.calibration_index = 0
         detection = summarize_detection()
         window = detection["active_table_window"]
         if window is None:
@@ -520,6 +849,7 @@ class PokerTrackerApp:
                 self.calibration_preview_label.configure(text="Aucune capture disponible.", image="")
                 self.calibration_preview_image = None
                 self.last_preview_source_path = None
+                self.calibration_status_var.set("Aucune capture disponible.")
                 return
         else:
             image_path = capture_window(window)
@@ -530,9 +860,11 @@ class PokerTrackerApp:
                 self.calibration_preview_label.configure(text="Capture impossible.", image="")
                 self.calibration_preview_image = None
                 self.last_preview_source_path = None
+                self.calibration_status_var.set("Capture impossible.")
                 return
 
         self.last_preview_source_path = image_path
+        self.calibration_status_var.set(f"Image calibration: {Path(image_path).name}")
         preview = self._build_calibration_preview_image(image_path)
         photo = ImageTk.PhotoImage(preview)
         self.calibration_preview_label.configure(image=photo, text="")
@@ -546,6 +878,7 @@ class PokerTrackerApp:
         if not image_path:
             self.calibration_preview_label.configure(text="Aucune capture disponible.", image="")
             self.calibration_preview_image = None
+            self.calibration_status_var.set("Aucune capture disponible.")
             return
 
         preview = self._build_calibration_preview_image(image_path)
@@ -553,6 +886,54 @@ class PokerTrackerApp:
         self.calibration_preview_label.configure(image=photo, text="")
         self.calibration_preview_label.image = photo
         self.calibration_preview_image = photo
+        self.calibration_status_var.set(f"Blocs appliqués sur: {Path(image_path).name}")
+
+    def _on_calibration_var_changed(self, *_args: object) -> None:
+        self._schedule_calibration_redraw()
+
+    def _schedule_calibration_redraw(self) -> None:
+        if self._calibration_redraw_after_id is not None:
+            self.root.after_cancel(self._calibration_redraw_after_id)
+            self._calibration_redraw_after_id = None
+        self._calibration_redraw_after_id = self.root.after(120, self._flush_calibration_redraw)
+
+    def _flush_calibration_redraw(self) -> None:
+        self._calibration_redraw_after_id = None
+        self._redraw_calibration_preview()
+
+    def _load_latest_calibration_session(self) -> None:
+        sessions = self.session_recorder.list_sessions()
+        if not sessions:
+            messagebox.showinfo("Calibration", "Aucune session disponible.")
+            return
+        self.calibration_snapshots = self.session_recorder.list_snapshots(sessions[0])
+        self.calibration_index = 0
+        self._render_calibration_snapshot()
+
+    def _move_calibration_image(self, step: int) -> None:
+        if not self.calibration_snapshots:
+            return
+        self.calibration_index = max(0, min(len(self.calibration_snapshots) - 1, self.calibration_index + step))
+        self._render_calibration_snapshot()
+
+    def _render_calibration_snapshot(self) -> None:
+        if not self.calibration_snapshots:
+            return
+        snapshot = self.calibration_snapshots[self.calibration_index]
+        image_path = snapshot.get("image_path") or ""
+        if not image_path:
+            self.calibration_status_var.set("Snapshot sans image.")
+            return
+        self.last_preview_source_path = image_path
+        preview = self._build_calibration_preview_image(image_path)
+        photo = ImageTk.PhotoImage(preview)
+        if self.calibration_preview_label is not None:
+            self.calibration_preview_label.configure(image=photo, text="")
+            self.calibration_preview_label.image = photo
+        self.calibration_preview_image = photo
+        self.calibration_status_var.set(
+            f"Session image {self.calibration_index + 1}/{len(self.calibration_snapshots)}: {Path(image_path).name}"
+        )
 
     @staticmethod
     def _find_latest_capture_file() -> str | None:
@@ -602,7 +983,14 @@ class PokerTrackerApp:
         preview = image.copy()
         preview = ImageEnhance.Brightness(preview).enhance(1.15)
         preview = ImageEnhance.Contrast(preview).enhance(1.15)
-        preview.thumbnail((1120, 760))
+        max_width = 1120
+        max_height = 760
+        if self.calibration_preview_label is not None:
+            widget_width = max(200, self.calibration_preview_label.winfo_width() - 12)
+            widget_height = max(200, self.calibration_preview_label.winfo_height() - 12)
+            max_width = max(200, min(1400, widget_width))
+            max_height = max(200, min(900, widget_height))
+        preview.thumbnail((max_width, max_height))
         return preview
 
     @staticmethod
