@@ -85,6 +85,45 @@ poker-tracker
 3. Verifier les onglets `Fenetres detectees`, `Derniere main`, `Main en cours` et `OCR live`.
 4. Utiliser l'onglet `Calibration` pour ajuster les zones si necessaire.
 
+## Annotation OpenAI des sessions
+
+Le projet peut aussi annoter une session de screenshots avec l'API OpenAI pour accelerer l'entrainement du detecteur local.
+
+Preparer la cle API dans `.env` a la racine du projet :
+
+```text
+OPENAI_API_KEY=sk-...
+```
+
+Un modele vide et ignore par Git est deja cree dans :
+
+- `.env`
+- `.env.example`
+
+Traiter la derniere session :
+
+```powershell
+python scripts\annotate_session_with_openai.py
+```
+
+Traiter une session precise :
+
+```powershell
+python scripts\annotate_session_with_openai.py --session .\sessions\20260324_204813
+```
+
+Le script :
+
+- cree un fichier `.openai.json` par screenshot ;
+- remplit ou enrichit le `.review.json` avec les valeurs attendues venant de l'IA ;
+- calcule `openai_calibration.suggested.json` pour proposer des zones moyennes issues des boxes renvoyees.
+
+Pour appliquer directement la calibration suggeree :
+
+```powershell
+python scripts\annotate_session_with_openai.py --apply-calibration
+```
+
 ## Fichiers importants
 
 - `main.py` : point d'entree simple

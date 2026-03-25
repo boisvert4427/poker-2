@@ -17,6 +17,7 @@ dist/
 
 config/calibration.json
 sessions/
+.env
 
 *.log
 

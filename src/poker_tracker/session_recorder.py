@@ -103,7 +103,18 @@ class SessionRecorder:
     def list_snapshots(self, session_dir: Path) -> list[dict[str, Any]]:
         snapshots: list[dict[str, Any]] = []
         for metadata_path in sorted(session_dir.glob("snapshot_*.json")):
-            if metadata_path.name.endswith(".review.json"):
+            if metadata_path.name.endswith(
+                (
+                    ".review.json",
+                    ".openai.json",
+                    ".local.json",
+                    ".live.json",
+                    ".compare.json",
+                    ".pure_live_compare.json",
+                    ".match.json",
+                    ".history_compare.json",
+                )
+            ):
                 continue
             try:
                 payload = json.loads(metadata_path.read_text(encoding="utf-8"))

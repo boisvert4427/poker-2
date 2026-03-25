@@ -12,11 +12,14 @@ TABLE_RE = re.compile(r"Table: '(?P<table_name>.+?)' (?P<table_format>.+?) Seat 
 SEAT_RE = re.compile(r"Seat (?P<seat>\d+): (?P<player>.+?) \((?P<stack>[\d.]+)\)")
 DEALT_RE = re.compile(r"Dealt to (?P<hero>.+?) \[(?P<cards>.+)\]")
 BOARD_RE = re.compile(r"\[(?P<cards>[^\]]+)\]")
+SUMMARY_BOARD_RE = re.compile(r"^Board:\s+\[(?P<cards>[^\]]+)\]")
+TOTAL_POT_RE = re.compile(r"^Total pot\s+(?P<pot>[\d.]+)")
 
 
 @dataclass(slots=True)
 class ParsedHand:
     hand_id: str = ""
+    source_file: str = ""
     game_type: str = ""
     variant: str = ""
     small_blind: float = 0.0
@@ -33,6 +36,7 @@ class ParsedHand:
     board_by_street: dict[str, str] = field(default_factory=dict)
     current_street: str = ""
     is_complete: bool = False
+    total_pot: float = 0.0
 
 
 def parse_winamax_hand(raw_text: str) -> ParsedHand:
@@ -88,6 +92,12 @@ def parse_winamax_hand(raw_text: str) -> ParsedHand:
 
         if current_street == "summary":
             hand.summary.append(line)
+            summary_board_match = SUMMARY_BOARD_RE.match(line)
+            if summary_board_match:
+                hand.board_by_street["summary"] = summary_board_match.group("cards")
+            total_pot_match = TOTAL_POT_RE.match(line)
+            if total_pot_match:
+                hand.total_pot = float(total_pot_match.group("pot"))
         else:
             hand.streets.setdefault(current_street, []).append(line)
 

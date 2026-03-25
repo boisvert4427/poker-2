@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import tkinter as tk
 import json
+import random
+import tkinter as tk
 from datetime import datetime
 from pathlib import Path
 from tkinter import messagebox, ttk
@@ -47,6 +48,7 @@ REVIEW_FIELDS = [
     "board_card_5",
 ]
 REVIEW_CHOICES = ["unknown", "true", "false"]
+ELEMENT_REVIEW_CHOICES = ["unknown", "ok", "false", "absent"]
 FIELD_LABELS = {
     "top_left_cards_visible": "top_left_cards_visible",
     "top_left_name": "top_left_name",
@@ -68,11 +70,66 @@ FIELD_LABELS = {
     "board_card_4": "board_card_4",
     "board_card_5": "board_card_5",
 }
+CALIBRATION_LABELS = {
+    "top_bar": "titre_table",
+    "top_left_cards": "top_left_cartes",
+    "top_left_name": "top_left_nom",
+    "top_left_stack": "top_left_stack",
+    "top_right_cards": "top_right_cartes",
+    "top_right_name": "top_right_nom",
+    "top_right_stack": "top_right_stack",
+    "left_cards": "left_cartes",
+    "left_name": "left_nom",
+    "left_stack": "left_stack",
+    "right_cards": "right_cartes",
+    "right_name": "right_nom",
+    "right_stack": "right_stack",
+    "pot": "zone_pot",
+    "pot_value": "texte_pot",
+    "board": "board_global",
+    "board_card_1": "board_carte_1",
+    "board_card_2": "board_carte_2",
+    "board_card_3": "board_carte_3",
+    "board_card_4": "board_carte_4",
+    "board_card_5": "board_carte_5",
+    "hero": "hero_global",
+    "hero_name": "hero_nom",
+    "hero_stack": "hero_stack",
+    "hero_status": "hero_cartes",
+    "dealer_button": "dealer_bouton",
+    "actions": "zone_actions",
+    "action_left": "bouton_fold_gauche",
+    "action_center": "bouton_call_check_centre",
+    "action_right": "bouton_raise_bet_droite",
+    "left_opponent": "zone_joueur_gauche",
+    "right_opponent": "zone_joueur_droite",
+}
 POSITION_HELP = (
     "Positions utiles: top_left = joueur en haut a gauche, "
     "top_right = joueur en haut a droite, right = joueur a droite, hero = toi en bas. "
     "Pour dealer_owner, mets de preference le nom du joueur ou une de ces positions."
 )
+FIELD_ZONE_MAP = {
+    "top_left_cards_visible": "top_left_cards",
+    "top_left_name": "top_left_name",
+    "top_left_stack": "top_left_stack",
+    "top_right_cards_visible": "top_right_cards",
+    "top_right_name": "top_right_name",
+    "top_right_stack": "top_right_stack",
+    "right_cards_visible": "right_cards",
+    "right_name": "right_name",
+    "right_stack": "right_stack",
+    "hero_name": "hero_name",
+    "hero_stack": "hero_stack",
+    "hero_status": "hero_status",
+    "pot_value": "pot",
+    "dealer_button": "dealer_button",
+    "board_card_1": "board_card_1",
+    "board_card_2": "board_card_2",
+    "board_card_3": "board_card_3",
+    "board_card_4": "board_card_4",
+    "board_card_5": "board_card_5",
+}
 
 
 class PokerTrackerApp:
@@ -110,6 +167,15 @@ class PokerTrackerApp:
         self.review_field_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="unknown") for field in REVIEW_FIELDS}
         self.review_expected_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="") for field in REVIEW_FIELDS}
         self.review_detected_vars: dict[str, tk.StringVar] = {field: tk.StringVar(value="-") for field in REVIEW_FIELDS}
+        self.element_review_field_var = tk.StringVar(value=REVIEW_FIELDS[0])
+        self.element_review_status_var = tk.StringVar(value="Aucun echantillon charge.")
+        self.element_review_choice_var = tk.StringVar(value="unknown")
+        self.element_review_expected_var = tk.StringVar(value="")
+        self.element_review_detected_var = tk.StringVar(value="-")
+        self.element_review_samples: list[dict] = []
+        self.element_review_index = 0
+        self.element_review_image_label: tk.Label | None = None
+        self.element_review_image_tk: ImageTk.PhotoImage | None = None
 
         self._build_layout()
         self.refresh()
@@ -184,6 +250,7 @@ class PokerTrackerApp:
         self.ocr_text = self._create_text_tab(notebook, "OCR live")
         self._create_calibration_tab(notebook)
         self._create_review_tab(notebook)
+        self._create_element_review_tab(notebook)
 
         footer = ttk.Frame(self.root, padding=(16, 0, 16, 16))
         footer.grid(row=2, column=0, sticky="ew")
@@ -242,7 +309,7 @@ class PokerTrackerApp:
 
         ttk.Label(
             frame,
-            text="Zones relatives de la table Winamax (left, top, right, bottom).",
+            text="Zones relatives de la table Winamax (left, top, width, height).",
         ).grid(row=0, column=0, sticky="w")
 
         controls_container = ttk.Frame(frame)
@@ -277,14 +344,16 @@ class PokerTrackerApp:
 
         calibration = load_calibration()
         zones = calibration.get("zones", {})
-        headers = ("Zone", "Left", "Top", "Right", "Bottom")
+        headers = ("Zone", "Left", "Top", "Width", "Height")
         for col, header in enumerate(headers):
             ttk.Label(grid, text=header).grid(row=0, column=col, padx=4, pady=2, sticky="w")
 
         for row, (name, values) in enumerate(zones.items(), start=1):
-            ttk.Label(grid, text=name).grid(row=row, column=0, padx=4, pady=2, sticky="w")
+            ttk.Label(grid, text=CALIBRATION_LABELS.get(name, name)).grid(row=row, column=0, padx=4, pady=2, sticky="w")
             vars_for_zone: list[tk.StringVar] = []
-            for col, value in enumerate(values, start=1):
+            left, top, right, bottom = values
+            display_values = [left, top, max(0.0, right - left), max(0.0, bottom - top)]
+            for col, value in enumerate(display_values, start=1):
                 var = tk.StringVar(value=f"{value:.2f}")
                 spin = ttk.Spinbox(
                     grid,
@@ -430,6 +499,80 @@ class PokerTrackerApp:
             ttk.Entry(fields_frame, textvariable=self.review_expected_vars[field], width=24).grid(
                 row=local_row, column=base_col + 3, sticky="ew", padx=(0, 16), pady=4
             )
+
+    def _create_element_review_tab(self, notebook: ttk.Notebook) -> None:
+        frame = ttk.Frame(notebook, padding=12)
+        frame.columnconfigure(0, weight=3)
+        frame.columnconfigure(1, weight=2)
+        frame.rowconfigure(1, weight=1)
+        notebook.add(frame, text="Review element")
+
+        controls = ttk.Frame(frame)
+        controls.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 10))
+        ttk.Label(controls, text="Element").grid(row=0, column=0, padx=(0, 6))
+        ttk.Combobox(
+            controls,
+            textvariable=self.element_review_field_var,
+            values=REVIEW_FIELDS,
+            width=24,
+            state="readonly",
+        ).grid(row=0, column=1, padx=(0, 8))
+        ttk.Button(controls, text="Charger derniere session", command=self._load_element_review_samples).grid(
+            row=0, column=2, padx=(0, 8)
+        )
+        ttk.Button(controls, text="Nouveau tirage", command=self._shuffle_element_review_samples).grid(
+            row=0, column=3, padx=(0, 8)
+        )
+        ttk.Button(controls, text="Precedent", command=lambda: self._move_element_review(-1)).grid(
+            row=0, column=4, padx=(0, 8)
+        )
+        ttk.Button(controls, text="Suivant", command=lambda: self._move_element_review(1)).grid(
+            row=0, column=5, padx=(0, 8)
+        )
+
+        self.element_review_image_label = tk.Label(
+            frame,
+            text="Aucun echantillon charge.",
+            anchor="center",
+            bg="#1f1f1f",
+            fg="#f2f2f2",
+            relief="sunken",
+            bd=1,
+        )
+        self.element_review_image_label.grid(row=1, column=0, sticky="nsew", padx=(0, 12))
+
+        side = ttk.Frame(frame)
+        side.grid(row=1, column=1, sticky="nsew")
+        side.columnconfigure(1, weight=1)
+
+        ttk.Label(side, textvariable=self.element_review_status_var, wraplength=420).grid(
+            row=0, column=0, columnspan=2, sticky="w", pady=(0, 10)
+        )
+        ttk.Label(side, text="Detecte").grid(row=1, column=0, sticky="w", padx=(0, 8), pady=4)
+        ttk.Label(side, textvariable=self.element_review_detected_var, wraplength=320).grid(
+            row=1, column=1, sticky="w", pady=4
+        )
+        ttk.Label(side, text="Verdict").grid(row=2, column=0, sticky="w", padx=(0, 8), pady=4)
+        ttk.Combobox(
+            side,
+            textvariable=self.element_review_choice_var,
+            values=ELEMENT_REVIEW_CHOICES,
+            width=18,
+            state="readonly",
+        ).grid(row=2, column=1, sticky="w", pady=4)
+        ttk.Label(side, text="Valeur attendue").grid(row=3, column=0, sticky="w", padx=(0, 8), pady=4)
+        ttk.Entry(side, textvariable=self.element_review_expected_var, width=32).grid(
+            row=3, column=1, sticky="ew", pady=4
+        )
+        ttk.Button(side, text="Valider element", command=self._save_element_review_annotation).grid(
+            row=4, column=0, columnspan=2, sticky="w", pady=(10, 0)
+        )
+        ttk.Label(
+            side,
+            text="Review rapide par element: on te montre des crops aleatoires d'une meme zone.",
+            wraplength=420,
+            foreground="#555555",
+        ).grid(row=5, column=0, columnspan=2, sticky="w", pady=(12, 0))
 
     def refresh(self) -> None:
         detection = summarize_detection()
@@ -598,6 +741,104 @@ class PokerTrackerApp:
         self.review_index = 0
         self._render_review_snapshot()
 
+    def _load_element_review_samples(self) -> None:
+        sessions = self.session_recorder.list_sessions()
+        if not sessions:
+            messagebox.showinfo("Review element", "Aucune session disponible.")
+            return
+        field = self.element_review_field_var.get()
+        snapshots = self.session_recorder.list_snapshots(sessions[0])
+        samples: list[dict] = []
+        for snapshot in snapshots:
+            payload = snapshot.get("payload", {})
+            crop = self._build_element_crop(snapshot, field)
+            if crop is None:
+                continue
+            detected_values = self._extract_detected_review_values(payload)
+            review = snapshot.get("review", {}) or {}
+            element_review = ((review.get("element_review") or {}).get(field) or {})
+            samples.append(
+                {
+                    "snapshot": snapshot,
+                    "field": field,
+                    "crop": crop,
+                    "detected": detected_values.get(field, "-"),
+                    "saved_status": element_review.get("status", "unknown"),
+                    "saved_expected": element_review.get("expected", ""),
+                }
+            )
+        random.shuffle(samples)
+        self.element_review_samples = samples
+        self.element_review_index = 0
+        self._render_element_review_sample()
+
+    def _shuffle_element_review_samples(self) -> None:
+        if not self.element_review_samples:
+            self._load_element_review_samples()
+            return
+        random.shuffle(self.element_review_samples)
+        self.element_review_index = 0
+        self._render_element_review_sample()
+
+    def _move_element_review(self, step: int) -> None:
+        if not self.element_review_samples:
+            return
+        self.element_review_index = max(0, min(len(self.element_review_samples) - 1, self.element_review_index + step))
+        self._render_element_review_sample()
+
+    def _render_element_review_sample(self) -> None:
+        if not self.element_review_samples or self.element_review_image_label is None:
+            self.element_review_status_var.set("Aucun echantillon charge.")
+            self.element_review_detected_var.set("-")
+            self.element_review_choice_var.set("unknown")
+            self.element_review_expected_var.set("")
+            self.element_review_image_label.configure(text="Aucun echantillon charge.", image="")
+            self.element_review_image_tk = None
+            return
+
+        sample = self.element_review_samples[self.element_review_index]
+        image = sample["crop"].copy()
+        image.thumbnail((980, 700))
+        photo = ImageTk.PhotoImage(image)
+        self.element_review_image_label.configure(image=photo, text="")
+        self.element_review_image_label.image = photo
+        self.element_review_image_tk = photo
+
+        snapshot = sample["snapshot"]
+        timestamp = (snapshot.get("payload") or {}).get("timestamp", "")
+        self.element_review_status_var.set(
+            f"{sample['field']} | echantillon {self.element_review_index + 1}/{len(self.element_review_samples)} | "
+            f"{Path(snapshot.get('image_path') or '').name} | {timestamp}"
+        )
+        self.element_review_detected_var.set(sample.get("detected", "-"))
+        self.element_review_choice_var.set(sample.get("saved_status", "unknown"))
+        self.element_review_expected_var.set(sample.get("saved_expected", ""))
+
+    def _save_element_review_annotation(self) -> None:
+        if not self.element_review_samples:
+            return
+        sample = self.element_review_samples[self.element_review_index]
+        snapshot = sample["snapshot"]
+        review_path = snapshot.get("review_path") or ""
+        review_payload = snapshot.get("review", {}) or {}
+        review_payload.setdefault("status", self.review_global_status_var.get())
+        review_payload.setdefault("note", "")
+        review_payload.setdefault("timestamp", (snapshot.get("payload") or {}).get("timestamp", ""))
+        review_payload["saved_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        review_payload.setdefault("fields", {})
+        review_payload.setdefault("element_review", {})
+        review_payload["element_review"][sample["field"]] = {
+            "status": self.element_review_choice_var.get(),
+            "expected": self.element_review_expected_var.get().strip(),
+        }
+        self.session_recorder.save_snapshot_review(review_path, review_payload)
+        snapshot["review"] = review_payload
+        sample["saved_status"] = self.element_review_choice_var.get()
+        sample["saved_expected"] = self.element_review_expected_var.get().strip()
+        self.element_review_status_var.set(
+            f"Element sauvegarde | {sample['field']} | {self.element_review_index + 1}/{len(self.element_review_samples)}"
+        )
+
     def _move_review(self, step: int) -> None:
         if not self.review_snapshots:
             return
@@ -679,6 +920,48 @@ class PokerTrackerApp:
         snapshot["review"] = review_payload
         self.review_status_var.set("Annotations sauvegardées.")
         self._render_review_snapshot()
+
+    def _build_element_crop(self, snapshot: dict, field: str) -> Image.Image | None:
+        image_path = snapshot.get("image_path") or ""
+        if not image_path or not Path(image_path).exists():
+            return None
+        payload = snapshot.get("payload") or {}
+        zones = ((payload.get("ocr") or {}).get("zones") or {})
+        zone = zones.get(self._review_zone_name(field)) or {}
+        rect = zone.get("rect") or []
+        if len(rect) != 4:
+            return None
+        try:
+            left, top, right, bottom = [int(value) for value in rect]
+            image = Image.open(image_path).convert("RGB")
+        except (OSError, ValueError):
+            return None
+
+        width, height = image.size
+        pad_x = max(8, int((right - left) * 0.15))
+        pad_y = max(8, int((bottom - top) * 0.20))
+        crop_box = (
+            max(0, left - pad_x),
+            max(0, top - pad_y),
+            min(width, right + pad_x),
+            min(height, bottom + pad_y),
+        )
+        crop = image.crop(crop_box)
+        draw = ImageDraw.Draw(crop)
+        inner_box = (
+            left - crop_box[0],
+            top - crop_box[1],
+            right - crop_box[0],
+            bottom - crop_box[1],
+        )
+        draw.rectangle(inner_box, outline="#ff5d5d", width=3)
+        draw.rectangle((4, 4, min(crop.width - 4, 220), 28), fill=(20, 20, 20))
+        draw.text((8, 7), FIELD_LABELS.get(field, field), fill="#ff5d5d")
+        return crop
+
+    @staticmethod
+    def _review_zone_name(field: str) -> str:
+        return FIELD_ZONE_MAP.get(field, field)
 
     @staticmethod
     def _extract_detected_review_values(payload: dict) -> dict[str, str]:
@@ -802,10 +1085,15 @@ class PokerTrackerApp:
         zones: dict[str, list[float]] = {}
         try:
             for name, vars_for_zone in self.calibration_entries.items():
-                values = [float(var.get().replace(",", ".")) for var in vars_for_zone]
-                if len(values) != 4 or not (0 <= values[0] < values[2] <= 1 and 0 <= values[1] < values[3] <= 1):
+                display_values = [float(var.get().replace(",", ".")) for var in vars_for_zone]
+                if len(display_values) != 4:
                     raise ValueError(name)
-                zones[name] = values
+                left, top, width, height = display_values
+                right = left + width
+                bottom = top + height
+                if not (0 <= left < right <= 1 and 0 <= top < bottom <= 1):
+                    raise ValueError(name)
+                zones[name] = [left, top, right, bottom]
         except ValueError as exc:
             messagebox.showerror("Calibration invalide", f"Valeurs invalides pour la zone {exc}.")
             return
@@ -817,14 +1105,18 @@ class PokerTrackerApp:
     def _reload_calibration(self) -> None:
         calibration = load_calibration()
         for name, values in calibration.get("zones", {}).items():
-            for var, value in zip(self.calibration_entries.get(name, []), values, strict=True):
+            left, top, right, bottom = values
+            display_values = [left, top, max(0.0, right - left), max(0.0, bottom - top)]
+            for var, value in zip(self.calibration_entries.get(name, []), display_values, strict=True):
                 var.set(f"{value:.2f}")
         self._redraw_calibration_preview()
 
     def _reset_calibration_defaults(self) -> None:
         defaults = DEFAULT_CALIBRATION.get("zones", {})
         for name, values in defaults.items():
-            for var, value in zip(self.calibration_entries.get(name, []), values, strict=True):
+            left, top, right, bottom = values
+            display_values = [left, top, max(0.0, right - left), max(0.0, bottom - top)]
+            for var, value in zip(self.calibration_entries.get(name, []), display_values, strict=True):
                 var.set(f"{value:.2f}")
         self._redraw_calibration_preview()
 
@@ -964,7 +1256,8 @@ class PokerTrackerApp:
         zones: dict[str, list[float]] = {}
         for name, vars_for_zone in self.calibration_entries.items():
             try:
-                zones[name] = [float(var.get().replace(",", ".")) for var in vars_for_zone]
+                left, top, width_ratio, height_ratio = [float(var.get().replace(",", ".")) for var in vars_for_zone]
+                zones[name] = [left, top, left + width_ratio, top + height_ratio]
             except ValueError:
                 continue
 
@@ -978,7 +1271,7 @@ class PokerTrackerApp:
             color = palette[index % len(palette)]
             draw.rectangle((left, top, right, bottom), outline=color, width=3)
             draw.rectangle((left + 2, top + 2, left + 140, top + 24), fill=(20, 20, 20))
-            draw.text((left + 6, top + 5), name, fill=color)
+            draw.text((left + 6, top + 5), CALIBRATION_LABELS.get(name, name), fill=color)
 
         preview = image.copy()
         preview = ImageEnhance.Brightness(preview).enhance(1.15)

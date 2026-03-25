@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from .history import find_latest_history_file
+from .history import find_history_file_for_table, find_latest_history_file
 
 
 PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
@@ -182,10 +182,13 @@ def summarize_detection() -> dict[str, object]:
     processes = list_winamax_processes()
     windows = list_winamax_windows()
     histories = guess_history_locations()
-    latest_history_file = find_latest_history_file(
-        item.path for item in histories if item.exists and item.accessible and item.path.lower().endswith("history")
-    )
     active_table_window = select_preferred_table_window(windows)
+    history_dirs = [item.path for item in histories if item.exists and item.accessible and item.path.lower().endswith("history")]
+    latest_history_file = None
+    if active_table_window is not None:
+        latest_history_file = find_history_file_for_table(history_dirs, active_table_window.title)
+    if latest_history_file is None:
+        latest_history_file = find_latest_history_file(history_dirs)
     return {
         "processes": processes,
         "windows": windows,

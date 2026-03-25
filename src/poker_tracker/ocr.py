@@ -90,6 +90,41 @@ def run_local_ocr(window: WinamaxWindow) -> OcrSnapshot:
     )
 
 
+def run_local_ocr_on_image(image_path: str | Path) -> OcrSnapshot:
+    image_path = str(image_path)
+    engine_path = _find_tesseract()
+    if not engine_path:
+        return OcrSnapshot(
+            image_path=image_path,
+            engine_available=False,
+            engine_path="",
+            status="tesseract_missing",
+            text="Tesseract n'est pas installe ou introuvable dans le PATH.",
+            zones={},
+        )
+
+    completed = _run_tesseract(engine_path, image_path, psm="6")
+    if completed.returncode != 0:
+        return OcrSnapshot(
+            image_path=image_path,
+            engine_available=True,
+            engine_path=engine_path,
+            status="ocr_failed",
+            text=(completed.stderr or "").strip() or "Erreur OCR inconnue.",
+            zones={},
+        )
+
+    zones = _run_zoned_ocr(engine_path, image_path)
+    return OcrSnapshot(
+        image_path=image_path,
+        engine_available=True,
+        engine_path=engine_path,
+        status="ok",
+        text=(completed.stdout or "").strip(),
+        zones=zones,
+    )
+
+
 def _find_tesseract() -> str:
     in_path = shutil.which("tesseract")
     if in_path:
