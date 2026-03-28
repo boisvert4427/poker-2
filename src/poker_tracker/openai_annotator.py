@@ -3,10 +3,13 @@ from __future__ import annotations
 import base64
 import json
 import os
+import io
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
 from typing import Any
+
+from PIL import Image
 
 from .config import CALIBRATION_FILE, load_calibration, save_calibration
 from .session_recorder import SessionRecorder
@@ -24,6 +27,9 @@ REVIEW_FIELDS = [
     "top_right_cards_visible",
     "top_right_name",
     "top_right_stack",
+    "left_cards_visible",
+    "left_name",
+    "left_stack",
     "right_cards_visible",
     "right_name",
     "right_stack",
@@ -46,6 +52,9 @@ SEAT_FIELDS = {
     "top_right_cards_visible": "top_right",
     "top_right_name": "top_right",
     "top_right_stack": "top_right",
+    "left_cards_visible": "left",
+    "left_name": "left",
+    "left_stack": "left",
     "right_cards_visible": "right",
     "right_name": "right",
     "right_stack": "right",
@@ -61,6 +70,9 @@ FIELD_TO_ZONE = {
     "top_right_cards_visible": "top_right_cards",
     "top_right_name": "top_right_name",
     "top_right_stack": "top_right_stack",
+    "left_cards_visible": "left_cards",
+    "left_name": "left_name",
+    "left_stack": "left_stack",
     "right_cards_visible": "right_cards",
     "right_name": "right_name",
     "right_stack": "right_stack",
@@ -78,7 +90,7 @@ FIELD_TO_ZONE = {
 
 PLAYER_HELP = (
     "Positions utiles: top_left = joueur en haut a gauche, top_right = joueur en haut a droite, "
-    "right = joueur a droite, hero = joueur en bas."
+    "left = joueur en bas a gauche, right = joueur a droite, hero = joueur en bas."
 )
 
 
@@ -98,6 +110,9 @@ FIELD_MIN_CONFIDENCE = {
     "top_right_cards_visible": 0.75,
     "top_right_name": 0.8,
     "top_right_stack": 0.7,
+    "left_cards_visible": 0.75,
+    "left_name": 0.8,
+    "left_stack": 0.7,
     "right_cards_visible": 0.75,
     "right_name": 0.8,
     "right_stack": 0.7,
@@ -222,6 +237,12 @@ def annotate_snapshot_with_openai(
         raise RuntimeError("La reponse OpenAI est vide.")
 
     payload = json.loads(content)
+    _maybe_enrich_dealer_field(
+        client=client,
+        payload=payload,
+        image_path=image_path,
+        model=model,
+    )
     payload["model"] = getattr(response, "model", model)
     payload["image_path"] = str(image_path)
     return payload
@@ -337,14 +358,14 @@ def _build_annotation_prompt(metadata_text: str) -> str:
         "- les ratios sont left, top, right, bottom entre 0.0 et 1.0;\n"
         "- si un element n'est pas visible, mettre visible=false, value='', box=null.\n\n"
         f"{PLAYER_HELP}\n"
-        "La table a 4 sieges d'interet pour notre outil: top_left, top_right, right, hero.\n"
+        "La table a 5 sieges d'interet pour notre outil: top_left, top_right, left, right, hero.\n"
         "Chaque siege peut etre dans un etat parmi: present, absent, sitout, unknown.\n"
         "Tu dois d'abord raisonner siege par siege.\n"
         "Si un siege est absent, vide, ferme, ou sans joueur lisible, ne pas inventer de pseudo, stack ou cartes.\n"
         "Si tu n'es pas sur, utilise state='unknown' et laisse les champs non visibles vides.\n"
         "Regles de remplissage:\n"
-        "- top_left_cards_visible / top_right_cards_visible / right_cards_visible: value doit etre visible, not_visible ou uncertain.\n"
-        "- top_left_name / top_right_name / right_name / hero_name: pseudo du joueur.\n"
+        "- top_left_cards_visible / top_right_cards_visible / left_cards_visible / right_cards_visible: value doit etre visible, not_visible ou uncertain.\n"
+        "- top_left_name / top_right_name / left_name / right_name / hero_name: pseudo du joueur.\n"
         "- stacks et pot_value: garder le texte lisible tel qu'affiche, ex: '102,7 BB' ou 'Pot : 2 BB'.\n"
         "- dealer_button: mettre de preference le nom du joueur proprietaire du bouton dealer, sinon une position.\n"
         "- board_card_1..5: format court type '7h', 'Qc', '3s'.\n"
@@ -356,6 +377,18 @@ def _build_annotation_prompt(metadata_text: str) -> str:
         "- si un stack n'est pas lisible, mets visible=false.\n\n"
         "Contexte local utile (peut contenir du bruit OCR, a utiliser comme indice seulement):\n"
         f"{metadata_text}"
+    )
+
+
+def _build_dealer_prompt() -> str:
+    return (
+        "Analyse uniquement le dealer button sur ce screenshot Winamax.\n\n"
+        "Le dealer button est un petit rond jaune/orange, proche de la couleur #665B48, "
+        "avec la lettre 'D' sombre a l'interieur.\n"
+        "Tu dois detecter ce bouton et l'associer au joueur le plus proche parmi: "
+        "top_left, top_right, left, right, hero.\n\n"
+        "Reponds uniquement avec le JSON demande.\n"
+        "Si tu ne vois pas clairement ce rond jaune avec le D, retourne dealer_owner='' et box=null."
     )
 
 
@@ -401,10 +434,11 @@ def _annotation_schema() -> dict[str, Any]:
                 "properties": {
                     "top_left": _seat_schema(),
                     "top_right": _seat_schema(),
+                    "left": _seat_schema(),
                     "right": _seat_schema(),
                     "hero": _seat_schema(),
                 },
-                "required": ["top_left", "top_right", "right", "hero"],
+                "required": ["top_left", "top_right", "left", "right", "hero"],
             },
             "fields": {
                 "type": "object",
@@ -414,6 +448,35 @@ def _annotation_schema() -> dict[str, Any]:
             },
         },
         "required": ["summary", "flags", "seats", "fields"],
+    }
+
+
+def _dealer_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "dealer_owner": {"type": "string"},
+            "confidence": {"type": "number"},
+            "reason": {"type": "string"},
+            "box": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "properties": {
+                            "left": {"type": "number"},
+                            "top": {"type": "number"},
+                            "right": {"type": "number"},
+                            "bottom": {"type": "number"},
+                        },
+                        "required": ["left", "top", "right", "bottom"],
+                    },
+                    {"type": "null"},
+                ]
+            },
+        },
+        "required": ["dealer_owner", "confidence", "reason", "box"],
     }
 
 
@@ -428,9 +491,14 @@ def _compact_ocr_hints(ocr_payload: dict[str, Any]) -> dict[str, str]:
 
 
 def _image_to_data_url(image_path: Path) -> str:
-    mime = "image/png" if image_path.suffix.lower() == ".png" else "image/jpeg"
-    encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
-    return f"data:{mime};base64,{encoded}"
+    with Image.open(image_path) as image:
+        image = image.convert("RGB")
+        max_size = (1280, 720)
+        image.thumbnail(max_size)
+        buffer = io.BytesIO()
+        image.save(buffer, format="JPEG", quality=82, optimize=True)
+        encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return f"data:image/jpeg;base64,{encoded}"
 
 
 def _valid_box(box: Any) -> bool:
@@ -466,3 +534,59 @@ def _seat_schema() -> dict[str, Any]:
         },
         "required": ["state", "player_name", "confidence"],
     }
+
+
+def _maybe_enrich_dealer_field(*, client: Any, payload: dict[str, Any], image_path: Path, model: str) -> None:
+    fields = payload.get("fields", {}) or {}
+    dealer_field = fields.get("dealer_button", {}) or {}
+    dealer_value = (dealer_field.get("value") or "").strip()
+    dealer_box = dealer_field.get("box")
+    if dealer_value or dealer_box:
+        return
+
+    try:
+        response = client.responses.create(
+            model=model,
+            store=False,
+            input=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": _build_dealer_prompt()},
+                        {"type": "input_image", "image_url": _image_to_data_url(image_path), "detail": "high"},
+                    ],
+                }
+            ],
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "dealer_detection",
+                    "strict": True,
+                    "schema": _dealer_schema(),
+                }
+            },
+        )
+        dealer_payload = json.loads(getattr(response, "output_text", "") or "{}")
+    except Exception:
+        return
+
+    owner = (dealer_payload.get("dealer_owner") or "").strip()
+    box = dealer_payload.get("box")
+    confidence = float(dealer_payload.get("confidence", 0.0) or 0.0)
+    if not owner and not box:
+        return
+
+    fields["dealer_button"] = {
+        "value": owner,
+        "visible": bool(owner or box),
+        "confidence": confidence,
+        "box": box if _valid_box(box) else None,
+    }
+    payload["fields"] = fields
+    payload.setdefault("flags", [])
+    payload["flags"].append("dealer_specialized_prompt")
+    summary = payload.get("summary", "")
+    if owner:
+        suffix = f" Dealer owner: {owner}."
+        if suffix not in summary:
+            payload["summary"] = (summary + suffix).strip()

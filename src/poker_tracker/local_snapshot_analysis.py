@@ -5,12 +5,10 @@ from pathlib import Path
 import re
 from typing import Any
 
-from PIL import Image
+from PIL import Image, ImageFilter, ImageOps
 
-from .history import read_history_text
-from .history_truth import truth_from_snapshot_metadata
-from .ocr import OcrSnapshot, run_local_ocr_on_image
-from .parser import parse_winamax_hand
+from .config import load_calibration
+from .ocr import OcrSnapshot, _find_tesseract, _run_tesseract, _scaled_rect, run_local_ocr_on_image
 
 
 REVIEW_FIELDS = [
@@ -20,6 +18,9 @@ REVIEW_FIELDS = [
     "top_right_cards_visible",
     "top_right_name",
     "top_right_stack",
+    "left_cards_visible",
+    "left_name",
+    "left_stack",
     "right_cards_visible",
     "right_name",
     "right_stack",
@@ -36,8 +37,9 @@ REVIEW_FIELDS = [
 ]
 
 STACK_RE = re.compile(r"\b\d+(?:[.,]\d+)?\s*BB\b", re.IGNORECASE)
-PLAYER_NAME_RE = re.compile(r"\b[a-zA-Z][a-zA-Z0-9_]{2,}\b")
+PLAYER_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_/-]{2,}")
 POT_TEXT_RE = re.compile(r"(Pot(?:\s+total)?\s*:\s*[\d.,]+\s*BB)", re.IGNORECASE)
+POT_TOTAL_TEXT_RE = re.compile(r"(Pot\s+total\s*:\s*[\d.,]+\s*BB)", re.IGNORECASE)
 BOARD_RANK_RE = re.compile(r"\b([2-9]|10|[AJQKT])\b", re.IGNORECASE)
 BB_LIKE_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:BB|B8|68|BES)\b", re.IGNORECASE)
 POT_LOOSE_RE = re.compile(r"pot[^0-9]{0,10}(\d+(?:[.,]\d+)?)", re.IGNORECASE)
@@ -75,9 +77,9 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     zones = ocr_snapshot.zones or {}
     full_text = _clean_ocr_text(ocr_snapshot.text)
     name_candidates = _extract_name_candidates(ocr_snapshot.text, hero_name=live.get("hero_name", ""))
-    history_hand = _load_matched_history_hand(metadata)
-    history_truth = truth_from_snapshot_metadata(metadata)
-
+    name_rows = _extract_name_rows(ocr_snapshot.text, hero_name=live.get("hero_name", ""))
+    stack_rows = _extract_stack_rows(ocr_snapshot.text)
+    stack_candidates = _extract_stack_candidates(ocr_snapshot.text)
     def zone_text(name: str) -> str:
         return ((zones.get(name) or {}).text or "").strip() if zones.get(name) else ""
 
@@ -85,7 +87,7 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
         return ((zones.get(name) or {}).image_path or "").strip() if zones.get(name) else ""
 
     board_text = zone_text("board")
-    board_cards = _extract_board_cards(board_text)
+    board_cards = _extract_board_cards_from_image(ocr_snapshot.image_path) or _extract_board_cards(board_text)
     hero_block = _clean_ocr_text(zone_text("hero"))
     hero_name_from_block = _extract_hero_name(hero_block)
     hero_stack_from_block = _extract_stack(hero_block)
@@ -102,65 +104,78 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     values = {
         "top_left_cards_visible": _detect_cards_visible(zone_image_path("top_left_cards")),
         "top_left_name": first_non_empty(
-            _history_position_name(history_truth, "top_left"),
             _clean_player_name(zone_text("top_left_name")),
-            _clean_player_name(top_left_opponent),
+            _row_value(name_rows, 0, 0),
             _candidate_name(name_candidates, 0),
         ),
         "top_left_stack": first_non_empty(
-            _history_position_stack(history_truth, "top_left"),
             _extract_stack(zone_text("top_left_stack")),
+            _candidate_value(stack_candidates, 0),
+            _row_value(stack_rows, 0, 0),
             _extract_stack(top_left_opponent),
         ),
         "top_right_cards_visible": _detect_cards_visible(zone_image_path("top_right_cards")),
         "top_right_name": first_non_empty(
-            _history_position_name(history_truth, "top_right"),
             _clean_player_name(zone_text("top_right_name")),
+            _row_value(name_rows, 0, 1),
+            _candidate_name(name_candidates, 1),
         ),
         "top_right_stack": first_non_empty(
-            _history_position_stack(history_truth, "top_right"),
             _extract_stack(zone_text("top_right_stack")),
+            _candidate_value(stack_candidates, 1),
+            _row_value(stack_rows, 0, 1),
+        ),
+        "left_cards_visible": _detect_cards_visible(zone_image_path("left_cards")),
+        "left_name": first_non_empty(
+            _clean_player_name(zone_text("left_name")),
+            _row_value(name_rows, 1, 0),
+            _clean_player_name(top_left_opponent),
+            _candidate_name(name_candidates, 2),
+        ),
+        "left_stack": first_non_empty(
+            _extract_stack(zone_text("left_stack")),
+            _row_value(stack_rows, 1, 0),
+            _candidate_value(stack_candidates, 2),
+            _extract_stack(top_left_opponent),
         ),
         "right_cards_visible": _detect_cards_visible(zone_image_path("right_cards")),
         "right_name": first_non_empty(
-            _history_position_name(history_truth, "right"),
             _clean_player_name(zone_text("right_name")),
+            _row_value(name_rows, 1, 1),
             _clean_player_name(right_opponent),
-            _candidate_name(name_candidates, 1),
+            _candidate_name(name_candidates, 3),
         ),
         "right_stack": first_non_empty(
-            _history_position_stack(history_truth, "right"),
             _extract_stack(zone_text("right_stack")),
+            _row_value(stack_rows, 1, 1),
+            _candidate_value(stack_candidates, 3),
             _extract_stack(right_opponent),
         ),
         "hero_name": first_non_empty(
-            history_hand.hero_name if history_hand else "",
             hero_name_from_block,
             _clean_player_name(zone_text("hero_name")),
             live.get("hero_name", ""),
         ),
         "hero_stack": first_non_empty(
-            _history_hero_stack_bb(history_hand),
             hero_stack_from_block,
             _extract_stack(zone_text("hero_stack")),
         ),
         "hero_status": _clean_ocr_text(zone_text("hero_status")),
         "pot_value": first_non_empty(
-            history_truth.pot_value_bb if history_truth and live.get("is_complete") else "",
-            pot_from_block,
             _extract_pot_value(zone_text("pot_value")),
+            pot_from_block,
             _extract_pot_value(full_text),
             live.get("pot_text", ""),
         ),
         "dealer_button": first_non_empty(
-            history_truth.dealer_owner if history_truth and live.get("is_complete") else "",
+            _detect_dealer_owner(ocr_snapshot.image_path),
             _clean_ocr_text(zone_text("dealer_button")),
         ),
-        "board_card_1": (_history_board_card(history_truth, 0) if history_truth and live.get("is_complete") else "") or (board_cards[0] if len(board_cards) > 0 else ""),
-        "board_card_2": (_history_board_card(history_truth, 1) if history_truth and live.get("is_complete") else "") or (board_cards[1] if len(board_cards) > 1 else ""),
-        "board_card_3": (_history_board_card(history_truth, 2) if history_truth and live.get("is_complete") else "") or (board_cards[2] if len(board_cards) > 2 else ""),
-        "board_card_4": (_history_board_card(history_truth, 3) if history_truth and live.get("is_complete") else "") or (board_cards[3] if len(board_cards) > 3 else ""),
-        "board_card_5": (_history_board_card(history_truth, 4) if history_truth and live.get("is_complete") else "") or (board_cards[4] if len(board_cards) > 4 else ""),
+        "board_card_1": board_cards[0] if len(board_cards) > 0 else "",
+        "board_card_2": board_cards[1] if len(board_cards) > 1 else "",
+        "board_card_3": board_cards[2] if len(board_cards) > 2 else "",
+        "board_card_4": board_cards[3] if len(board_cards) > 3 else "",
+        "board_card_5": board_cards[4] if len(board_cards) > 4 else "",
     }
 
     result: dict[str, dict[str, Any]] = {}
@@ -178,13 +193,20 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
 def compare_local_to_openai(local_payload: dict[str, Any], openai_payload: dict[str, Any]) -> dict[str, Any]:
     comparison: dict[str, Any] = {"fields": {}, "matches": 0, "total": 0}
     for field in REVIEW_FIELDS:
-        local_value = _normalize_compare_value((local_payload.get("fields", {}).get(field, {}) or {}).get("value", ""))
-        openai_value = _normalize_compare_value((openai_payload.get("fields", {}).get(field, {}) or {}).get("value", ""))
+        local_field = (local_payload.get("fields", {}).get(field, {}) or {})
+        openai_field = (openai_payload.get("fields", {}).get(field, {}) or {})
+        local_value = _normalize_compare_value(local_field.get("value", ""))
+        openai_value = _normalize_compare_value(openai_field.get("value", ""))
         matched = local_value == openai_value and bool(openai_value or local_value)
+        local_box = local_field.get("box")
+        openai_box = openai_field.get("box")
         comparison["fields"][field] = {
             "local": local_value,
             "openai": openai_value,
             "match": matched,
+            "local_box": local_box,
+            "openai_box": openai_box,
+            "box_distance": _box_distance(local_box, openai_box),
         }
         comparison["total"] += 1
         if matched:
@@ -205,6 +227,7 @@ def _zone_for_field(field: str) -> str:
     mapping = {
         "top_left_cards_visible": "top_left_cards",
         "top_right_cards_visible": "top_right_cards",
+        "left_cards_visible": "left_cards",
         "right_cards_visible": "right_cards",
     }
     return mapping.get(field, field)
@@ -238,9 +261,9 @@ def _detect_cards_visible(image_path: str) -> str:
     bright_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 > 160) / total
     dark_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 < 40) / total
 
-    if red_ratio > 0.06 or bright_ratio > 0.20:
+    if red_ratio > 0.78 and bright_ratio > 0.18 and dark_ratio < 0.20:
         return "visible"
-    if dark_ratio > 0.70:
+    if dark_ratio > 0.45 or (red_ratio > 0.50 and bright_ratio < 0.18):
         return "not_visible"
     return "uncertain"
 
@@ -252,6 +275,129 @@ def _extract_board_cards(board_text: str) -> list[str]:
     while len(cards) < 5:
         cards.append("")
     return cards
+
+
+def _extract_board_cards_from_image(image_path: str) -> list[str]:
+    image_file = Path(image_path)
+    if not image_file.exists():
+        return []
+
+    try:
+        image = Image.open(image_file).convert("RGB")
+    except OSError:
+        return []
+
+    engine_path = _find_tesseract()
+    if not engine_path:
+        return []
+
+    calibration = load_calibration().get("zones", {})
+    cards: list[str] = []
+    for index in range(1, 6):
+        zone_name = f"board_card_{index}"
+        ratios = calibration.get(zone_name)
+        if not ratios:
+            cards.append("")
+            continue
+        rect = _scaled_rect(image.width, image.height, *ratios)
+        crop = image.crop(rect)
+        rank = _extract_card_rank(crop, engine_path)
+        suit = _extract_card_suit(crop)
+        if rank and suit:
+            cards.append(f"{rank}{suit}")
+        elif rank:
+            cards.append(rank)
+        else:
+            cards.append("")
+    return cards
+
+
+def _extract_card_rank(card_image: Image.Image, engine_path: str) -> str:
+    rank_crop = card_image.crop((0, 0, max(1, int(card_image.width * 0.45)), max(1, int(card_image.height * 0.35))))
+    processed = ImageOps.autocontrast(rank_crop.convert("L"))
+    processed = processed.resize((processed.width * 4, processed.height * 4))
+    processed = processed.filter(ImageFilter.SHARPEN)
+    processed = processed.point(lambda p: 255 if p > 165 else 0)
+
+    temp_dir = Path(Path.cwd()) / "tmp_board_rank"
+    temp_dir.mkdir(exist_ok=True)
+    temp_path = temp_dir / "rank.png"
+    processed.save(temp_path)
+
+    completed = _run_tesseract(engine_path, str(temp_path), psm="10")
+    text = (completed.stdout or "").strip().upper()
+    text = text.replace("110", "10").replace("10.", "10").replace("1O", "10").replace("O", "Q")
+    if text in {"10", "T"}:
+        return "t"
+    if text[:1] in {"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}:
+        return "t" if text[0] == "T" else text[0].lower()
+    return ""
+
+
+def _extract_card_suit(card_image: Image.Image) -> str:
+    pixels = list(card_image.getdata())
+    total = max(1, len(pixels))
+    red_ratio = sum(1 for r, g, b in pixels if r > 120 and r > g * 1.2 and r > b * 1.2) / total
+    blue_ratio = sum(1 for r, g, b in pixels if b > 80 and b > r * 1.15 and b > g * 1.15) / total
+    green_ratio = sum(1 for r, g, b in pixels if g > 80 and g > r * 1.1 and g > b * 1.05) / total
+    dark_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 < 60) / total
+
+    if red_ratio > 0.12:
+        return "h"
+    if green_ratio > 0.15:
+        return "c"
+    if blue_ratio > 0.08:
+        return "d"
+    if dark_ratio > 0.18:
+        return "s"
+    return ""
+
+
+def _detect_dealer_owner(image_path: str) -> str:
+    image_file = Path(image_path)
+    if not image_file.exists():
+        return ""
+    try:
+        image = Image.open(image_file).convert("RGB")
+    except OSError:
+        return ""
+
+    pixels = image.load()
+    points: list[tuple[int, int]] = []
+    for y in range(image.height):
+        for x in range(image.width):
+            r, g, b = pixels[x, y]
+            if r > 150 and g > 110 and 40 < b < 120 and r > g * 1.05:
+                points.append((x, y))
+
+    if len(points) < 20:
+        return ""
+
+    cx = sum(x for x, _ in points) / len(points)
+    cy = sum(y for _, y in points) / len(points)
+
+    calibration = load_calibration().get("zones", {})
+    seat_boxes = {
+        "top_left": calibration.get("top_left_name"),
+        "top_right": calibration.get("top_right_name"),
+        "left": calibration.get("left_name"),
+        "right": calibration.get("right_name"),
+        "hero": calibration.get("hero_name"),
+    }
+
+    best_name = ""
+    best_distance = None
+    for seat_name, ratios in seat_boxes.items():
+        if not ratios:
+            continue
+        rect = _scaled_rect(image.width, image.height, *ratios)
+        seat_cx = (rect[0] + rect[2]) / 2
+        seat_cy = (rect[1] + rect[3]) / 2
+        distance = ((cx - seat_cx) ** 2 + (cy - seat_cy) ** 2) ** 0.5
+        if best_distance is None or distance < best_distance:
+            best_distance = distance
+            best_name = seat_name
+    return best_name
 
 
 def _clean_ocr_text(value: str) -> str:
@@ -267,7 +413,15 @@ def _normalize_card_value(value: str) -> str:
 
 
 def _normalize_compare_value(value: str) -> str:
-    return " ".join(str(value or "").strip().lower().split())
+    normalized = " ".join(str(value or "").strip().lower().split())
+    card = _normalize_card_value(normalized)
+    if card:
+        return card
+    if normalized.startswith("pot total :"):
+        return normalized.replace("pot total :", "pot :").strip()
+    if re.fullmatch(r"\d+(?:[.,]\d+)?\s*bb", normalized):
+        return f"pot : {normalized}"
+    return normalized
 
 
 def _extract_stack(text: str) -> str:
@@ -290,12 +444,23 @@ def _extract_hero_name(text: str) -> str:
 
 def _clean_player_name(text: str) -> str:
     cleaned = _clean_ocr_text(text)
-    candidates = [token for token in cleaned.split() if PLAYER_NAME_RE.fullmatch(token)]
+    candidates = []
+    for token in cleaned.split():
+        token = token.strip("~—-_=.,:;()[]{}<>")
+        token = token.replace("|", "l")
+        token = token.replace("/3", "73")
+        token = token.replace("/", "7")
+        token = _normalize_player_name(token)
+        if PLAYER_NAME_RE.fullmatch(token):
+            candidates.append(token)
     return " ".join(candidates[:2]).strip()
 
 
 def _extract_pot_value(text: str) -> str:
     cleaned = _clean_ocr_text(text)
+    total_match = POT_TOTAL_TEXT_RE.search(cleaned)
+    if total_match:
+        return total_match.group(1)
     match = POT_TEXT_RE.search(cleaned)
     if match:
         return match.group(1)
@@ -341,6 +506,73 @@ def _candidate_name(candidates: list[str], index: int) -> str:
     return candidates[index] if 0 <= index < len(candidates) else ""
 
 
+def _extract_name_rows(text: str, hero_name: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    hero_name = hero_name.lower().strip()
+    for raw_line in text.splitlines():
+        row: list[str] = []
+        for token in raw_line.split():
+            cleaned = _clean_player_name(token)
+            if not cleaned:
+                continue
+            lowered = cleaned.lower()
+            if lowered == hero_name or lowered in NAME_BLACKLIST:
+                continue
+            row.append(cleaned)
+        if len(row) >= 2:
+            rows.append(row[:2])
+    return rows
+
+
+def _extract_stack_rows(text: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for raw_line in text.splitlines():
+        cleaned = _clean_ocr_text(raw_line)
+        stacks = [match.group(0) for match in STACK_RE.finditer(cleaned)]
+        if len(stacks) >= 2:
+            rows.append(stacks[:2])
+            continue
+        loose = []
+        for match in BB_LIKE_RE.finditer(cleaned):
+            amount = _normalize_bb_amount(match.group(1))
+            if amount:
+                loose.append(f"{amount} BB")
+        if len(loose) >= 2:
+            rows.append(loose[:2])
+    return rows
+
+
+def _extract_stack_candidates(text: str) -> list[str]:
+    candidates: list[str] = []
+    for match in BB_LIKE_RE.finditer(_clean_ocr_text(text)):
+        amount = _normalize_bb_amount(match.group(1))
+        if not amount:
+            continue
+        token = f"{amount} BB"
+        if token not in candidates:
+            candidates.append(token)
+    return candidates
+
+
+def _row_value(rows: list[list[str]], row_index: int, col_index: int) -> str:
+    if 0 <= row_index < len(rows):
+        row = rows[row_index]
+        if 0 <= col_index < len(row):
+            return row[col_index]
+    return ""
+
+
+def _candidate_value(values: list[str], index: int) -> str:
+    return values[index] if 0 <= index < len(values) else ""
+
+
+def _normalize_player_name(token: str) -> str:
+    lowered = token.lower()
+    if lowered.startswith("temivi"):
+        return f"J{token[1:]}"
+    return token
+
+
 def _normalize_bb_amount(amount: str) -> str:
     value = amount.replace(",", ".")
     if value.endswith("68") and len(value) > 3 and "." not in value:
@@ -352,71 +584,16 @@ def _normalize_bb_amount(amount: str) -> str:
     return value.replace(".", ",") if "." in value else value
 
 
-def _load_matched_history_hand(metadata: dict[str, Any]):
-    history_file = metadata.get("history_file", "")
-    live = metadata.get("live_snapshot") or {}
-    hand_id = live.get("hand_id", "") or ""
-    if not history_file or not hand_id or not Path(history_file).exists():
+def _box_distance(left: Any, right: Any) -> float | None:
+    if not isinstance(left, dict) or not isinstance(right, dict):
         return None
-    raw = read_history_text(history_file)
-    for chunk in raw.split("\n\n\n"):
-        chunk = chunk.strip()
-        if not chunk or hand_id not in chunk:
-            continue
-        hand = parse_winamax_hand(chunk)
-        if hand.hand_id == hand_id:
-            return hand
-    return None
-
-
-def _history_position_name(truth, position: str) -> str:
-    if truth is None:
-        return ""
-    seat = truth.positions.get(position, {})
-    return seat.get("player", "")
-
-
-def _history_position_stack(truth, position: str) -> str:
-    if truth is None:
-        return ""
-    seat = truth.positions.get(position, {})
-    stack = seat.get("stack", "")
-    if not stack or truth.big_blind <= 0:
-        return ""
     try:
-        value = float(stack) / truth.big_blind
-    except ValueError:
-        return ""
-    return f"{_format_bb_value(value)} BB"
-
-
-def _history_hero_stack_bb(hand) -> str:
-    if hand is None:
-        return ""
-    for seat in hand.seats:
-        if seat.get("player") == hand.hero_name:
-            stack = seat.get("stack", "")
-            return _stack_to_bb(hand, stack)
-    return ""
-
-
-def _history_board_card(truth, index: int) -> str:
-    if truth is None:
-        return ""
-    if 0 <= index < len(truth.board_cards):
-        return truth.board_cards[index]
-    return ""
-
-
-def _stack_to_bb(hand, stack: str) -> str:
-    if hand is None or not stack or hand.big_blind <= 0:
-        return ""
-    value = float(stack) / hand.big_blind
-    return f"{_format_bb_value(value)} BB"
-
-
-def _format_bb_value(value: float) -> str:
-    rounded = round(value, 1)
-    if rounded.is_integer():
-        return str(int(rounded))
-    return f"{rounded:.1f}".replace(".", ",")
+        diffs = [
+            abs(float(left["left"]) - float(right["left"])),
+            abs(float(left["top"]) - float(right["top"])),
+            abs(float(left["right"]) - float(right["right"])),
+            abs(float(left["bottom"]) - float(right["bottom"])),
+        ]
+    except (KeyError, TypeError, ValueError):
+        return None
+    return round(sum(diffs) / 4, 4)

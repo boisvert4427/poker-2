@@ -20,7 +20,7 @@ from .detection import (
 )
 from .history import read_history_text
 from .live_state import build_live_snapshot, format_live_snapshot
-from .ocr import OcrSnapshot, capture_window, run_local_ocr
+from .ocr import OcrSnapshot, capture_window, run_local_ocr, run_local_ocr_on_image
 from .parser import ParsedHand, parse_winamax_hand
 from .session_recorder import SessionRecorder
 
@@ -33,6 +33,9 @@ REVIEW_FIELDS = [
     "top_right_cards_visible",
     "top_right_name",
     "top_right_stack",
+    "left_cards_visible",
+    "left_name",
+    "left_stack",
     "right_cards_visible",
     "right_name",
     "right_stack",
@@ -56,6 +59,9 @@ FIELD_LABELS = {
     "top_right_cards_visible": "top_right_cards_visible",
     "top_right_name": "top_right_name",
     "top_right_stack": "top_right_stack",
+    "left_cards_visible": "left_cards_visible",
+    "left_name": "left_name",
+    "left_stack": "left_stack",
     "right_cards_visible": "right_cards_visible",
     "right_name": "right_name",
     "right_stack": "right_stack",
@@ -116,6 +122,9 @@ FIELD_ZONE_MAP = {
     "top_right_cards_visible": "top_right_cards",
     "top_right_name": "top_right_name",
     "top_right_stack": "top_right_stack",
+    "left_cards_visible": "left_cards",
+    "left_name": "left_name",
+    "left_stack": "left_stack",
     "right_cards_visible": "right_cards",
     "right_name": "right_name",
     "right_stack": "right_stack",
@@ -806,11 +815,13 @@ class PokerTrackerApp:
 
         snapshot = sample["snapshot"]
         timestamp = (snapshot.get("payload") or {}).get("timestamp", "")
+        current_detected = self._compute_current_element_detected(snapshot, sample["field"])
+        sample["detected"] = current_detected
         self.element_review_status_var.set(
             f"{sample['field']} | echantillon {self.element_review_index + 1}/{len(self.element_review_samples)} | "
             f"{Path(snapshot.get('image_path') or '').name} | {timestamp}"
         )
-        self.element_review_detected_var.set(sample.get("detected", "-"))
+        self.element_review_detected_var.set(current_detected)
         self.element_review_choice_var.set(sample.get("saved_status", "unknown"))
         self.element_review_expected_var.set(sample.get("saved_expected", ""))
 
@@ -838,6 +849,32 @@ class PokerTrackerApp:
         self.element_review_status_var.set(
             f"Element sauvegarde | {sample['field']} | {self.element_review_index + 1}/{len(self.element_review_samples)}"
         )
+
+    def _compute_current_element_detected(self, snapshot: dict, field: str) -> str:
+        image_path = snapshot.get("image_path") or ""
+        if not image_path or not Path(image_path).exists():
+            return "-"
+        try:
+            ocr_snapshot = run_local_ocr_on_image(image_path)
+        except Exception:
+            return "-"
+
+        payload = dict(snapshot.get("payload") or {})
+        payload["ocr"] = {
+            "status": ocr_snapshot.status,
+            "engine_path": ocr_snapshot.engine_path,
+            "text": ocr_snapshot.text,
+            "zones": {
+                name: {
+                    "text": zone.text,
+                    "rect": list(zone.rect),
+                    "image_path": zone.image_path,
+                }
+                for name, zone in ocr_snapshot.zones.items()
+            },
+        }
+        values = self._extract_detected_review_values(payload)
+        return values.get(field, "-")
 
     def _move_review(self, step: int) -> None:
         if not self.review_snapshots:
@@ -925,19 +962,22 @@ class PokerTrackerApp:
         image_path = snapshot.get("image_path") or ""
         if not image_path or not Path(image_path).exists():
             return None
-        payload = snapshot.get("payload") or {}
-        zones = ((payload.get("ocr") or {}).get("zones") or {})
-        zone = zones.get(self._review_zone_name(field)) or {}
-        rect = zone.get("rect") or []
-        if len(rect) != 4:
-            return None
         try:
-            left, top, right, bottom = [int(value) for value in rect]
             image = Image.open(image_path).convert("RGB")
-        except (OSError, ValueError):
+        except OSError:
             return None
 
+        calibration = load_calibration()
+        zone_name = self._review_zone_name(field)
+        zone_values = (calibration.get("zones") or {}).get(zone_name)
+        if not zone_values or len(zone_values) != 4:
+            return None
         width, height = image.size
+        left = int(width * zone_values[0])
+        top = int(height * zone_values[1])
+        right = int(width * zone_values[2])
+        bottom = int(height * zone_values[3])
+
         pad_x = max(8, int((right - left) * 0.15))
         pad_y = max(8, int((bottom - top) * 0.20))
         crop_box = (
@@ -998,6 +1038,9 @@ class PokerTrackerApp:
             "top_right_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("top_right_cards")),
             "top_right_name": PokerTrackerApp._clean_ocr_text(zone_text("top_right_name")),
             "top_right_stack": PokerTrackerApp._clean_ocr_text(zone_text("top_right_stack")),
+            "left_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("left_cards")),
+            "left_name": PokerTrackerApp._clean_ocr_text(zone_text("left_name")),
+            "left_stack": PokerTrackerApp._clean_ocr_text(zone_text("left_stack")),
             "right_cards_visible": PokerTrackerApp._detect_cards_visible(zone_image_path("right_cards")),
             "right_name": PokerTrackerApp._clean_ocr_text(zone_text("right_name")),
             "right_stack": PokerTrackerApp._clean_ocr_text(zone_text("right_stack")),

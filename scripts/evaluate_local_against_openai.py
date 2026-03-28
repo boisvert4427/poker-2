@@ -30,6 +30,7 @@ def main() -> None:
 
     overall_matches = 0
     overall_total = 0
+    compared_count = 0
     per_field = defaultdict(lambda: {"matches": 0, "total": 0})
 
     for snapshot in snapshots:
@@ -48,6 +49,7 @@ def main() -> None:
         comparison_path = image_path.with_suffix(".compare.json")
         comparison_path.write_text(json.dumps(comparison, indent=2, ensure_ascii=False), encoding="utf-8")
 
+        compared_count += 1
         overall_matches += comparison["matches"]
         overall_total += comparison["total"]
         for field, field_result in comparison["fields"].items():
@@ -57,7 +59,7 @@ def main() -> None:
 
     summary = {
         "session": str(session_dir),
-        "snapshots_compared": len(snapshots),
+        "snapshots_compared": compared_count,
         "overall_accuracy": round(overall_matches / overall_total, 3) if overall_total else 0.0,
         "per_field_accuracy": {
             field: round(stats["matches"] / stats["total"], 3) if stats["total"] else 0.0
