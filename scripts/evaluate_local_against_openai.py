@@ -32,6 +32,7 @@ def main() -> None:
     overall_total = 0
     compared_count = 0
     per_field = defaultdict(lambda: {"matches": 0, "total": 0})
+    previous_fields = {}
 
     for snapshot in snapshots:
         image_path = Path(snapshot["image_path"])
@@ -41,8 +42,11 @@ def main() -> None:
         if not openai_path.exists():
             continue
 
-        local_path = save_local_analysis(image_path, metadata=snapshot.get("payload", {}))
+        local_metadata = dict(snapshot.get("payload", {}) or {})
+        local_metadata["previous_fields"] = previous_fields
+        local_path = save_local_analysis(image_path, metadata=local_metadata)
         local_payload = json.loads(local_path.read_text(encoding="utf-8"))
+        previous_fields = local_payload.get("fields", {}) or {}
         openai_payload = json.loads(openai_path.read_text(encoding="utf-8"))
         comparison = compare_local_to_openai(local_payload, openai_payload)
 
@@ -53,6 +57,8 @@ def main() -> None:
         overall_matches += comparison["matches"]
         overall_total += comparison["total"]
         for field, field_result in comparison["fields"].items():
+            if not field_result.get("counted", True):
+                continue
             per_field[field]["total"] += 1
             if field_result["match"]:
                 per_field[field]["matches"] += 1
