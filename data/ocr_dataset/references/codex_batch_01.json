@@ -1,0 +1,608 @@
+{
+  "version": 2,
+  "source": "manual_visual_codex",
+  "zone_map": {
+    "dealer": "dealer_button",
+    "pot": "pot",
+    "pot_total": "pot_value",
+    "bet_candidates": {
+      "left": "left_opponent",
+      "right": "right_opponent"
+    },
+    "action_buttons": [
+      "action_left",
+      "action_center",
+      "action_right"
+    ],
+    "board": [
+      "board_card_1",
+      "board_card_2",
+      "board_card_3",
+      "board_card_4",
+      "board_card_5"
+    ],
+    "hero_cards": "hero",
+    "players": {
+      "top_left": {
+        "cards": "top_left_cards",
+        "name": "top_left_name",
+        "stack": "top_left_stack"
+      },
+      "top_right": {
+        "cards": "top_right_cards",
+        "name": "top_right_name",
+        "stack": "top_right_stack"
+      },
+      "left": {
+        "cards": "left_cards",
+        "name": "left_name",
+        "stack": "left_stack"
+      },
+      "right": {
+        "cards": "right_cards",
+        "name": "right_name",
+        "stack": "right_stack"
+      },
+      "hero": {
+        "cards": "hero",
+        "name": "hero_name",
+        "stack": "hero_stack"
+      }
+    }
+  },
+  "captures": {
+    "snapshot_2026-04-12T11-47-59.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "181,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "103,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "0,5 BB",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "185 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "",
+          "present": true
+        },
+        "right": {
+          "name": "Haddock25",
+          "stack": "17 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "ABSENT",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "98 BB",
+          "cards": "Jc 2s",
+          "cards_visible": false,
+          "bet": "1 BB",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [],
+      "pot": "",
+      "pot_total": "2,5 BB",
+      "dealer": "top_left"
+    },
+    "snapshot_2026-04-12T11-48-15.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "181,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "FOLD",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "103,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "FOLD",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "186,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "CALL",
+          "present": true
+        },
+        "right": {
+          "name": "Haddock25",
+          "stack": "17 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "97,5 BB",
+          "cards": "4h 4s",
+          "cards_visible": false,
+          "bet": "0,5 BB",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [],
+      "pot": "",
+      "pot_total": "1,5 BB",
+      "dealer": "top_right"
+    },
+    "snapshot_2026-04-12T11-48-31.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "181,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "103,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "186,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "right": {
+          "name": "Haddock25",
+          "stack": "17 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "ABSENT",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "97 BB",
+          "cards": "4h 4s",
+          "cards_visible": false,
+          "bet": "",
+          "action": "CHECK",
+          "present": true
+        }
+      },
+      "board": [
+        "3c",
+        "2c",
+        "5d",
+        "7c"
+      ],
+      "pot": "2 BB",
+      "pot_total": "",
+      "dealer": "top_right"
+    },
+    "snapshot_2026-04-12T11-48-45.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "180,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "103,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "188 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "0,5 BB",
+          "action": "",
+          "present": true
+        },
+        "right": {
+          "name": "",
+          "stack": "",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "97 BB",
+          "cards": "Kh 7c",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [],
+      "pot": "",
+      "pot_total": "1,5 BB",
+      "dealer": "hero"
+    },
+    "snapshot_2026-04-12T11-49-00.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "180,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "103,5 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "187,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "CHECK",
+          "present": true
+        },
+        "right": {
+          "name": "",
+          "stack": "",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "97 BB",
+          "cards": "Kh 7c",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [
+        "10s",
+        "5c",
+        "5h"
+      ],
+      "pot": "2 BB",
+      "pot_total": "",
+      "dealer": "hero"
+    },
+    "snapshot_2026-04-12T11-49-14.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "182 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "0,5 BB",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "102,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "187,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "right": {
+          "name": "",
+          "stack": "",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "97 BB",
+          "cards": "Kd 3s",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [],
+      "pot": "",
+      "pot_total": "1,5 BB",
+      "dealer": "left"
+    },
+    "snapshot_2026-04-12T11-49-34.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "182 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "102,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "186,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "right": {
+          "name": "",
+          "stack": "",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": false
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "96 BB",
+          "cards": "Kd 3s",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [
+        "2d",
+        "10s",
+        "10c"
+      ],
+      "pot": "3,5 BB",
+      "pot_total": "",
+      "dealer": "left"
+    },
+    "snapshot_2026-04-12T11-49-49.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "182 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "105 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "0,5 BB",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "185,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "CALL",
+          "present": true
+        },
+        "right": {
+          "name": "Badboys777",
+          "stack": "100 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "95 BB",
+          "cards": "Js 7s",
+          "cards_visible": false,
+          "bet": "1 BB",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [],
+      "pot": "",
+      "pot_total": "2,5 BB",
+      "dealer": "top_left"
+    },
+    "snapshot_2026-04-12T11-50-05.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "182 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "105 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "185,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "CHECK",
+          "present": true
+        },
+        "right": {
+          "name": "Badboys777",
+          "stack": "100 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "95 BB",
+          "cards": "Js 7s",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [
+        "4d",
+        "As",
+        "2c",
+        "8d"
+      ],
+      "pot": "3 BB",
+      "pot_total": "",
+      "dealer": "top_left"
+    },
+    "snapshot_2026-04-12T11-50-20.png": {
+      "players": {
+        "top_left": {
+          "name": "cochise 87",
+          "stack": "182 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "top_right": {
+          "name": "Elodie2303",
+          "stack": "105 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "left": {
+          "name": "Alaindu49",
+          "stack": "184,5 BB",
+          "cards": null,
+          "cards_visible": true,
+          "bet": "1 BB",
+          "action": "BETS 1 BB",
+          "present": true
+        },
+        "right": {
+          "name": "Badboys777",
+          "stack": "100 BB",
+          "cards": null,
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        },
+        "hero": {
+          "name": "RougeLion",
+          "stack": "95 BB",
+          "cards": "Js 7s",
+          "cards_visible": false,
+          "bet": "",
+          "action": "",
+          "present": true
+        }
+      },
+      "board": [
+        "4d",
+        "As",
+        "2c",
+        "8d"
+      ],
+      "pot": "3 BB",
+      "pot_total": "4 BB",
+      "dealer": "top_left"
+    }
+  }
+}

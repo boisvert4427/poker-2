@@ -20,6 +20,16 @@ sessions/
 .env
 
 *.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.webp
+*.tif
+*.tiff
+*.ico
+*.svg
 
 .DS_Store
 Thumbs.db

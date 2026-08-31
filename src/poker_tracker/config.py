@@ -37,6 +37,15 @@ DEFAULT_CALIBRATION = {
         "hero_stack": [0.41, 0.79, 0.57, 0.84],
         "hero_status": [0.42, 0.84, 0.56, 0.89],
         "dealer_button": [0.62, 0.57, 0.68, 0.65],
+        # Zones candidates du bouton dealer. Elles sont testées dans l'ordre
+        # des sièges et la recherche s'arrête dès qu'un bouton est trouvé.
+        # Coordinates calibrated from the actual orange dealer discs in the
+        # reference screenshots (1936x1048, normalized here).
+        "dealer_top_left": [0.36, 0.20, 0.45, 0.35],
+        "dealer_top_right": [0.62, 0.23, 0.70, 0.39],
+        "dealer_left": [0.20, 0.38, 0.30, 0.55],
+        "dealer_right": [0.70, 0.38, 0.80, 0.55],
+        "dealer_hero": [0.36, 0.60, 0.45, 0.75],
         "actions": [0.50, 0.72, 0.99, 0.96],
         "action_left": [0.74, 0.80, 0.82, 0.96],
         "action_center": [0.82, 0.80, 0.90, 0.96],

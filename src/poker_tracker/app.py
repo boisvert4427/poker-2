@@ -5,6 +5,8 @@ import random
 import tkinter as tk
 from datetime import datetime
 from pathlib import Path
+import threading
+import time
 from tkinter import messagebox, ttk
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageTk
@@ -19,10 +21,11 @@ from .detection import (
     summarize_detection,
 )
 from .history import read_history_text
-from .live_state import build_live_snapshot, format_live_snapshot
-from .ocr import OcrSnapshot, capture_window, run_local_ocr, run_local_ocr_on_image
+from .live_state import build_fast_live_snapshot, build_live_snapshot, format_live_commentary, format_live_snapshot
+from .ocr import OcrSnapshot, capture_window, run_action_ocr_on_image, run_local_ocr, run_local_ocr_on_image, run_local_ocr_on_image_with_profile, run_local_ocr_with_profile
 from .parser import ParsedHand, parse_winamax_hand
 from .session_recorder import SessionRecorder
+from .visual import has_active_action_bar
 
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -148,8 +151,10 @@ class PokerTrackerApp:
         self.root.geometry("1680x980")
 
         self.status_var = tk.StringVar(value="Pret pour le premier scan.")
-        self.auto_refresh_var = tk.BooleanVar(value=False)
+        self.auto_refresh_var = tk.BooleanVar(value=True)
         self.refresh_ms = 5000
+        self.fast_refresh_ms = 200
+        self.background_refresh_every = 20
         self._after_id: str | None = None
         self._record_after_id: str | None = None
         self.calibration_entries: dict[str, list[tk.StringVar]] = {}
@@ -185,6 +190,25 @@ class PokerTrackerApp:
         self.element_review_index = 0
         self.element_review_image_label: tk.Label | None = None
         self.element_review_image_tk: ImageTk.PhotoImage | None = None
+        self.last_live_commentary_key: tuple | None = None
+        self.live_tick_counter = 0
+        self.current_detection: dict[str, object] | None = None
+        self.last_full_ocr_key: tuple[str, str, bool] | None = None
+        self.last_full_ocr_at = 0.0
+        self.live_decision_text: tk.Text | None = None
+        self.last_live_scan_at = ""
+        self.last_live_capture_path = ""
+        self.cached_live_context: dict[str, object] = {}
+        self.full_ocr_thread: threading.Thread | None = None
+        self.full_ocr_in_progress = False
+        self.pending_full_ocr_result: tuple[int, object, object, OcrSnapshot | None] | None = None
+        self.pending_full_ocr_request: tuple[int, object, object, str] | None = None
+        self.latest_full_ocr_request_id = 0
+        self.latest_applied_full_ocr_id = 0
+        self.pending_turn_snapshot: object | None = None
+        self.current_live_snapshot: object | None = None
+        self.full_ocr_display_until = 0.0
+        self.hero_turn_release_streak = 0
 
         self._build_layout()
         self.refresh()
@@ -235,31 +259,7 @@ class PokerTrackerApp:
 
         notebook = ttk.Notebook(self.root)
         notebook.grid(row=1, column=0, sticky="nsew", padx=16, pady=(0, 12))
-
-        self.processes_tree = self._create_tree(
-            notebook,
-            "Processus Winamax",
-            ("pid", "name", "window_title", "executable"),
-            ("PID", "Nom", "Titre principal", "Executable"),
-        )
-        self.windows_tree = self._create_tree(
-            notebook,
-            "Fenetres detectees",
-            ("hwnd", "pid", "title", "visible", "rect"),
-            ("HWND", "PID", "Titre", "Visible", "Rectangle"),
-        )
-        self.histories_tree = self._create_tree(
-            notebook,
-            "Dossiers d'historiques",
-            ("path", "source", "exists", "accessible", "details"),
-            ("Chemin", "Source", "Existe", "Accessible", "Details"),
-        )
-        self.hand_text = self._create_text_tab(notebook, "Derniere main")
-        self.live_text = self._create_text_tab(notebook, "Main en cours")
-        self.ocr_text = self._create_text_tab(notebook, "OCR live")
-        self._create_calibration_tab(notebook)
-        self._create_review_tab(notebook)
-        self._create_element_review_tab(notebook)
+        self.live_decision_text = self._create_text_tab(notebook, "Assistant live")
 
         footer = ttk.Frame(self.root, padding=(16, 0, 16, 16))
         footer.grid(row=2, column=0, sticky="ew")
@@ -585,23 +585,20 @@ class PokerTrackerApp:
 
     def refresh(self) -> None:
         detection = summarize_detection()
-        self.last_detected_window = detection["active_table_window"]
-        self._fill_processes(detection["processes"])
-        self._fill_windows(detection["windows"])
-        self._fill_histories(detection["history_locations"])
-        self._fill_latest_hand(detection["latest_history_file"])
+        self._apply_detection(detection)
         ocr_snapshot = self._fill_ocr(detection["active_table_window"])
         self._fill_live_state(detection["latest_history_file"], detection["active_table_window"], ocr_snapshot)
-        if self.calibration_preview_image is None:
-            self._refresh_calibration_preview()
+        self._schedule_refresh()
 
+    def _apply_detection(self, detection: dict[str, object]) -> None:
+        self.current_detection = detection
+        self.last_detected_window = detection["active_table_window"]
         process_count = len(detection["processes"])
         window_count = len(detection["windows"])
         history_count = len(detection["history_locations"])
         self.status_var.set(
             f"Scan termine: {process_count} processus, {window_count} fenetres, {history_count} emplacements historiques."
         )
-        self._schedule_refresh()
 
     def _fill_processes(self, rows: list[WinamaxProcess]) -> None:
         self._clear_tree(self.processes_tree)
@@ -637,6 +634,8 @@ class PokerTrackerApp:
             )
 
     def _fill_latest_hand(self, history_file: object) -> None:
+        if not hasattr(self, "hand_text") or self.hand_text is None:
+            return
         if history_file is None:
             self._set_hand_text("Aucun fichier d'historique detecte.")
             return
@@ -646,17 +645,31 @@ class PokerTrackerApp:
         self._set_hand_text(self._format_hand(parsed, history_file.path))
 
     def _fill_ocr(self, window: object) -> OcrSnapshot | None:
+        if not hasattr(self, "ocr_text") or self.ocr_text is None:
+            if window is None:
+                return None
+            self.last_live_scan_at = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+            return run_local_ocr_with_profile(window, profile="live")
         if window is None:
             self._set_ocr_text("Aucune fenetre de table Winamax active detectee.")
             return None
 
-        snapshot = run_local_ocr(window)
+        self.last_live_scan_at = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        snapshot = run_local_ocr_with_profile(window, profile="live")
+        self.last_live_capture_path = snapshot.image_path or self.last_live_capture_path
         self._set_ocr_text(self._format_ocr(window, snapshot))
         return snapshot
 
     def _fill_live_state(self, history_file: object, window: object, ocr_snapshot: OcrSnapshot | None) -> None:
-        snapshot = build_live_snapshot(history_file, window, ocr_snapshot)
-        self._set_live_text(format_live_snapshot(snapshot))
+        snapshot = build_live_snapshot(
+            history_file,
+            window,
+            ocr_snapshot,
+            hero_name_hint=str(self.cached_live_context.get("hero_name", "") or "RougeLion"),
+        )
+        self.current_live_snapshot = snapshot
+        self._update_cached_live_context(snapshot)
+        self._render_live_decision(snapshot, full_ocr=True)
 
     @staticmethod
     def _clear_tree(tree: ttk.Treeview) -> None:
@@ -670,16 +683,63 @@ class PokerTrackerApp:
         self.hand_text.configure(state="disabled")
 
     def _set_ocr_text(self, content: str) -> None:
+        if not hasattr(self, "ocr_text") or self.ocr_text is None:
+            return
         self.ocr_text.configure(state="normal")
         self.ocr_text.delete("1.0", tk.END)
         self.ocr_text.insert("1.0", content)
         self.ocr_text.configure(state="disabled")
 
     def _set_live_text(self, content: str) -> None:
+        if not hasattr(self, "live_text") or self.live_text is None:
+            return
         self.live_text.configure(state="normal")
         self.live_text.delete("1.0", tk.END)
         self.live_text.insert("1.0", content)
         self.live_text.configure(state="disabled")
+
+    def _set_live_commentary_text(self, content: str) -> None:
+        if not hasattr(self, "live_commentary_text") or self.live_commentary_text is None:
+            return
+        self.live_commentary_text.configure(state="normal")
+        self.live_commentary_text.delete("1.0", tk.END)
+        self.live_commentary_text.insert("1.0", content)
+        self.live_commentary_text.configure(state="disabled")
+
+    def _append_live_commentary(self, snapshot: object) -> None:
+        if not hasattr(self, "live_commentary_text") or self.live_commentary_text is None:
+            return
+        if snapshot is None:
+            self._set_live_commentary_text("Aucune table live exploitable pour le moment.")
+            self.last_live_commentary_key = None
+            return
+
+        commentary_key = (
+            getattr(snapshot, "hand_id", ""),
+            getattr(snapshot, "current_street", ""),
+            getattr(snapshot, "visible_board", ""),
+            getattr(snapshot, "pot_text", ""),
+            getattr(snapshot, "is_hero_turn", False),
+            tuple(getattr(snapshot, "available_actions", []) or []),
+            tuple(getattr(snapshot, "recent_actions", [])[-3:] or []),
+        )
+        if commentary_key == self.last_live_commentary_key:
+            return
+
+        self.last_live_commentary_key = commentary_key
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        content = format_live_commentary(snapshot)
+        block = f"=== {timestamp} ===\n{content}\n\n"
+
+        self.live_commentary_text.configure(state="normal")
+        existing = self.live_commentary_text.get("1.0", tk.END).strip()
+        if not existing or existing == "Aucune table live exploitable pour le moment.":
+            self.live_commentary_text.delete("1.0", tk.END)
+            self.live_commentary_text.insert("1.0", block)
+        else:
+            self.live_commentary_text.insert("end", block)
+        self.live_commentary_text.see("end")
+        self.live_commentary_text.configure(state="disabled")
 
     def _toggle_auto_refresh(self) -> None:
         if self.auto_refresh_var.get():
@@ -693,7 +753,312 @@ class PokerTrackerApp:
             self.root.after_cancel(self._after_id)
             self._after_id = None
         if self.auto_refresh_var.get():
-            self._after_id = self.root.after(self.refresh_ms, self.refresh)
+            self._after_id = self.root.after(self.fast_refresh_ms, self._live_tick)
+
+    def _live_tick(self) -> None:
+        self._after_id = None
+        self._consume_pending_full_ocr()
+
+        if time.monotonic() < self.full_ocr_display_until and self.current_live_snapshot is not None:
+            self._render_live_decision(self.current_live_snapshot, full_ocr=True, preserve_details=True)
+            self.status_var.set("Snapshot detaille courant affiche.")
+            self._schedule_refresh()
+            return
+
+        if self.full_ocr_in_progress:
+            self.status_var.set("Tour detecte: snapshot fige, analyse detaillee en cours...")
+            self._schedule_refresh()
+            return
+
+        self.live_tick_counter += 1
+
+        needs_detection = self.current_detection is None
+        if not needs_detection and self.live_tick_counter % self.background_refresh_every == 0:
+            needs_detection = True
+
+        if needs_detection:
+            detection = summarize_detection()
+            self._apply_detection(detection)
+        else:
+            detection = self.current_detection or summarize_detection()
+
+        history_file = detection.get("latest_history_file")
+        window = detection.get("active_table_window")
+        if window is None:
+            self.current_live_snapshot = None
+            self.full_ocr_display_until = 0.0
+            self._render_live_decision(None, full_ocr=False)
+            self.status_var.set("Scan rapide actif, mais aucune table Winamax visible.")
+            self._schedule_refresh()
+            return
+
+        image_path = capture_window(window)
+        self.last_live_scan_at = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        self.last_live_capture_path = image_path or ""
+        action_texts = run_action_ocr_on_image(image_path) if image_path and has_active_action_bar(image_path) else {}
+        fast_snapshot = build_fast_live_snapshot(
+            history_file,
+            window,
+            image_path,
+            action_texts,
+            self.cached_live_context,
+        )
+
+        if (
+            self.current_live_snapshot is not None
+            and getattr(self.current_live_snapshot, "is_hero_turn", False)
+            and fast_snapshot is not None
+            and getattr(fast_snapshot, "is_hero_turn", False)
+        ):
+            self.hero_turn_release_streak = 0
+            self._render_live_decision(self.current_live_snapshot, full_ocr=True, preserve_details=True)
+            self.status_var.set("Ton tour est toujours detecte. Snapshot detaille conserve.")
+            self._schedule_refresh()
+            return
+
+        if self.current_live_snapshot is not None and getattr(self.current_live_snapshot, "is_hero_turn", False):
+            if fast_snapshot is None or not getattr(fast_snapshot, "is_hero_turn", False):
+                self.hero_turn_release_streak += 1
+            else:
+                self.hero_turn_release_streak = 0
+            if self.hero_turn_release_streak < 2:
+                self._render_live_decision(self.current_live_snapshot, full_ocr=True, preserve_details=True)
+                self.status_var.set("Verification de fin de tour en cours. Snapshot detaille conserve.")
+                self._schedule_refresh()
+                return
+            self.current_live_snapshot = None
+            self.hero_turn_release_streak = 0
+
+        should_run_full_ocr = self._should_run_full_ocr(fast_snapshot)
+        if should_run_full_ocr:
+            self.hero_turn_release_streak = 0
+            self._queue_full_ocr_request(history_file, window, image_path or "")
+            self.pending_turn_snapshot = fast_snapshot
+            self._render_live_decision(fast_snapshot, full_ocr=False, analysis_pending=True)
+            self.status_var.set("Tour detecte: analyse complete en cours...")
+        else:
+            self.pending_turn_snapshot = None
+            self.full_ocr_display_until = 0.0
+            if self.current_live_snapshot is not None:
+                self._render_live_decision(self.current_live_snapshot, full_ocr=True, preserve_details=True)
+                self.status_var.set("Scan rapide en boucle. Dernier snapshot detaille conserve.")
+            else:
+                self._render_live_decision(fast_snapshot, full_ocr=False, analysis_pending=False)
+                self.status_var.set(
+                    f"Scan rapide en boucle ({self.fast_refresh_ms} ms). "
+                    f"Confiance tour: {getattr(fast_snapshot, 'hero_turn_confidence', 0.0):.2f}"
+                )
+
+        self._schedule_refresh()
+
+    def _should_run_full_ocr(self, snapshot: object) -> bool:
+        if snapshot is None:
+            return False
+        if getattr(snapshot, "is_hero_turn", False):
+            return True
+        return False
+
+    def _queue_full_ocr_request(self, history_file: object, window: object, image_path: str) -> None:
+        if not image_path:
+            return
+        request_id = self.live_tick_counter
+        self.latest_full_ocr_request_id = request_id
+        self.pending_full_ocr_request = (request_id, history_file, window, image_path)
+        if not self.full_ocr_in_progress:
+            self._start_next_full_ocr_job()
+
+    def _start_next_full_ocr_job(self) -> None:
+        if self.full_ocr_in_progress or self.pending_full_ocr_request is None:
+            return
+        request_id, history_file, window, image_path = self.pending_full_ocr_request
+        self.pending_full_ocr_request = None
+        self.full_ocr_in_progress = True
+
+        def worker() -> None:
+            try:
+                snapshot = run_local_ocr_on_image_with_profile(image_path, profile="live") if image_path else None
+                self.pending_full_ocr_result = (request_id, history_file, window, snapshot)
+            finally:
+                self.full_ocr_in_progress = False
+
+        self.full_ocr_thread = threading.Thread(target=worker, daemon=True)
+        self.full_ocr_thread.start()
+
+    def _consume_pending_full_ocr(self) -> None:
+        if self.pending_full_ocr_result is None:
+            return
+        request_id, history_file, window, ocr_snapshot = self.pending_full_ocr_result
+        self.pending_full_ocr_result = None
+        if request_id < self.latest_full_ocr_request_id:
+            self._start_next_full_ocr_job()
+            return
+        if ocr_snapshot is not None:
+            self.last_live_capture_path = ocr_snapshot.image_path or self.last_live_capture_path
+            self._fill_live_state(history_file, window, ocr_snapshot)
+            self.last_full_ocr_at = time.monotonic()
+            self.full_ocr_display_until = self.last_full_ocr_at + 1.2
+            self.latest_applied_full_ocr_id = request_id
+            self.pending_turn_snapshot = None
+            self.hero_turn_release_streak = 0
+        self._start_next_full_ocr_job()
+
+    def _update_cached_live_context(self, snapshot: object) -> None:
+        if snapshot is None:
+            return
+        hero_name = self._safe_live_hero_name(getattr(snapshot, "hero_name", ""))
+        self.cached_live_context = {
+            "table_name": getattr(snapshot, "table_name", ""),
+            "hero_name": hero_name,
+            "current_street": getattr(snapshot, "current_street", ""),
+            "visible_board": getattr(snapshot, "visible_board", ""),
+        }
+
+    def _render_live_decision(
+        self,
+        snapshot: object,
+        full_ocr: bool,
+        analysis_pending: bool = False,
+        preserve_details: bool = False,
+    ) -> None:
+        if self.live_decision_text is None:
+            return
+
+        if snapshot is None:
+            content = (
+                "Assistant live\n\n"
+                "Etat : aucune table Winamax detectee.\n"
+                "Decision : attente d'une table visible.\n"
+                f"Dernier scan : {self.last_live_scan_at or '-'}\n"
+                f"Compteur scans : {self.live_tick_counter}\n"
+                f"Derniere capture : {self.last_live_capture_path or '-'}"
+            )
+        else:
+            hero_name = self._safe_live_hero_name(getattr(snapshot, "hero_name", ""))
+            table_name = getattr(snapshot, "table_name", "") or getattr(snapshot, "window_title", "") or "-"
+            street = getattr(snapshot, "current_street", "") or "-"
+            hero_cards = getattr(snapshot, "hero_cards", "") or "-"
+            board = getattr(snapshot, "visible_board", "") or "-"
+            pot = getattr(snapshot, "pot_text", "") or "-"
+            actions = ", ".join(getattr(snapshot, "available_actions", []) or []) or "-"
+            visual = ", ".join(getattr(snapshot, "visual_buttons", []) or []) or "-"
+            confidence = float(getattr(snapshot, "hero_turn_confidence", 0.0) or 0.0)
+            recent = " | ".join((getattr(snapshot, "recent_actions", []) or [])[-4:]) or "-"
+            detected_fields = getattr(snapshot, "detected_fields", {}) or {}
+            players_in_hand = ", ".join(getattr(snapshot, "players_in_hand", []) or []) or "-"
+            dealer = getattr(snapshot, "dealer_owner", "") or "-"
+            stacks = self._format_live_stacks(detected_fields)
+            villain_profiles = getattr(snapshot, "villain_profile_summary", "") or "-"
+            villain_ranges = getattr(snapshot, "villain_range_summary", "") or "-"
+            bluff_summary = getattr(snapshot, "bluff_summary", "") or "-"
+            hero_turn = bool(getattr(snapshot, "is_hero_turn", False))
+
+            if hero_turn:
+                if full_ocr:
+                    banner = "TON TOUR"
+                    decision = "Snapshot detaille courant pret."
+                else:
+                    banner = "TON TOUR"
+                    decision = "Analyse detaillee du snapshot courant en cours..."
+                    street = "-"
+                    hero_cards = "-"
+                    board = "-"
+                    pot = "-"
+                    actions = ", ".join(getattr(snapshot, "available_actions", []) or []) or "-"
+                    players_in_hand = "-"
+                    dealer = "-"
+                    stacks = "-"
+                    villain_profiles = "-"
+                    villain_ranges = "-"
+                    bluff_summary = "-"
+            elif preserve_details and full_ocr:
+                banner = "EN ATTENTE"
+                decision = "Dernier snapshot detaille conserve en attendant le prochain spot."
+            else:
+                banner = "EN ATTENTE"
+                decision = "Ce n'est pas ton tour. Les infos detaillees sont masquees jusqu'a la prochaine decision."
+                street = "-"
+                hero_cards = "-"
+                board = "-"
+                pot = "-"
+                actions = "-"
+                visual = "-"
+                recent = "-"
+                players_in_hand = "-"
+                dealer = "-"
+                stacks = "-"
+                villain_profiles = "-"
+                villain_ranges = "-"
+                bluff_summary = "-"
+
+            mode = "OCR complet" if full_ocr else "Scan rapide"
+            if analysis_pending and not full_ocr:
+                mode = "Scan rapide + analyse detaillee en cours"
+            content = (
+                "Assistant live\n\n"
+                f"{banner}\n"
+                f"{'=' * len(banner)}\n\n"
+                f"Mode : {mode}\n"
+                f"Decision : {decision}\n"
+                f"Confiance : {confidence:.2f}\n\n"
+                "Activite\n"
+                f"- dernier scan : {self.last_live_scan_at or '-'}\n"
+                f"- compteur scans : {self.live_tick_counter}\n"
+                f"- derniere capture : {self.last_live_capture_path or '-'}\n\n"
+                "Table\n"
+                f"- nom : {table_name}\n"
+                f"- street : {street}\n"
+                f"- etat : {'main en cours' if not getattr(snapshot, 'is_complete', False) else 'main terminee'}\n\n"
+                "Hero\n"
+                f"- joueur : {hero_name}\n"
+                f"- cartes : {hero_cards}\n\n"
+                "Joueurs\n"
+                f"- stacks : {stacks}\n"
+                f"- encore en course : {players_in_hand}\n"
+                f"- dealer : {dealer}\n\n"
+                "Profils vilains\n"
+                f"- {villain_profiles}\n\n"
+                "Ranges supposees\n"
+                f"- {villain_ranges}\n\n"
+                "Suspicion de bluff\n"
+                f"- {bluff_summary}\n\n"
+                "Lecture actuelle\n"
+                f"- board : {board}\n"
+                f"- pot : {pot}\n"
+                f"- actions lues : {actions}\n"
+                f"- boutons visuels : {visual}\n"
+                f"- actions recentes : {recent}\n\n"
+                "Resume OCR\n"
+                f"- {getattr(snapshot, 'ocr_preview', '') or '-'}\n"
+            )
+
+        self.live_decision_text.configure(state="normal")
+        self.live_decision_text.delete("1.0", tk.END)
+        self.live_decision_text.insert("1.0", content)
+        self.live_decision_text.configure(state="disabled")
+
+    @staticmethod
+    def _safe_live_hero_name(value: object) -> str:
+        cleaned = " ".join(str(value or "").strip().split())
+        lowered = cleaned.lower()
+        if cleaned and len(cleaned) >= 4 and lowered not in {"sera", "hero", "voir", "tes", "cartes", "poser"}:
+            return cleaned
+        return "RougeLion"
+
+    @staticmethod
+    def _format_live_stacks(fields: dict[str, str]) -> str:
+        parts = []
+        for seat, name_field, stack_field in (
+            ("top_left", "top_left_name", "top_left_stack"),
+            ("top_right", "top_right_name", "top_right_stack"),
+            ("left", "left_name", "left_stack"),
+            ("right", "right_name", "right_stack"),
+            ("hero", "hero_name", "hero_stack"),
+        ):
+            name = fields.get(name_field, "") or seat
+            stack = fields.get(stack_field, "")
+            if stack:
+                parts.append(f"{name} {stack}")
+        return " | ".join(parts) if parts else "-"
 
     def _start_recording_session(self) -> None:
         session_dir = self.session_recorder.start_session()

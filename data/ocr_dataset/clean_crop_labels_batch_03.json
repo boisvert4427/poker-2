@@ -1,0 +1,2065 @@
+{
+  "version": 2,
+  "rows": [
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "5s"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "3d"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": "Qc"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-53-11.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-11.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-53-26.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-26.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-53-41.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-41.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "As"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "7d"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": "7h"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-53-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-53-55.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "As"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "7d"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": "7h"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-54-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-10.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-54-27.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-27.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "6c"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "Ah"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "4c"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": "Jd"
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-54-44.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-44.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-54-59.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-54-59.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-55-14.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-14.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_cards\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_name\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_left_stack\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_cards\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_name\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\top_right_stack\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_cards\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "hidden"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_name\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_stack\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_cards\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_name\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_stack\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_name\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_stack\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "2d"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "7h"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "Jd"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "5d"
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": "Qs"
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\hero_cards\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\pot_total\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\dealer\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_left\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_center\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\action_right\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\left_opponent\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_03\\right_opponent\\snapshot_2026-04-12T11-55-29.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-55-29.png",
+      "label": {
+        "name": "",
+        "stack": "",
+        "bet": "",
+        "action": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "total": 30,
+  "matches": 21,
+  "accuracy": 0.7,
+  "errors": [
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-15.png",
+      "expected": "4h 4s",
+      "local": "4h 4d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "expected": "4h 4s",
+      "local": "4h 7d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-14.png",
+      "expected": "kd 3s",
+      "local": "kd 3d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-34.png",
+      "expected": "kd 3s",
+      "local": "kd 3d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-24.png",
+      "expected": "as 4d",
+      "local": "ad 7d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-40.png",
+      "expected": "as 4d",
+      "local": "ad 7d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-55.png",
+      "expected": "as 4d",
+      "local": "ad 7d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-11.png",
+      "expected": "as 4d",
+      "local": "ad 4d"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-14.png",
+      "expected": "2c as",
+      "local": "2c 7d"
+    }
+  ]
+}

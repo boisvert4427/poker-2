@@ -33,6 +33,12 @@ def analyze_action_buttons(image_path: str) -> list[ButtonVisualState]:
     return results
 
 
+def has_active_action_bar(image_path: str) -> bool:
+    states = analyze_action_buttons(image_path)
+    active_count = sum(1 for state in states if state.active)
+    return active_count >= 2
+
+
 def _analyze_region(image: Image.Image, name: str, rect: tuple[int, int, int, int]) -> ButtonVisualState:
     x1, y1, x2, y2 = rect
     crop = image.crop(rect)

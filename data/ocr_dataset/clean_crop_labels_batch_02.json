@@ -1,0 +1,2065 @@
+{
+  "version": 2,
+  "rows": [
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "182 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "104 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "187,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "100 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "94,5 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "4s 9h"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "Pot total : 2,5 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": "top_right"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "187,5 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-50-36.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-36.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "100 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "182 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "104 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "186,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "100 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "Qc"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "5h"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "3h"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "7d"
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "4s 9h"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "3 BB"
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "Pot total : 4 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": "top_right"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "186,5 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-50-53.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-50-53.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "100 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "181 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "102 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "191,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "99 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "4h 2h"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "Pot total : 2,5 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": "hero"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "191,5 BB",
+        "bet": "0,5 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-51-08.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-08.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "99 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "visible"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "181 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "102 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "191 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "99 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "6s"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "Ks"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "5h"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "4h 2h"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "3 BB"
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": "hero"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "191 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-51-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-24.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "99 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "181 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "102 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "188 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "hidden"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "100 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "6s"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "Ks"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "5h"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "Jd"
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "10s"
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "4h 2h"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": "hero"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "188 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-51-39.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-39.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "100 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "180,5 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "101 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "195,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "9c 3d"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": "left"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "195,5 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-51-54.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-51-54.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "",
+        "bet": "101,5 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "180,5 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "100,5 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "193,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "96,5 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "94 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "6s"
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "8h"
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "6d"
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "Qs"
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "3d 9c"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "4,5 BB"
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "Pot total : 7,5 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": "top_left"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "193,5 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-52-10.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-10.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "96,5 BB",
+        "bet": "3 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "180,5 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "100,5 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "192,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "103 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "93 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "As 4d"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "Pot total : 2,5 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": "top_right"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "192,5 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-52-24.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-24.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "103 BB",
+        "bet": "0,5 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "180,5 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "100,5 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "192,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "103 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "93 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "As 4d"
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "Pot total : 2,5 BB"
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": "top_right"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "192,5 BB",
+        "bet": "1 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-52-40.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-40.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "103 BB",
+        "bet": "0,5 BB",
+        "action": ""
+      }
+    },
+    {
+      "field": "top_left_cards",
+      "zone": "top_left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_cards\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_left_name",
+      "zone": "top_left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_name\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "cochise 87"
+    },
+    {
+      "field": "top_left_stack",
+      "zone": "top_left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_left_stack\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "180,5 BB"
+    },
+    {
+      "field": "top_right_cards",
+      "zone": "top_right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_cards\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "hidden"
+    },
+    {
+      "field": "top_right_name",
+      "zone": "top_right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_name\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "Elodie2303"
+    },
+    {
+      "field": "top_right_stack",
+      "zone": "top_right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\top_right_stack\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "100,5 BB"
+    },
+    {
+      "field": "left_cards",
+      "zone": "left_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_cards\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "visible"
+    },
+    {
+      "field": "left_name",
+      "zone": "left_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_name\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "Alaindu49"
+    },
+    {
+      "field": "left_stack",
+      "zone": "left_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_stack\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "192,5 BB"
+    },
+    {
+      "field": "right_cards",
+      "zone": "right_cards",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_cards\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "visible"
+    },
+    {
+      "field": "right_name",
+      "zone": "right_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_name\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "Badboys777"
+    },
+    {
+      "field": "right_stack",
+      "zone": "right_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_stack\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "103 BB"
+    },
+    {
+      "field": "hero_name",
+      "zone": "hero_name",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_name\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "RougeLion"
+    },
+    {
+      "field": "hero_stack",
+      "zone": "hero_stack",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_stack\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "93 BB"
+    },
+    {
+      "field": "board_card_1",
+      "zone": "board_card_1",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_2",
+      "zone": "board_card_2",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_3",
+      "zone": "board_card_3",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_4",
+      "zone": "board_card_4",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "board_card_5",
+      "zone": "board_card_5",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "hero_cards",
+      "zone": "hero",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "pot",
+      "zone": "pot",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "pot_total",
+      "zone": "pot_value",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\pot_total\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "dealer",
+      "zone": "dealer_button",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\dealer\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": "top_right"
+    },
+    {
+      "field": "action_left",
+      "zone": "action_left",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_left\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "action_center",
+      "zone": "action_center",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_center\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "action_right",
+      "zone": "action_right",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\action_right\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": ""
+    },
+    {
+      "field": "left_opponent",
+      "zone": "left_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\left_opponent\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": {
+        "name": "Alaindu49",
+        "stack": "192,5 BB",
+        "bet": "",
+        "action": ""
+      }
+    },
+    {
+      "field": "right_opponent",
+      "zone": "right_opponent",
+      "image": "data\\ocr_dataset\\crops\\batch_02\\right_opponent\\snapshot_2026-04-12T11-52-55.png",
+      "source": "sessions\\20260412_114742\\snapshot_2026-04-12T11-52-55.png",
+      "label": {
+        "name": "Badboys777",
+        "stack": "103 BB",
+        "bet": "",
+        "action": ""
+      }
+    }
+  ]
+}

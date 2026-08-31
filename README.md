@@ -85,6 +85,38 @@ poker-tracker
 3. Verifier les onglets `Fenetres detectees`, `Derniere main`, `Main en cours` et `OCR live`.
 4. Utiliser l'onglet `Calibration` pour ajuster les zones si necessaire.
 
+## Base de profils vilains
+
+Le projet peut maintenant construire une base SQLite a partir de tous les hand histories Winamax detectes.
+
+Commande :
+
+```powershell
+python scripts\build_villain_db.py
+```
+
+La base est creee ici par defaut :
+
+```text
+data\villains.sqlite3
+```
+
+Le script :
+
+- scanne tous les dossiers `history` Winamax detectes ;
+- importe les mains, joueurs et actions ;
+- calcule un premier profil par joueur avec :
+  - `hands_played`
+  - `vpip`
+  - `pfr`
+  - une classe simple (`nit`, `tag`, `lag`, `loose_passive`, etc.)
+
+Ces profils servent maintenant de base a l'aide live :
+
+- si un vilain est connu dans la base, on reprend son `vpip/pfr/profile`
+- si le joueur est inconnu, on lui applique un profil `standard`
+- une range preflop estimee est derivee de ce profil
+
 ## Annotation OpenAI des sessions
 
 Le projet peut aussi annoter une session de screenshots avec l'API OpenAI pour accelerer l'entrainement du detecteur local.

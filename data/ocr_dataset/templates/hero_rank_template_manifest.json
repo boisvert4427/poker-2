@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "rank": "J",
+      "card": "Jc",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-47-59.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\J\\batch_01_snapshot_2026-04-12T11-47-59.png"
+    },
+    {
+      "rank": "2",
+      "card": "2s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-47-59.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\2\\batch_01_snapshot_2026-04-12T11-47-59.png"
+    },
+    {
+      "rank": "4",
+      "card": "4h",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-15.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_01_snapshot_2026-04-12T11-48-15.png"
+    },
+    {
+      "rank": "4",
+      "card": "4s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-15.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_01_snapshot_2026-04-12T11-48-15.png"
+    },
+    {
+      "rank": "4",
+      "card": "4h",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "4",
+      "card": "4s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "K",
+      "card": "Kh",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-45.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\K\\batch_01_snapshot_2026-04-12T11-48-45.png"
+    },
+    {
+      "rank": "7",
+      "card": "7c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-48-45.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\7\\batch_01_snapshot_2026-04-12T11-48-45.png"
+    },
+    {
+      "rank": "K",
+      "card": "Kh",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-00.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\K\\batch_01_snapshot_2026-04-12T11-49-00.png"
+    },
+    {
+      "rank": "7",
+      "card": "7c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-00.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\7\\batch_01_snapshot_2026-04-12T11-49-00.png"
+    },
+    {
+      "rank": "K",
+      "card": "Kd",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-14.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\K\\batch_01_snapshot_2026-04-12T11-49-14.png"
+    },
+    {
+      "rank": "3",
+      "card": "3s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-14.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\3\\batch_01_snapshot_2026-04-12T11-49-14.png"
+    },
+    {
+      "rank": "K",
+      "card": "Kd",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-34.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\K\\batch_01_snapshot_2026-04-12T11-49-34.png"
+    },
+    {
+      "rank": "3",
+      "card": "3s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-34.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\3\\batch_01_snapshot_2026-04-12T11-49-34.png"
+    },
+    {
+      "rank": "J",
+      "card": "Js",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-49.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\J\\batch_01_snapshot_2026-04-12T11-49-49.png"
+    },
+    {
+      "rank": "7",
+      "card": "7s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-49-49.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\7\\batch_01_snapshot_2026-04-12T11-49-49.png"
+    },
+    {
+      "rank": "J",
+      "card": "Js",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\J\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "7",
+      "card": "7s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\7\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "J",
+      "card": "Js",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\J\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "7",
+      "card": "7s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\hero_cards\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\7\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "4",
+      "card": "4s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-36.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-50-36.png"
+    },
+    {
+      "rank": "9",
+      "card": "9h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-36.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\9\\batch_02_snapshot_2026-04-12T11-50-36.png"
+    },
+    {
+      "rank": "4",
+      "card": "4s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "9",
+      "card": "9h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\9\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "4",
+      "card": "4h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-08.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-51-08.png"
+    },
+    {
+      "rank": "2",
+      "card": "2h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-08.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\2\\batch_02_snapshot_2026-04-12T11-51-08.png"
+    },
+    {
+      "rank": "4",
+      "card": "4h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-24.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-51-24.png"
+    },
+    {
+      "rank": "2",
+      "card": "2h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-24.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\2\\batch_02_snapshot_2026-04-12T11-51-24.png"
+    },
+    {
+      "rank": "4",
+      "card": "4h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "2",
+      "card": "2h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\2\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "9",
+      "card": "9c",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-54.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\9\\batch_02_snapshot_2026-04-12T11-51-54.png"
+    },
+    {
+      "rank": "3",
+      "card": "3d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-51-54.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\3\\batch_02_snapshot_2026-04-12T11-51-54.png"
+    },
+    {
+      "rank": "3",
+      "card": "3d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\3\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "9",
+      "card": "9c",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\9\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-24.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\A\\batch_02_snapshot_2026-04-12T11-52-24.png"
+    },
+    {
+      "rank": "4",
+      "card": "4d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-24.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-52-24.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-40.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\A\\batch_02_snapshot_2026-04-12T11-52-40.png"
+    },
+    {
+      "rank": "4",
+      "card": "4d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\hero_cards\\snapshot_2026-04-12T11-52-40.png",
+      "template": "data\\ocr_dataset\\templates\\hero_ranks\\4\\batch_02_snapshot_2026-04-12T11-52-40.png"
+    }
+  ]
+}

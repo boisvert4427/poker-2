@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": "manual_visual_verification",
+  "captures": {
+    "snapshot_2026-04-12T11-55-45.png": {"hero_cards": "9h 5s", "board": []},
+    "snapshot_2026-04-12T11-56-00.png": {"hero_cards": null, "board": []},
+    "snapshot_2026-04-12T11-56-16.png": {"hero_cards": "10d Ks", "board": []},
+    "snapshot_2026-04-12T11-56-32.png": {"hero_cards": "10d Ks", "board": []},
+    "snapshot_2026-04-12T11-56-48.png": {"hero_cards": "10d Ks", "board": ["Js", "3h", "As"]},
+    "snapshot_2026-04-12T11-57-05.png": {"hero_cards": null, "board": ["Js", "3h", "As", "Ad", "6h"]},
+    "snapshot_2026-04-12T11-57-26.png": {"hero_cards": "5d 5c", "board": ["8d", "4h", "7h"]},
+    "snapshot_2026-04-12T11-57-43.png": {"hero_cards": "7h 4c", "board": []},
+    "snapshot_2026-04-12T11-57-59.png": {"hero_cards": null, "board": []},
+    "snapshot_2026-04-12T11-58-14.png": {"hero_cards": null, "board": ["Jd", "6d", "5c"]}
+  }
+}

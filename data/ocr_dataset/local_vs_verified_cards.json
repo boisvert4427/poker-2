@@ -1,0 +1,466 @@
+{
+  "snapshots": 30,
+  "fields": 180,
+  "matches": 109,
+  "accuracy": 0.606,
+  "by_field": {
+    "hero_cards": {
+      "matches": 10,
+      "total": 30,
+      "accuracy": 0.333
+    },
+    "board_card_1": {
+      "matches": 17,
+      "total": 30,
+      "accuracy": 0.567
+    },
+    "board_card_2": {
+      "matches": 17,
+      "total": 30,
+      "accuracy": 0.567
+    },
+    "board_card_3": {
+      "matches": 17,
+      "total": 30,
+      "accuracy": 0.567
+    },
+    "board_card_4": {
+      "matches": 23,
+      "total": 30,
+      "accuracy": 0.767
+    },
+    "board_card_5": {
+      "matches": 25,
+      "total": 30,
+      "accuracy": 0.833
+    }
+  },
+  "errors": [
+    {
+      "snapshot": "snapshot_2026-04-12T11-47-59.png",
+      "field": "hero_cards",
+      "expected": "Jc 2s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-15.png",
+      "field": "hero_cards",
+      "expected": "4h 4s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "field": "hero_cards",
+      "expected": "4h 4s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "field": "board_card_1",
+      "expected": "3c",
+      "local": "3"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "field": "board_card_2",
+      "expected": "2c",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "field": "board_card_3",
+      "expected": "5d",
+      "local": "5"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-31.png",
+      "field": "board_card_4",
+      "expected": "7c",
+      "local": "7"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-48-45.png",
+      "field": "hero_cards",
+      "expected": "Kh 7c",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-00.png",
+      "field": "board_card_1",
+      "expected": "10s",
+      "local": "t"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-00.png",
+      "field": "board_card_2",
+      "expected": "5c",
+      "local": "5"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-00.png",
+      "field": "board_card_3",
+      "expected": "5h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-14.png",
+      "field": "hero_cards",
+      "expected": "Kd 3s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-34.png",
+      "field": "hero_cards",
+      "expected": "Kd 3s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-34.png",
+      "field": "board_card_1",
+      "expected": "2d",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-34.png",
+      "field": "board_card_2",
+      "expected": "10s",
+      "local": "t"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-34.png",
+      "field": "board_card_3",
+      "expected": "10c",
+      "local": "t"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-49-49.png",
+      "field": "hero_cards",
+      "expected": "Js 7s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "hero_cards",
+      "expected": "Js 7s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "board_card_1",
+      "expected": "4d",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "board_card_2",
+      "expected": "As",
+      "local": "a"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "board_card_3",
+      "expected": "2c",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "board_card_4",
+      "expected": "8d",
+      "local": "8"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-05.png",
+      "field": "board_card_5",
+      "expected": "",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "hero_cards",
+      "expected": "Js 7s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "board_card_1",
+      "expected": "4d",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "board_card_2",
+      "expected": "As",
+      "local": "a"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "board_card_3",
+      "expected": "2c",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "board_card_4",
+      "expected": "8d",
+      "local": "8"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-20.png",
+      "field": "board_card_5",
+      "expected": "",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-36.png",
+      "field": "hero_cards",
+      "expected": "4s 9h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-53.png",
+      "field": "hero_cards",
+      "expected": "4s 9h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-53.png",
+      "field": "board_card_1",
+      "expected": "Qc",
+      "local": "q"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-53.png",
+      "field": "board_card_2",
+      "expected": "5h",
+      "local": "7"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-53.png",
+      "field": "board_card_3",
+      "expected": "3h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-50-53.png",
+      "field": "board_card_4",
+      "expected": "7d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-51-08.png",
+      "field": "hero_cards",
+      "expected": "4h 2h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-51-24.png",
+      "field": "board_card_1",
+      "expected": "6s",
+      "local": "6"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-51-24.png",
+      "field": "board_card_2",
+      "expected": "Ks",
+      "local": "k"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-51-24.png",
+      "field": "board_card_3",
+      "expected": "5h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-51-39.png",
+      "field": "board_card_5",
+      "expected": "10s",
+      "local": "9s"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-10.png",
+      "field": "board_card_1",
+      "expected": "6s",
+      "local": "6"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-10.png",
+      "field": "board_card_2",
+      "expected": "8h",
+      "local": "6"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-10.png",
+      "field": "board_card_3",
+      "expected": "6d",
+      "local": "q"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-10.png",
+      "field": "board_card_4",
+      "expected": "Qs",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-10.png",
+      "field": "board_card_5",
+      "expected": "",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-24.png",
+      "field": "hero_cards",
+      "expected": "As 4d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-40.png",
+      "field": "hero_cards",
+      "expected": "As 4d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-52-55.png",
+      "field": "hero_cards",
+      "expected": "As 4d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-11.png",
+      "field": "hero_cards",
+      "expected": "As 4d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-11.png",
+      "field": "board_card_1",
+      "expected": "5s",
+      "local": "5"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-11.png",
+      "field": "board_card_2",
+      "expected": "3d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-11.png",
+      "field": "board_card_3",
+      "expected": "Qc",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-26.png",
+      "field": "hero_cards",
+      "expected": "8d 4s",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-55.png",
+      "field": "board_card_1",
+      "expected": "As",
+      "local": "a"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-55.png",
+      "field": "board_card_2",
+      "expected": "7d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-53-55.png",
+      "field": "board_card_3",
+      "expected": "7h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-10.png",
+      "field": "board_card_1",
+      "expected": "As",
+      "local": "a"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-10.png",
+      "field": "board_card_2",
+      "expected": "7d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-10.png",
+      "field": "board_card_3",
+      "expected": "7h",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-27.png",
+      "field": "hero_cards",
+      "expected": "Ac Jc",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-44.png",
+      "field": "hero_cards",
+      "expected": "Ac Jc",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-44.png",
+      "field": "board_card_1",
+      "expected": "6c",
+      "local": "4"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-44.png",
+      "field": "board_card_2",
+      "expected": "Ah",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-44.png",
+      "field": "board_card_3",
+      "expected": "4c",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-54-44.png",
+      "field": "board_card_4",
+      "expected": "Jd",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-14.png",
+      "field": "hero_cards",
+      "expected": "2c As",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-29.png",
+      "field": "board_card_1",
+      "expected": "2d",
+      "local": "2"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-29.png",
+      "field": "board_card_2",
+      "expected": "7h",
+      "local": "5"
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-29.png",
+      "field": "board_card_3",
+      "expected": "Jd",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-29.png",
+      "field": "board_card_4",
+      "expected": "5d",
+      "local": ""
+    },
+    {
+      "snapshot": "snapshot_2026-04-12T11-55-29.png",
+      "field": "board_card_5",
+      "expected": "Qs",
+      "local": ""
+    }
+  ]
+}

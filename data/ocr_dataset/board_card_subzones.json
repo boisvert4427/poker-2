@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "relative_to": "board_card_crop",
+  "purpose": "Calibration des petites zones internes d'une carte du board",
+  "zones": {
+    "value": [0.02, 0.05, 0.40, 0.27],
+    "suit": [0.02, 0.18, 0.42, 0.56]
+  },
+  "notes": [
+    "La zone value contient uniquement le rang A, K, Q, J, 10, 9, etc.",
+    "Les coordonnées sont relatives à chacun des cinq crops board_card_1 à board_card_5.",
+    "La valeur attendue n'est jamais utilisée pendant la reconnaissance live."
+  ]
+}

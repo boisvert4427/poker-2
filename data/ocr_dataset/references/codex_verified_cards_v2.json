@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "source": "manual_visual_verification",
+  "captures": {
+    "snapshot_2026-04-12T11-47-59.png": {
+      "hero_cards": "Jc 2s",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-48-15.png": {
+      "hero_cards": "4h 4d",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-48-31.png": {
+      "hero_cards": "4h 4d",
+      "hero_cards_visible": true,
+      "board": [
+        "3c",
+        "2c",
+        "5d",
+        "7c"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-48-45.png": {
+      "hero_cards": "Kh 7c",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-49-00.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "10s",
+        "5c",
+        "5h"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-49-14.png": {
+      "hero_cards": "Kd 3d",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-49-34.png": {
+      "hero_cards": "Kd 3d",
+      "hero_cards_visible": true,
+      "board": [
+        "2d",
+        "10s",
+        "10c"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-49-49.png": {
+      "hero_cards": "Js 7s",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-50-05.png": {
+      "hero_cards": "Js 7s",
+      "hero_cards_visible": true,
+      "board": [
+        "4d",
+        "As",
+        "2c",
+        "8d"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-50-20.png": {
+      "hero_cards": "Js 7s",
+      "hero_cards_visible": true,
+      "board": [
+        "4d",
+        "As",
+        "2c",
+        "8d"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-50-36.png": {
+      "hero_cards": "4s 9h",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-50-53.png": {
+      "hero_cards": "4s 9h",
+      "hero_cards_visible": true,
+      "board": [
+        "Qc",
+        "5h",
+        "3h",
+        "7d"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-51-08.png": {
+      "hero_cards": "4h 2h",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-51-24.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "6s",
+        "Ks",
+        "5h"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-51-39.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "6s",
+        "Ks",
+        "5h",
+        "Jd",
+        "10s"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-51-54.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-52-10.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "6s",
+        "8h",
+        "6d",
+        "Qs"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-52-24.png": {
+      "hero_cards": "Ad 4d",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-52-40.png": {
+      "hero_cards": "Ad 4d",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-52-55.png": {
+      "hero_cards": "Ad 4d",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-53-11.png": {
+      "hero_cards": "Ad 4d",
+      "hero_cards_visible": true,
+      "board": [
+        "5s",
+        "3d",
+        "Qc"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-53-26.png": {
+      "hero_cards": "8d 4s",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-53-41.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-53-55.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "As",
+        "7d",
+        "7h"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-54-10.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "As",
+        "7d",
+        "7h"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-54-27.png": {
+      "hero_cards": "Ac Jc",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-54-44.png": {
+      "hero_cards": "Ac Jc",
+      "hero_cards_visible": true,
+      "board": [
+        "6c",
+        "Ah",
+        "4c",
+        "Jd"
+      ],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-54-59.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-55-14.png": {
+      "hero_cards": "2c Ad",
+      "hero_cards_visible": true,
+      "board": [],
+      "source": "visual_check_plus_rank_color"
+    },
+    "snapshot_2026-04-12T11-55-29.png": {
+      "hero_cards": null,
+      "hero_cards_visible": false,
+      "board": [
+        "2d",
+        "7h",
+        "Jd",
+        "5d",
+        "Qs"
+      ],
+      "source": "visual_check_plus_rank_color"
+    }
+  }
+}

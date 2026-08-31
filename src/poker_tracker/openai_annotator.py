@@ -103,6 +103,15 @@ class AnnotationResult:
     fields: dict[str, dict[str, Any]]
 
 
+@dataclass(slots=True)
+class HeroTurnResult:
+    snapshot_path: Path
+    annotation_path: Path
+    is_hero_turn: bool
+    confidence: float
+    reason: str
+
+
 FIELD_MIN_CONFIDENCE = {
     "top_left_cards_visible": 0.75,
     "top_left_name": 0.8,
@@ -191,6 +200,52 @@ def annotate_session_with_openai(
     return results
 
 
+def annotate_session_hero_turn_with_openai(
+    session_dir: Path,
+    *,
+    model: str = "gpt-5-nano",
+    limit: int | None = None,
+    overwrite_annotation: bool = False,
+) -> list[HeroTurnResult]:
+    recorder = SessionRecorder(session_dir.parent)
+    snapshots = recorder.list_snapshots(session_dir)
+    if limit is not None:
+        snapshots = snapshots[:limit]
+
+    client = _build_openai_client()
+    results: list[HeroTurnResult] = []
+
+    for snapshot in snapshots:
+        image_path = Path(snapshot["image_path"])
+        if not image_path.exists():
+            continue
+
+        annotation_path = image_path.with_suffix(".hero_turn.openai.json")
+        if annotation_path.exists() and not overwrite_annotation:
+            payload = json.loads(annotation_path.read_text(encoding="utf-8"))
+        else:
+            payload = annotate_hero_turn_with_openai(
+                client=client,
+                image_path=image_path,
+                metadata=snapshot,
+                model=model,
+            )
+            annotation_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        hero_turn = payload.get("hero_turn", {}) or {}
+        results.append(
+            HeroTurnResult(
+                snapshot_path=image_path,
+                annotation_path=annotation_path,
+                is_hero_turn=bool(hero_turn.get("is_hero_turn", False)),
+                confidence=float(hero_turn.get("confidence", 0.0) or 0.0),
+                reason=str(hero_turn.get("reason", "") or ""),
+            )
+        )
+
+    return results
+
+
 def annotate_snapshot_with_openai(
     *,
     client: Any,
@@ -243,6 +298,60 @@ def annotate_snapshot_with_openai(
         image_path=image_path,
         model=model,
     )
+    payload["model"] = getattr(response, "model", model)
+    payload["image_path"] = str(image_path)
+    return payload
+
+
+def annotate_hero_turn_with_openai(
+    *,
+    client: Any,
+    image_path: Path,
+    metadata: dict[str, Any],
+    model: str,
+) -> dict[str, Any]:
+    local_live = metadata.get("live_snapshot", {}) if isinstance(metadata, dict) else {}
+    metadata_text = json.dumps(
+        {
+            "window": metadata.get("window", {}) if isinstance(metadata, dict) else {},
+            "local_live_hint": {
+                "available_actions": local_live.get("available_actions", []),
+                "visual_buttons": local_live.get("visual_buttons", []),
+                "hero_turn_confidence": local_live.get("hero_turn_confidence", 0.0),
+                "ocr_preview": local_live.get("ocr_preview", ""),
+            },
+        },
+        ensure_ascii=False,
+        indent=2,
+    )
+
+    response = client.responses.create(
+        model=model,
+        store=False,
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": _build_hero_turn_prompt(metadata_text)},
+                    {"type": "input_image", "image_url": _image_to_data_url(image_path), "detail": "high"},
+                ],
+            }
+        ],
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "hero_turn_annotation",
+                "strict": True,
+                "schema": _hero_turn_schema(),
+            }
+        },
+    )
+
+    content = getattr(response, "output_text", "") or ""
+    if not content:
+        raise RuntimeError("La reponse OpenAI hero_turn est vide.")
+
+    payload = json.loads(content)
     payload["model"] = getattr(response, "model", model)
     payload["image_path"] = str(image_path)
     return payload
@@ -368,9 +477,24 @@ def _build_annotation_prompt(metadata_text: str) -> str:
         "- top_left_name / top_right_name / left_name / right_name / hero_name: pseudo du joueur.\n"
         "- stacks et pot_value: garder le texte lisible tel qu'affiche, ex: '102,7 BB' ou 'Pot : 2 BB'.\n"
         "- dealer_button: mettre de preference le nom du joueur proprietaire du bouton dealer, sinon une position.\n"
-        "- board_card_1..5: format court type '7h', 'Qc', '3s'.\n"
+        "- board_card_1..5: format court type '7h', 'Qc', '3s', '10h'.\n"
         "- hero_status: texte comme ABSENT si visible.\n"
+        "- hero_turn: dire explicitement si c'est le tour du hero de jouer maintenant.\n"
         "- confidence: nombre entre 0 et 1.\n\n"
+        "Regles de lecture des cartes:\n"
+        "- les rangs valides sont uniquement: 2 3 4 5 6 7 8 9 10 J Q K A;\n"
+        "- le rang '1' n'existe jamais seul sur ces cartes, donc ne retourne jamais '1s', '1h', '1d' ou '1c';\n"
+        "- fais tres attention a ne pas confondre 4 et 7;\n"
+        "- fais tres attention a ne pas confondre J et 10;\n"
+        "- 10 doit etre ecrit '10' et non 'T', 't' ou '1';\n"
+        "- J represente uniquement le valet; si tu hesites entre J et 10, privilegie seulement la forme vraiment visible, sinon laisse vide;\n"
+        "- si tu hesites entre 4 et 7, choisis uniquement celui qui correspond vraiment a la forme visible, sinon laisse vide;\n"
+        "- les cartes de sortie doivent donc ressembler a '10h', 'Jd', '7s', 'Ac'.\n\n"
+        "Regle speciale hero_turn:\n"
+        "- is_hero_turn=true seulement si les vrais boutons d'action du hero sont visibles et exploitables maintenant;\n"
+        "- les indices forts sont les boutons fold / check / call / bet / raise / all-in visibles en bas de table;\n"
+        "- ne te base pas sur du texte parasite d'interface comme 'voir tes cartes', 'poser la big blind', 'preselection' ou des textes hors boutons;\n"
+        "- si tu n'es pas sur, mets is_hero_turn=false.\n\n"
         "Contraintes anti-hallucination:\n"
         "- n'invente jamais un pseudo, un stack, une carte ou un dealer si ce n'est pas visible;\n"
         "- si une carte vilain n'est pas clairement visible, mets value='not_visible' ou 'uncertain';\n"
@@ -389,6 +513,21 @@ def _build_dealer_prompt() -> str:
         "top_left, top_right, left, right, hero.\n\n"
         "Reponds uniquement avec le JSON demande.\n"
         "Si tu ne vois pas clairement ce rond jaune avec le D, retourne dealer_owner='' et box=null."
+    )
+
+
+def _build_hero_turn_prompt(metadata_text: str) -> str:
+    return (
+        "Analyse uniquement si c'est le tour du hero de jouer sur ce screenshot Winamax.\n\n"
+        "Tu dois repondre avec un JSON tres court.\n"
+        "Regle principale:\n"
+        "- is_hero_turn=true seulement si les vrais boutons d'action du hero sont visibles et utilisables maintenant.\n"
+        "- Les boutons attendus en bas de table sont typiquement fold, check, call, bet, raise ou all-in.\n"
+        "- Ne te base pas sur le simple fait que le hero a des cartes.\n"
+        "- Ne te base pas sur du texte parasite d'interface comme 'voir tes cartes', 'poser la big blind', 'preselection', 'autorebuy'.\n"
+        "- Si tu n'es pas sur, mets is_hero_turn=false.\n\n"
+        "Contexte local indicatif seulement:\n"
+        f"{metadata_text}"
     )
 
 
@@ -428,6 +567,16 @@ def _annotation_schema() -> dict[str, Any]:
         "properties": {
             "summary": {"type": "string"},
             "flags": {"type": "array", "items": {"type": "string"}},
+            "hero_turn": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "is_hero_turn": {"type": "boolean"},
+                    "confidence": {"type": "number"},
+                    "reason": {"type": "string"},
+                },
+                "required": ["is_hero_turn", "confidence", "reason"],
+            },
             "seats": {
                 "type": "object",
                 "additionalProperties": False,
@@ -447,7 +596,7 @@ def _annotation_schema() -> dict[str, Any]:
                 "required": REVIEW_FIELDS,
             },
         },
-        "required": ["summary", "flags", "seats", "fields"],
+        "required": ["summary", "flags", "hero_turn", "seats", "fields"],
     }
 
 
@@ -477,6 +626,26 @@ def _dealer_schema() -> dict[str, Any]:
             },
         },
         "required": ["dealer_owner", "confidence", "reason", "box"],
+    }
+
+
+def _hero_turn_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "hero_turn": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "is_hero_turn": {"type": "boolean"},
+                    "confidence": {"type": "number"},
+                    "reason": {"type": "string"},
+                },
+                "required": ["is_hero_turn", "confidence", "reason"],
+            }
+        },
+        "required": ["hero_turn"],
     }
 
 

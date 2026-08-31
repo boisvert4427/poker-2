@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "source": "manual_visual_codex",
+  "captures": {
+    "snapshot_2026-04-12T11-53-11.png": {"fields": {"board": "5s 3d Qc"}},
+    "snapshot_2026-04-12T11-53-26.png": {"fields": {"board": ""}},
+    "snapshot_2026-04-12T11-53-41.png": {"fields": {"board": ""}},
+    "snapshot_2026-04-12T11-53-55.png": {"fields": {"board": "As 7d 7h"}},
+    "snapshot_2026-04-12T11-54-10.png": {"fields": {"board": "As 7d 7h"}},
+    "snapshot_2026-04-12T11-54-27.png": {"fields": {"board": ""}},
+    "snapshot_2026-04-12T11-54-44.png": {"fields": {"board": "6c Ah 4c Jd"}},
+    "snapshot_2026-04-12T11-54-59.png": {"fields": {"board": ""}},
+    "snapshot_2026-04-12T11-55-14.png": {"fields": {"board": ""}},
+    "snapshot_2026-04-12T11-55-29.png": {"fields": {"board": "2d 7h Jd 5d Qs"}}
+  }
+}

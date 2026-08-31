@@ -6,11 +6,27 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+import re
 
 from PIL import Image, ImageFilter, ImageGrab, ImageOps
 
 from .config import load_calibration
 from .detection import WinamaxWindow
+
+
+ACTION_FAST_RE = re.compile(r"\b(FOLD|CALL|CHECK|BET|RAISE|ALL-?IN)\b", re.IGNORECASE)
+ACTION_NOISE_MARKERS = (
+    "voir tes cartes",
+    "poser la big blind",
+    "poser la small blind",
+    "préselection",
+    "preselection",
+    "selection de la prochaine action",
+    "autorebuy",
+    "hauteur",
+    "prochaine action",
+    "attendre",
+)
 
 
 @dataclass(slots=True)
@@ -39,13 +55,19 @@ def capture_window(window: WinamaxWindow) -> str | None:
     temp_dir = Path(tempfile.gettempdir()) / "winamax_poker_tracker"
     temp_dir.mkdir(parents=True, exist_ok=True)
     image_path = temp_dir / f"table_{window.pid}_{window.hwnd}.png"
+    temp_image_path = image_path.with_suffix(".tmp.png")
 
     image = ImageGrab.grab(bbox=(left, top, right, bottom), all_screens=True)
-    image.save(image_path)
+    image.save(temp_image_path)
+    temp_image_path.replace(image_path)
     return str(image_path)
 
 
 def run_local_ocr(window: WinamaxWindow) -> OcrSnapshot:
+    return run_local_ocr_with_profile(window, profile="full")
+
+
+def run_local_ocr_with_profile(window: WinamaxWindow, profile: str = "full") -> OcrSnapshot:
     image_path = capture_window(window)
     if image_path is None:
         return OcrSnapshot(
@@ -68,29 +90,36 @@ def run_local_ocr(window: WinamaxWindow) -> OcrSnapshot:
             zones={},
         )
 
-    completed = _run_tesseract(engine_path, image_path, psm="6")
-    if completed.returncode != 0:
-        return OcrSnapshot(
-            image_path=image_path,
-            engine_available=True,
-            engine_path=engine_path,
-            status="ocr_failed",
-            text=(completed.stderr or "").strip() or "Erreur OCR inconnue.",
-            zones={},
-        )
+    full_text = ""
+    if profile == "full":
+        completed = _run_tesseract(engine_path, image_path, psm="6")
+        if completed.returncode != 0:
+            return OcrSnapshot(
+                image_path=image_path,
+                engine_available=True,
+                engine_path=engine_path,
+                status="ocr_failed",
+                text=(completed.stderr or "").strip() or "Erreur OCR inconnue.",
+                zones={},
+            )
+        full_text = (completed.stdout or "").strip()
 
-    zones = _run_zoned_ocr(engine_path, image_path)
+    zones = _run_zoned_ocr(engine_path, image_path, profile=profile)
     return OcrSnapshot(
         image_path=image_path,
         engine_available=True,
         engine_path=engine_path,
-        status="ok",
-        text=(completed.stdout or "").strip(),
+        status="ok_minimal" if profile == "minimal" else "ok",
+        text=full_text,
         zones=zones,
     )
 
 
 def run_local_ocr_on_image(image_path: str | Path) -> OcrSnapshot:
+    return run_local_ocr_on_image_with_profile(image_path, profile="full")
+
+
+def run_local_ocr_on_image_with_profile(image_path: str | Path, profile: str = "full") -> OcrSnapshot:
     image_path = str(image_path)
     engine_path = _find_tesseract()
     if not engine_path:
@@ -103,26 +132,133 @@ def run_local_ocr_on_image(image_path: str | Path) -> OcrSnapshot:
             zones={},
         )
 
-    completed = _run_tesseract(engine_path, image_path, psm="6")
-    if completed.returncode != 0:
-        return OcrSnapshot(
-            image_path=image_path,
-            engine_available=True,
-            engine_path=engine_path,
-            status="ocr_failed",
-            text=(completed.stderr or "").strip() or "Erreur OCR inconnue.",
-            zones={},
-        )
+    full_text = ""
+    if profile == "full":
+        completed = _run_tesseract(engine_path, image_path, psm="6")
+        if completed.returncode != 0:
+            return OcrSnapshot(
+                image_path=image_path,
+                engine_available=True,
+                engine_path=engine_path,
+                status="ocr_failed",
+                text=(completed.stderr or "").strip() or "Erreur OCR inconnue.",
+                zones={},
+            )
+        full_text = (completed.stdout or "").strip()
 
-    zones = _run_zoned_ocr(engine_path, image_path)
+    zones = _run_zoned_ocr(engine_path, image_path, profile=profile)
     return OcrSnapshot(
         image_path=image_path,
         engine_available=True,
         engine_path=engine_path,
-        status="ok",
-        text=(completed.stdout or "").strip(),
+        status="ok_minimal" if profile == "minimal" else "ok",
+        text=full_text,
         zones=zones,
     )
+
+
+def run_action_ocr_on_image(image_path: str | Path) -> dict[str, str]:
+    image_path = str(image_path)
+    engine_path = _find_tesseract()
+    if not engine_path:
+        return {}
+
+    image = Image.open(image_path)
+    width, height = image.size
+    action_names = {"action_left", "action_center", "action_right", "hero_status", "hero"}
+    results: dict[str, str] = {}
+    temp_dir = Path(tempfile.gettempdir()) / "winamax_poker_tracker"
+
+    for name, rect, psm in _zone_definitions(width, height):
+        if name not in action_names:
+            continue
+        if name in {"hero_status", "hero"}:
+            cropped = _preprocess_text_zone(image.crop(rect))
+        else:
+            cropped = _preprocess_actions_zone(image.crop(rect))
+        zone_path = temp_dir / f"{Path(image_path).stem}_{name}_fast.png"
+        cropped.save(zone_path)
+        completed = _run_tesseract(engine_path, str(zone_path), psm=psm)
+        raw_text = ((completed.stdout or "") if completed.returncode == 0 else "").strip()
+        if name in {"hero_status", "hero"}:
+            text = " ".join(part.strip() for part in raw_text.splitlines() if part.strip())
+        else:
+            text = _normalize_action_ocr_text(raw_text)
+        results[name] = text
+
+    for name, rect, psm in _zone_definitions(width, height):
+        if name != "actions":
+            continue
+        cropped = _preprocess_actions_zone(image.crop(rect))
+        zone_path = temp_dir / f"{Path(image_path).stem}_{name}_fast.png"
+        cropped.save(zone_path)
+        completed = _run_tesseract(engine_path, str(zone_path), psm=psm)
+        raw_text = ((completed.stdout or "") if completed.returncode == 0 else "").strip()
+        hint_text = _normalize_fast_hint_text(raw_text)
+        if hint_text:
+            results["actions_hint"] = hint_text
+        text = _normalize_action_fallback_text(raw_text)
+        if text:
+            results["actions"] = text
+        break
+
+    return results
+
+
+def _normalize_action_ocr_text(text: str) -> str:
+    cleaned = " ".join(part.strip() for part in str(text or "").splitlines() if part.strip())
+    lowered = cleaned.lower()
+    if not cleaned:
+        return ""
+    if any(marker in lowered for marker in ACTION_NOISE_MARKERS):
+        return ""
+
+    matches: list[str] = []
+    for match in ACTION_FAST_RE.findall(cleaned):
+        token = str(match).upper().replace("ALLIN", "ALL-IN")
+        if token not in matches:
+            matches.append(token)
+    if len(matches) != 1:
+        return ""
+    return matches[0]
+
+
+def _normalize_action_fallback_text(text: str) -> str:
+    cleaned = " ".join(part.strip() for part in str(text or "").splitlines() if part.strip())
+    lowered = cleaned.lower()
+    if not cleaned:
+        return ""
+    if any(marker in lowered for marker in ACTION_NOISE_MARKERS):
+        return ""
+
+    matches: list[str] = []
+    for match in ACTION_FAST_RE.findall(cleaned):
+        token = str(match).upper().replace("ALLIN", "ALL-IN")
+        if token not in matches:
+            matches.append(token)
+    return " ".join(matches)
+
+
+def _normalize_fast_hint_text(text: str) -> str:
+    cleaned = " ".join(part.strip() for part in str(text or "").splitlines() if part.strip())
+    if not cleaned:
+        return ""
+    lowered = cleaned.lower()
+    markers = [
+        "preselection",
+        "préselection",
+        "selection de la prochaine action",
+        "prochaine action",
+        "tu as passe",
+        "tu as passé",
+        "voir tes cartes",
+        "poser la big blind",
+        "poser la small blind",
+    ]
+    for marker in markers:
+        if marker in lowered:
+            return marker.upper()
+    return cleaned
 
 
 def _find_tesseract() -> str:
@@ -140,7 +276,12 @@ def _find_tesseract() -> str:
     return ""
 
 
-def _run_tesseract(engine_path: str, image_path: str, psm: str) -> subprocess.CompletedProcess[str]:
+def _run_tesseract(
+    engine_path: str,
+    image_path: str,
+    psm: str,
+    extra_args: list[str] | None = None,
+) -> subprocess.CompletedProcess[str]:
     startupinfo = None
     creationflags = 0
     if os.name == "nt":
@@ -148,8 +289,11 @@ def _run_tesseract(engine_path: str, image_path: str, psm: str) -> subprocess.Co
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
+    command = [engine_path, image_path, "stdout", "--psm", psm]
+    if extra_args:
+        command.extend(extra_args)
     return subprocess.run(
-        [engine_path, image_path, "stdout", "--psm", psm],
+        command,
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -161,13 +305,17 @@ def _run_tesseract(engine_path: str, image_path: str, psm: str) -> subprocess.Co
     )
 
 
-def _run_zoned_ocr(engine_path: str, image_path: str) -> dict[str, OcrZoneResult]:
+def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> dict[str, OcrZoneResult]:
     image = Image.open(image_path)
     width, height = image.size
     temp_dir = Path(tempfile.gettempdir()) / "winamax_poker_tracker"
+    temp_dir.mkdir(parents=True, exist_ok=True)
     zones: dict[str, OcrZoneResult] = {}
+    allowed = _zone_profile_names(profile)
 
     for name, rect, psm in _zone_definitions(width, height):
+        if allowed is not None and name not in allowed:
+            continue
         cropped = image.crop(rect)
         if name in {"actions", "action_left", "action_center", "action_right"}:
             cropped = _preprocess_actions_zone(cropped)
@@ -198,6 +346,52 @@ def _run_zoned_ocr(engine_path: str, image_path: str) -> dict[str, OcrZoneResult
         zones[name] = OcrZoneResult(name=name, image_path=str(zone_path), text=text, rect=rect)
 
     return zones
+
+
+def _zone_profile_names(profile: str) -> set[str] | None:
+    if profile == "full":
+        return None
+    if profile == "live":
+        return {
+            "top_left_cards",
+            "top_left_name",
+            "top_left_stack",
+            "top_right_cards",
+            "top_right_name",
+            "top_right_stack",
+            "left_cards",
+            "left_name",
+            "left_stack",
+            "right_cards",
+            "right_name",
+            "right_stack",
+            "pot",
+            "pot_value",
+            "board",
+            "board_card_1",
+            "board_card_2",
+            "board_card_3",
+            "board_card_4",
+            "board_card_5",
+            "hero",
+            "hero_name",
+            "hero_stack",
+            "hero_status",
+            "dealer_button",
+            "action_left",
+            "action_center",
+            "action_right",
+        }
+    if profile == "minimal":
+        return {
+            "top_left_name", "top_left_stack",
+            "top_right_name", "top_right_stack",
+            "left_name", "left_stack",
+            "right_name", "right_stack",
+            "hero_name", "hero_stack", "hero_status",
+            "pot", "pot_value", "board",
+        }
+    return None
 
 
 def _zone_definitions(width: int, height: int) -> list[tuple[str, tuple[int, int, int, int], str]]:

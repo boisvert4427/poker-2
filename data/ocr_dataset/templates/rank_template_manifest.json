@@ -1,0 +1,317 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "rank": "3",
+      "card": "3c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_1\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\3\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "2",
+      "card": "2c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_2\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\2\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "5",
+      "card": "5d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_3\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "7",
+      "card": "7c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_4\\snapshot_2026-04-12T11-48-31.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_01_snapshot_2026-04-12T11-48-31.png"
+    },
+    {
+      "rank": "10",
+      "card": "10s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_1\\snapshot_2026-04-12T11-49-00.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\10\\batch_01_snapshot_2026-04-12T11-49-00.png"
+    },
+    {
+      "rank": "5",
+      "card": "5c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_2\\snapshot_2026-04-12T11-49-00.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_01_snapshot_2026-04-12T11-49-00.png"
+    },
+    {
+      "rank": "5",
+      "card": "5h",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_3\\snapshot_2026-04-12T11-49-00.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_01_snapshot_2026-04-12T11-49-00.png"
+    },
+    {
+      "rank": "2",
+      "card": "2d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_1\\snapshot_2026-04-12T11-49-34.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\2\\batch_01_snapshot_2026-04-12T11-49-34.png"
+    },
+    {
+      "rank": "10",
+      "card": "10s",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_2\\snapshot_2026-04-12T11-49-34.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\10\\batch_01_snapshot_2026-04-12T11-49-34.png"
+    },
+    {
+      "rank": "10",
+      "card": "10c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_3\\snapshot_2026-04-12T11-49-34.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\10\\batch_01_snapshot_2026-04-12T11-49-34.png"
+    },
+    {
+      "rank": "4",
+      "card": "4d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_1\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\4\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_2\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\A\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "2",
+      "card": "2c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_3\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\2\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "8",
+      "card": "8d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_4\\snapshot_2026-04-12T11-50-05.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\8\\batch_01_snapshot_2026-04-12T11-50-05.png"
+    },
+    {
+      "rank": "4",
+      "card": "4d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_1\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\4\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_2\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\A\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "2",
+      "card": "2c",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_3\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\2\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "8",
+      "card": "8d",
+      "source": "data\\ocr_dataset\\crops\\batch_01\\board_card_4\\snapshot_2026-04-12T11-50-20.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\8\\batch_01_snapshot_2026-04-12T11-50-20.png"
+    },
+    {
+      "rank": "Q",
+      "card": "Qc",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\Q\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "5",
+      "card": "5h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "3",
+      "card": "3h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\3\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "7",
+      "card": "7d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-50-53.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_02_snapshot_2026-04-12T11-50-53.png"
+    },
+    {
+      "rank": "6",
+      "card": "6s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-24.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\6\\batch_02_snapshot_2026-04-12T11-51-24.png"
+    },
+    {
+      "rank": "K",
+      "card": "Ks",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-24.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\K\\batch_02_snapshot_2026-04-12T11-51-24.png"
+    },
+    {
+      "rank": "5",
+      "card": "5h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-24.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_02_snapshot_2026-04-12T11-51-24.png"
+    },
+    {
+      "rank": "6",
+      "card": "6s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\6\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "K",
+      "card": "Ks",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\K\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "5",
+      "card": "5h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "J",
+      "card": "Jd",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\J\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "10",
+      "card": "10s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_5\\snapshot_2026-04-12T11-51-39.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\10\\batch_02_snapshot_2026-04-12T11-51-39.png"
+    },
+    {
+      "rank": "6",
+      "card": "6s",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_1\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\6\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "8",
+      "card": "8h",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_2\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\8\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "6",
+      "card": "6d",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_3\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\6\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "Q",
+      "card": "Qs",
+      "source": "data\\ocr_dataset\\crops\\batch_02\\board_card_4\\snapshot_2026-04-12T11-52-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\Q\\batch_02_snapshot_2026-04-12T11-52-10.png"
+    },
+    {
+      "rank": "5",
+      "card": "5s",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-11.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_03_snapshot_2026-04-12T11-53-11.png"
+    },
+    {
+      "rank": "3",
+      "card": "3d",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-11.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\3\\batch_03_snapshot_2026-04-12T11-53-11.png"
+    },
+    {
+      "rank": "Q",
+      "card": "Qc",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-11.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\Q\\batch_03_snapshot_2026-04-12T11-53-11.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-53-55.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\A\\batch_03_snapshot_2026-04-12T11-53-55.png"
+    },
+    {
+      "rank": "7",
+      "card": "7d",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-53-55.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_03_snapshot_2026-04-12T11-53-55.png"
+    },
+    {
+      "rank": "7",
+      "card": "7h",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-53-55.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_03_snapshot_2026-04-12T11-53-55.png"
+    },
+    {
+      "rank": "A",
+      "card": "As",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\A\\batch_03_snapshot_2026-04-12T11-54-10.png"
+    },
+    {
+      "rank": "7",
+      "card": "7d",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_03_snapshot_2026-04-12T11-54-10.png"
+    },
+    {
+      "rank": "7",
+      "card": "7h",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-10.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_03_snapshot_2026-04-12T11-54-10.png"
+    },
+    {
+      "rank": "6",
+      "card": "6c",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-54-44.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\6\\batch_03_snapshot_2026-04-12T11-54-44.png"
+    },
+    {
+      "rank": "A",
+      "card": "Ah",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-54-44.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\A\\batch_03_snapshot_2026-04-12T11-54-44.png"
+    },
+    {
+      "rank": "4",
+      "card": "4c",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-54-44.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\4\\batch_03_snapshot_2026-04-12T11-54-44.png"
+    },
+    {
+      "rank": "J",
+      "card": "Jd",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-54-44.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\J\\batch_03_snapshot_2026-04-12T11-54-44.png"
+    },
+    {
+      "rank": "2",
+      "card": "2d",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_1\\snapshot_2026-04-12T11-55-29.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\2\\batch_03_snapshot_2026-04-12T11-55-29.png"
+    },
+    {
+      "rank": "7",
+      "card": "7h",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_2\\snapshot_2026-04-12T11-55-29.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\7\\batch_03_snapshot_2026-04-12T11-55-29.png"
+    },
+    {
+      "rank": "J",
+      "card": "Jd",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_3\\snapshot_2026-04-12T11-55-29.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\J\\batch_03_snapshot_2026-04-12T11-55-29.png"
+    },
+    {
+      "rank": "5",
+      "card": "5d",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_4\\snapshot_2026-04-12T11-55-29.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\5\\batch_03_snapshot_2026-04-12T11-55-29.png"
+    },
+    {
+      "rank": "Q",
+      "card": "Qs",
+      "source": "data\\ocr_dataset\\crops\\batch_03\\board_card_5\\snapshot_2026-04-12T11-55-29.png",
+      "template": "data\\ocr_dataset\\templates\\ranks\\Q\\batch_03_snapshot_2026-04-12T11-55-29.png"
+    }
+  ]
+}
