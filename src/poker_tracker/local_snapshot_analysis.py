@@ -165,7 +165,7 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     board_text = zone_text("board")
     # The board zone is already OCR'd above.  Prefer it so we do not launch
     # five additional Tesseract processes for the individual card zones.
-    board_cards = _extract_board_cards(board_text)
+    board_cards = _extract_board_cards_fast(ocr_snapshot.image_path, board_text)
     if not any(board_cards):
         board_cards = _extract_board_cards_from_image(ocr_snapshot.image_path)
     hero_block = _clean_ocr_text(zone_text("hero"))
@@ -544,6 +544,53 @@ def _extract_board_cards(board_text: str) -> list[str]:
     return cards
 
 
+def _extract_board_cards_fast(image_path: str, board_text: str) -> list[str]:
+    """Combine one board OCR pass with cheap per-card colour detection."""
+    ranks = _extract_board_cards(board_text)
+    if not any(ranks):
+        return []
+    image_file = Path(image_path)
+    if not image_file.exists():
+        return ranks
+    try:
+        image = Image.open(image_file).convert("RGB")
+    except OSError:
+        return ranks
+
+    calibration = load_calibration().get("zones", {})
+    visible_count = 0
+    for index in range(1, 6):
+        ratios = calibration.get(f"board_card_{index}")
+        if not ratios:
+            continue
+        crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+        if _looks_like_card_crop(crop):
+            visible_count += 1
+    if visible_count > sum(bool(rank) for rank in ranks):
+        # The global OCR missed at least one visible rank; use the accurate
+        # per-card fallback rather than returning an incomplete board.
+        return _extract_board_cards_from_image(image_path)
+
+    cards: list[str] = []
+    for index, rank in enumerate(ranks):
+        ratios = calibration.get(f"board_card_{index + 1}")
+        if not ratios:
+            cards.append(rank)
+            continue
+        crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+        # L'OCR global peut renvoyer un chiffre parasite provenant d'une
+        # autre zone. Ne jamais attribuer ce chiffre Ã  un emplacement vide.
+        if not _looks_like_card_crop(crop) and _card_white_ratio(crop) < 0.18:
+            break
+        rank_crop = crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
+        # Template matching is local and does not start a Tesseract process.
+        # Use the global OCR rank as fallback when the crop is marginal.
+        local_rank = _match_board_rank_reference(rank_crop) or rank
+        suit = _extract_card_suit(crop)
+        cards.append(f"{local_rank}{suit}" if suit else local_rank)
+    return cards
+
+
 def _extract_board_cards_from_image(image_path: str) -> list[str]:
     image_file = Path(image_path)
     if not image_file.exists():
@@ -629,40 +676,23 @@ def _extract_hero_cards_from_image(image_path: str) -> str:
         return ""
 
     calibration = load_calibration().get("zones", {})
-    subzone_file = Path(__file__).resolve().parents[2] / "data" / "ocr_dataset" / "hero_card_subzones.json"
-    if calibration.get("hero") and subzone_file.exists():
-        try:
-            subzones = json.loads(subzone_file.read_text(encoding="utf-8"))["zones"]
-            hero_crop = image.crop(_scaled_rect(image.width, image.height, *calibration["hero"]))
-            cards: list[str] = []
-            for index in (1, 2):
-                zone = subzones.get(f"hero_card_{index}_value")
-                if not zone:
-                    break
-                value_crop = hero_crop.crop(_scaled_rect(hero_crop.width, hero_crop.height, *zone))
-                if _card_white_ratio(value_crop) < 0.12:
-                    break
-                rank = _extract_rank_from_value_crop(value_crop, engine_path)
-                suit = _extract_suit_from_rank_crop(value_crop)
-                if not rank:
-                    break
-                cards.append(f"{rank}{suit}" if suit else rank)
-            return " ".join(cards)
-        except (OSError, KeyError, TypeError, json.JSONDecodeError):
-            pass
-
-    primary_ratios = calibration.get("hero_status")
-    fallback_ratios = calibration.get("hero")
-    if not primary_ratios and not fallback_ratios:
-        return ""
-
-    cards = _extract_hero_cards_from_ratios(image, engine_path, primary_ratios, widen=0.10)
-    if len(cards) < 2 and fallback_ratios:
-        merged = _extract_hero_cards_from_ratios(image, engine_path, fallback_ratios, widen=0.06)
-        for card in merged:
-            if card not in cards:
-                cards.append(card)
-    return " ".join(cards[:2])
+    direct_zones = [
+        calibration.get("hero_card_1_value"),
+        calibration.get("hero_card_2_value"),
+    ]
+    if all(direct_zones):
+        direct_cards: list[str] = []
+        for ratios in direct_zones:
+            value_crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+            if _card_white_ratio(value_crop) < 0.12:
+                break
+            rank = _extract_rank_from_value_crop(value_crop, engine_path)
+            suit = _extract_suit_from_rank_crop(value_crop)
+            if not rank:
+                break
+            direct_cards.append(f"{rank}{suit}" if suit else rank)
+        return " ".join(direct_cards)
+    return ""
 
 
 def _extract_hero_cards_from_ratios(
@@ -689,8 +719,8 @@ def _extract_hero_cards_from_ratios(
         # Les deux cartes se recouvrent : on garde une fenêtre indépendante
         # autour de chaque valeur pour éviter que la carte 1 soit relue dans
         # la fenêtre de la carte 2.
-        (0.00, 0.00, 0.58, 1.00),
-        (0.38, 0.00, 0.82, 1.00),
+        (0.00, 0.00, 0.45, 1.00),
+        (0.30, 0.00, 0.90, 1.00),
     ]
     cards: list[str] = []
     for left_ratio, top_ratio, right_ratio, bottom_ratio in card_regions:

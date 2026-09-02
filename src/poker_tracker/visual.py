@@ -35,8 +35,9 @@ def analyze_action_buttons(image_path: str) -> list[ButtonVisualState]:
 
 def has_active_action_bar(image_path: str) -> bool:
     states = analyze_action_buttons(image_path)
-    active_count = sum(1 for state in states if state.active)
-    return active_count >= 2
+    # Enabled action buttons are red. Grey preselection buttons also contain
+    # bright text, so counting brightness alone creates false hero turns.
+    return any(state.red_ratio >= 0.04 for state in states)
 
 
 def _analyze_region(image: Image.Image, name: str, rect: tuple[int, int, int, int]) -> ButtonVisualState:

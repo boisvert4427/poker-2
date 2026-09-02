@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 import re
@@ -313,6 +314,7 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
     zones: dict[str, OcrZoneResult] = {}
     allowed = _zone_profile_names(profile)
 
+    jobs: list[tuple[str, tuple[int, int, int, int], str, Path]] = []
     for name, rect, psm in _zone_definitions(width, height):
         if allowed is not None and name not in allowed:
             continue
@@ -341,8 +343,21 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
             cropped = _preprocess_card_zone(cropped)
         zone_path = temp_dir / f"{Path(image_path).stem}_{name}.png"
         cropped.save(zone_path)
+        jobs.append((name, rect, psm, zone_path))
+
+    def read_zone(job: tuple[str, tuple[int, int, int, int], str, Path]) -> tuple[str, tuple[int, int, int, int], Path, str]:
+        name, rect, psm, zone_path = job
         completed = _run_tesseract(engine_path, str(zone_path), psm=psm)
         text = ((completed.stdout or "") if completed.returncode == 0 else (completed.stderr or "")).strip()
+        return name, rect, zone_path, text
+
+    # Each zone is independent.  Running the Tesseract processes concurrently
+    # removes the sequential process-startup cost while keeping the same OCR
+    # settings and the same fallback behavior.
+    worker_count = min(8, max(1, len(jobs)))
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        results = list(executor.map(read_zone, jobs))
+    for name, rect, zone_path, text in results:
         zones[name] = OcrZoneResult(name=name, image_path=str(zone_path), text=text, rect=rect)
 
     return zones

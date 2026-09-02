@@ -75,6 +75,8 @@ def list_winamax_windows() -> list[WinamaxWindow]:
     user32.GetWindowRect.restype = wintypes.BOOL
     user32.GetWindowThreadProcessId.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.DWORD)]
     user32.GetWindowThreadProcessId.restype = wintypes.DWORD
+    user32.GetAncestor.argtypes = [wintypes.HWND, ctypes.c_uint]
+    user32.GetAncestor.restype = wintypes.HWND
 
     kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
     kernel32.OpenProcess.restype = wintypes.HANDLE
@@ -115,7 +117,11 @@ def list_winamax_windows() -> list[WinamaxWindow]:
         title_lower = title.lower()
         if "poker tracker prototype" in title_lower:
             return True
-        if "winamax" not in process_name and "winamax" not in title_lower:
+        if (
+            "winamax" not in process_name
+            and "winamax" not in title_lower
+            and "playground" not in title_lower
+        ):
             return True
 
         rect = wintypes.RECT()
@@ -132,7 +138,30 @@ def list_winamax_windows() -> list[WinamaxWindow]:
         return True
 
     user32.EnumWindows(callback, 0)
-    return windows
+
+    # Winamax peut exposer une petite fenêtre interne portant le titre
+    # ``Winamax`` et une fenêtre racine borderless qui couvre réellement le
+    # moniteur.  Les coordonnées de la fenêtre interne coupent la table.
+    # Normaliser vers la racine garantit que la capture prend le plein écran.
+    roots: dict[int, WinamaxWindow] = {}
+    for window in windows:
+        root_hwnd = int(user32.GetAncestor(window.hwnd, 2) or window.hwnd)
+        # Certaines fenêtres Winamax sont des fenêtres popup dont le parent
+        # Windows contient la vraie table, sans être retourné par GetAncestor.
+        rect = wintypes.RECT()
+        if not user32.GetWindowRect(root_hwnd, ctypes.byref(rect)):
+            roots[root_hwnd] = window
+            continue
+        if int(rect.right) - int(rect.left) < 100 or int(rect.bottom) - int(rect.top) < 100:
+            continue
+        roots[root_hwnd] = WinamaxWindow(
+            hwnd=root_hwnd,
+            pid=window.pid,
+            title=window.title,
+            visible=window.visible,
+            rect=(int(rect.left), int(rect.top), int(rect.right), int(rect.bottom)),
+        )
+    return list(roots.values())
 
 
 def guess_history_locations() -> list[HistoryLocation]:

@@ -186,13 +186,12 @@ def build_fast_live_snapshot(
     )
     visual_buttons = [state.name for state in visual_states if state.active]
     table_name = _extract_table_name(window.title if window else "")
-
     return LiveHandSnapshot(
         source_file="",
         hand_id="",
         table_name=table_name or cached_context.get("table_name", ""),
         hero_name=_sanitize_hero_name(cached_context.get("hero_name", ""), "RougeLion"),
-        hero_cards="",
+        hero_cards=cached_context.get("hero_cards", ""),
         current_street=cached_context.get("current_street", ""),
         is_complete=False,
         visible_board=cached_context.get("visible_board", ""),
@@ -577,11 +576,28 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
     active_names = [getattr(state, "name", "") for state in visual_states if getattr(state, "active", False)]
     active_visual = len(active_names)
     if {"left", "center"}.issubset(set(active_names)):
-        score += 0.35 if has_clean_action else 0.18
+        red_active = any(
+            getattr(state, "active", False) and getattr(state, "red_ratio", 0.0) >= 0.04
+            for state in visual_states
+        )
+        score += 0.35 if has_clean_action else (0.65 if red_active else 0.0)
     elif active_visual >= 2:
-        score += 0.18 if has_clean_action else 0.08
+        # Les boutons de mise peuvent être lisibles visuellement alors que
+        # leur texte OCR ne l'est pas. Plusieurs zones actives suffisent donc
+        # à confirmer le tour hero, sauf si un marqueur d'attente a déjà
+        # déclenché le retour anticipé ci-dessus.
+        red_active = any(
+            getattr(state, "active", False) and getattr(state, "red_ratio", 0.0) >= 0.04
+            for state in visual_states
+        )
+        score += 0.35 if has_clean_action else (0.65 if red_active else 0.0)
     elif active_visual == 1:
-        score += 0.08 if has_clean_action else 0.03
+        # A single broad active region may contain POT and ALL-IN together.
+        red_active = any(
+            getattr(state, "active", False) and getattr(state, "red_ratio", 0.0) >= 0.04
+            for state in visual_states
+        )
+        score += 0.12 if has_clean_action else (0.65 if red_active else 0.0)
 
     return max(0.0, min(1.0, score))
 

@@ -2,8 +2,8 @@
   "version": 1,
   "relative_to": "hero_cards_crop",
   "zones": {
-      "hero_card_1_value": [0.18, 0.20, 0.34, 0.42],
-      "hero_card_2_value": [0.34, 0.20, 0.51, 0.38]
+      "hero_card_1_value": [0.05, 0.05, 0.30, 0.40],
+      "hero_card_2_value": [0.30, 0.05, 0.60, 0.40]
   },
   "notes": [
     "Les valeurs et symboles sont reconnus avec les mêmes modèles que le board.",

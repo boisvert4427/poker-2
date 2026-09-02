@@ -191,6 +191,7 @@ class PokerTrackerApp:
         self.element_review_image_label: tk.Label | None = None
         self.element_review_image_tk: ImageTk.PhotoImage | None = None
         self.last_live_commentary_key: tuple | None = None
+        self.last_fast_live_signature: tuple | None = None
         self.live_tick_counter = 0
         self.current_detection: dict[str, object] | None = None
         self.last_full_ocr_key: tuple[str, str, bool] | None = None
@@ -803,18 +804,22 @@ class PokerTrackerApp:
             action_texts,
             self.cached_live_context,
         )
+        fast_signature = self._fast_live_signature(fast_snapshot)
 
         if (
             self.current_live_snapshot is not None
             and getattr(self.current_live_snapshot, "is_hero_turn", False)
             and fast_snapshot is not None
             and getattr(fast_snapshot, "is_hero_turn", False)
+            and fast_signature == self.last_fast_live_signature
         ):
             self.hero_turn_release_streak = 0
             self._render_live_decision(self.current_live_snapshot, full_ocr=True, preserve_details=True)
             self.status_var.set("Ton tour est toujours detecte. Snapshot detaille conserve.")
             self._schedule_refresh()
             return
+
+        self.last_fast_live_signature = fast_signature
 
         if self.current_live_snapshot is not None and getattr(self.current_live_snapshot, "is_hero_turn", False):
             if fast_snapshot is None or not getattr(fast_snapshot, "is_hero_turn", False):
@@ -857,6 +862,17 @@ class PokerTrackerApp:
         if getattr(snapshot, "is_hero_turn", False):
             return True
         return False
+
+    @staticmethod
+    def _fast_live_signature(snapshot: object) -> tuple | None:
+        """Stable cheap state key used before deciding to keep old details."""
+        if snapshot is None:
+            return None
+        return (
+            bool(getattr(snapshot, "is_hero_turn", False)),
+            tuple(getattr(snapshot, "available_actions", []) or []),
+            tuple(getattr(snapshot, "visual_buttons", []) or []),
+        )
 
     def _queue_full_ocr_request(self, history_file: object, window: object, image_path: str) -> None:
         if not image_path:
@@ -909,6 +925,7 @@ class PokerTrackerApp:
         self.cached_live_context = {
             "table_name": getattr(snapshot, "table_name", ""),
             "hero_name": hero_name,
+            "hero_cards": getattr(snapshot, "hero_cards", "") or "",
             "current_street": getattr(snapshot, "current_street", ""),
             "visible_board": getattr(snapshot, "visible_board", ""),
         }
@@ -925,110 +942,52 @@ class PokerTrackerApp:
 
         if snapshot is None:
             content = (
-                "Assistant live\n\n"
-                "Etat : aucune table Winamax detectee.\n"
-                "Decision : attente d'une table visible.\n"
-                f"Dernier scan : {self.last_live_scan_at or '-'}\n"
-                f"Compteur scans : {self.live_tick_counter}\n"
-                f"Derniere capture : {self.last_live_capture_path or '-'}"
+                "DEBUG LIVE\n\n"
+                "ROBOT\n"
+                "- Etat : recherche d'une table Winamax\n"
+                "- Action : aucun traitement en cours\n"
             )
         else:
             hero_name = self._safe_live_hero_name(getattr(snapshot, "hero_name", ""))
-            table_name = getattr(snapshot, "table_name", "") or getattr(snapshot, "window_title", "") or "-"
             street = getattr(snapshot, "current_street", "") or "-"
             hero_cards = getattr(snapshot, "hero_cards", "") or "-"
             board = getattr(snapshot, "visible_board", "") or "-"
             pot = getattr(snapshot, "pot_text", "") or "-"
             actions = ", ".join(getattr(snapshot, "available_actions", []) or []) or "-"
             visual = ", ".join(getattr(snapshot, "visual_buttons", []) or []) or "-"
-            confidence = float(getattr(snapshot, "hero_turn_confidence", 0.0) or 0.0)
-            recent = " | ".join((getattr(snapshot, "recent_actions", []) or [])[-4:]) or "-"
             detected_fields = getattr(snapshot, "detected_fields", {}) or {}
             players_in_hand = ", ".join(getattr(snapshot, "players_in_hand", []) or []) or "-"
             dealer = getattr(snapshot, "dealer_owner", "") or "-"
             stacks = self._format_live_stacks(detected_fields)
-            villain_profiles = getattr(snapshot, "villain_profile_summary", "") or "-"
-            villain_ranges = getattr(snapshot, "villain_range_summary", "") or "-"
-            bluff_summary = getattr(snapshot, "bluff_summary", "") or "-"
             hero_turn = bool(getattr(snapshot, "is_hero_turn", False))
 
             if hero_turn:
                 if full_ocr:
-                    banner = "TON TOUR"
-                    decision = "Snapshot detaille courant pret."
+                    robot_action = "Analyse complète terminée ; résultat conservé."
                 else:
-                    banner = "TON TOUR"
-                    decision = "Analyse detaillee du snapshot courant en cours..."
-                    street = "-"
-                    hero_cards = "-"
-                    board = "-"
-                    pot = "-"
-                    actions = ", ".join(getattr(snapshot, "available_actions", []) or []) or "-"
-                    players_in_hand = "-"
-                    dealer = "-"
-                    stacks = "-"
-                    villain_profiles = "-"
-                    villain_ranges = "-"
-                    bluff_summary = "-"
-            elif preserve_details and full_ocr:
-                banner = "EN ATTENTE"
-                decision = "Dernier snapshot detaille conserve en attendant le prochain spot."
+                    robot_action = "Tour hero détecté ; analyse complète en cours."
             else:
-                banner = "EN ATTENTE"
-                decision = "Ce n'est pas ton tour. Les infos detaillees sont masquees jusqu'a la prochaine decision."
-                street = "-"
-                hero_cards = "-"
-                board = "-"
-                pot = "-"
-                actions = "-"
-                visual = "-"
-                recent = "-"
-                players_in_hand = "-"
-                dealer = "-"
-                stacks = "-"
-                villain_profiles = "-"
-                villain_ranges = "-"
-                bluff_summary = "-"
-
-            mode = "OCR complet" if full_ocr else "Scan rapide"
+                robot_action = "Tour hero non détecté ; scan rapide poursuivi."
             if analysis_pending and not full_ocr:
-                mode = "Scan rapide + analyse detaillee en cours"
+                robot_action = "Tour hero détecté ; analyse complète mise en file."
+
             content = (
-                "Assistant live\n\n"
-                f"{banner}\n"
-                f"{'=' * len(banner)}\n\n"
-                f"Mode : {mode}\n"
-                f"Decision : {decision}\n"
-                f"Confiance : {confidence:.2f}\n\n"
-                "Activite\n"
-                f"- dernier scan : {self.last_live_scan_at or '-'}\n"
-                f"- compteur scans : {self.live_tick_counter}\n"
-                f"- derniere capture : {self.last_live_capture_path or '-'}\n\n"
-                "Table\n"
-                f"- nom : {table_name}\n"
-                f"- street : {street}\n"
-                f"- etat : {'main en cours' if not getattr(snapshot, 'is_complete', False) else 'main terminee'}\n\n"
-                "Hero\n"
-                f"- joueur : {hero_name}\n"
-                f"- cartes : {hero_cards}\n\n"
-                "Joueurs\n"
-                f"- stacks : {stacks}\n"
-                f"- encore en course : {players_in_hand}\n"
-                f"- dealer : {dealer}\n\n"
-                "Profils vilains\n"
-                f"- {villain_profiles}\n\n"
-                "Ranges supposees\n"
-                f"- {villain_ranges}\n\n"
-                "Suspicion de bluff\n"
-                f"- {bluff_summary}\n\n"
-                "Lecture actuelle\n"
-                f"- board : {board}\n"
-                f"- pot : {pot}\n"
-                f"- actions lues : {actions}\n"
-                f"- boutons visuels : {visual}\n"
-                f"- actions recentes : {recent}\n\n"
-                "Resume OCR\n"
-                f"- {getattr(snapshot, 'ocr_preview', '') or '-'}\n"
+                "DEBUG LIVE\n\n"
+                "ROBOT\n"
+                f"- Action : {robot_action}\n"
+                f"- Dernier scan : {self.last_live_scan_at or '-'}\n\n"
+                "DÉTECTION\n"
+                f"- Tour hero : {'oui' if hero_turn else 'non'}\n"
+                f"- Joueur hero : {hero_name}\n"
+                f"- Cartes hero : {hero_cards}\n"
+                f"- Board : {board}\n"
+                f"- Street : {street}\n"
+                f"- Pot : {pot}\n"
+                f"- Actions : {actions}\n"
+                f"- Boutons actifs : {visual}\n"
+                f"- Dealer : {dealer}\n"
+                f"- Stacks : {stacks}\n"
+                f"- Joueurs actifs : {players_in_hand}\n"
             )
 
         self.live_decision_text.configure(state="normal")

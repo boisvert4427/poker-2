@@ -78,11 +78,14 @@ SEAT_SEARCH_REGIONS = {
 }
 
 DEALER_SEARCH_REGIONS = {
-    "left": (0.08, 0.54, 0.18, 0.68),
-    "top_left": (0.26, 0.19, 0.36, 0.31),
-    "top_right": (0.60, 0.19, 0.70, 0.31),
-    "right": (0.70, 0.54, 0.80, 0.68),
-    "hero": (0.43, 0.64, 0.55, 0.75),
+    "left": (0.235, 0.425, 0.265, 0.475),
+    "top_left": (0.385, 0.228, 0.415, 0.278),
+    "top_right": (0.635, 0.263, 0.665, 0.313),
+    # Bouton D observé sur le siège droit : crop serré, avec une petite
+    # marge pour les variations de rendu.
+    "right": (0.635, 0.585, 0.67, 0.65),
+    # Crop prÃ©cis validÃ© autour du bouton D Ã  cÃ´tÃ© des cartes hero.
+    "hero": (0.377, 0.627, 0.406, 0.681),
 }
 
 
