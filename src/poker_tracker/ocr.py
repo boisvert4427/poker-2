@@ -397,6 +397,17 @@ def _zone_profile_names(profile: str) -> set[str] | None:
             "action_center",
             "action_right",
         }
+    if profile == "live_without_hero_cards":
+        return _zone_profile_names("live") - {"hero", "hero_status"}
+    if profile == "live_without_hero_and_board":
+        return _zone_profile_names("live") - {
+            "hero", "hero_status", "board", "board_card_1", "board_card_2",
+            "board_card_3", "board_card_4", "board_card_5",
+        }
+    if profile == "live_without_hero_board_and_names":
+        return _zone_profile_names("live_without_hero_and_board") - {
+            "top_left_name", "top_right_name", "left_name", "right_name", "hero_name",
+        }
     if profile == "minimal":
         return {
             "top_left_name", "top_left_stack",

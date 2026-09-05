@@ -80,12 +80,14 @@ def analyze_snapshot_image(
     return payload
 
 
-def extract_live_table_facts(ocr_snapshot: OcrSnapshot, hero_name: str = "") -> dict[str, str]:
+def extract_live_table_facts(
+    ocr_snapshot: OcrSnapshot, hero_name: str = "", hero_cards_hint: str = ""
+) -> dict[str, str]:
     if ocr_snapshot.status == "ok_minimal":
         return _extract_minimal_live_table_facts(ocr_snapshot, hero_name)
     extracted = extract_review_values(ocr_snapshot, {"live_snapshot": {"hero_name": hero_name}})
     values = {field: (payload.get("value", "") or "") for field, payload in extracted.items()}
-    values["hero_cards"] = _extract_hero_cards_from_image(ocr_snapshot.image_path)
+    values["hero_cards"] = hero_cards_hint or _extract_hero_cards_from_image(ocr_snapshot.image_path)
     return values
 
 
@@ -582,10 +584,17 @@ def _extract_board_cards_fast(image_path: str, board_text: str) -> list[str]:
         # autre zone. Ne jamais attribuer ce chiffre Ã  un emplacement vide.
         if not _looks_like_card_crop(crop) and _card_white_ratio(crop) < 0.18:
             break
-        rank_crop = crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
+        value_ratios = calibration.get(f"{zone_name}_value")
+        rank_crop = (
+            image.crop(_scaled_rect(image.width, image.height, *value_ratios))
+            if value_ratios
+            else crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
+        )
         # Template matching is local and does not start a Tesseract process.
         # Use the global OCR rank as fallback when the crop is marginal.
         local_rank = _match_board_rank_reference(rank_crop) or rank
+        if rank == "3" and _value_crop_has_two_holes(rank_crop):
+            local_rank = "8"
         suit = _extract_card_suit(crop)
         cards.append(f"{local_rank}{suit}" if suit else local_rank)
     return cards
@@ -620,8 +629,20 @@ def _extract_board_cards_from_image(image_path: str) -> list[str]:
         if not _looks_like_card_crop(crop) and white_ratio < 0.18:
             break
         suit = _extract_card_suit(crop)
-        rank_crop = crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
-        rank = _match_board_rank_reference(rank_crop) or _extract_card_rank(crop, engine_path, suit)
+        value_ratios = calibration.get(f"{zone_name}_value")
+        rank_crop = (
+            image.crop(_scaled_rect(image.width, image.height, *value_ratios))
+            if value_ratios
+            else crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
+        )
+        template_rank = _match_board_rank_reference(rank_crop)
+        full_rank = _extract_card_rank(crop, engine_path, suit)
+        value_rank = "" if full_rank else _extract_rank_from_value_crop(rank_crop, engine_path)
+        # La lecture de la carte complète est plus fiable pour A/J/6. Le crop
+        # serré sert à corriger la confusion fréquente entre 8 et 3.
+        rank = template_rank or full_rank or value_rank
+        if full_rank == "3" and _value_crop_has_two_holes(rank_crop):
+            rank = "8"
         if not _looks_like_card_crop(crop) and not (rank and suit):
             break
         if rank and suit:
@@ -659,6 +680,17 @@ def _match_board_rank_reference(rank_crop: Image.Image) -> str:
             if score > best_score:
                 best_rank, best_score = folder.name.lower(), score
     return best_rank if best_score >= 0.52 else ""
+
+
+def _value_crop_has_two_holes(value_crop: Image.Image) -> bool:
+    """Distinguish Winamax's 8 from 3 by counting enclosed glyph loops."""
+    gray = cv2.cvtColor(np.asarray(value_crop.convert("RGB")), cv2.COLOR_RGB2GRAY)
+    mask = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)[1]
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    if hierarchy is None or not contours:
+        return False
+    holes = sum(1 for node in hierarchy[0] if node[3] >= 0)
+    return holes >= 2
 
 
 def _extract_hero_cards_from_image(image_path: str) -> str:
@@ -1528,6 +1560,8 @@ def _looks_like_top_right_name(current_right: str, current_top_right: str) -> bo
 
 def _extract_stack(text: str) -> str:
     cleaned = _clean_ocr_text(text)
+    if re.search(r"\bALL\s*[- ]?\s*IN\b", cleaned, re.IGNORECASE):
+        return "0 BB"
     split_leading_one = re.search(r"\b1\s+(\d{2}(?:[.,]\d+)?)\s*(?:BB|B8|68|BES|BE|BBS)\b", cleaned, re.IGNORECASE)
     if split_leading_one:
         return _format_stack_match(f"1{split_leading_one.group(1)} BB")

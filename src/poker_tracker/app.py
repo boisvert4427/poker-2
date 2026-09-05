@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import random
 import tkinter as tk
 from datetime import datetime
@@ -20,7 +21,7 @@ from .detection import (
     select_preferred_table_window,
     summarize_detection,
 )
-from .history import read_history_text
+from .history import latest_hand_block_key, read_history_text
 from .live_state import build_fast_live_snapshot, build_live_snapshot, format_live_commentary, format_live_snapshot
 from .ocr import OcrSnapshot, capture_window, run_action_ocr_on_image, run_local_ocr, run_local_ocr_on_image, run_local_ocr_on_image_with_profile, run_local_ocr_with_profile
 from .parser import ParsedHand, parse_winamax_hand
@@ -151,7 +152,8 @@ class PokerTrackerApp:
         self.root.geometry("1680x980")
 
         self.status_var = tk.StringVar(value="Pret pour le premier scan.")
-        self.auto_refresh_var = tk.BooleanVar(value=True)
+        self.auto_refresh_var = tk.BooleanVar(value=False)
+        self.live_debug_var = tk.BooleanVar(value=False)
         self.refresh_ms = 5000
         self.fast_refresh_ms = 200
         self.background_refresh_every = 20
@@ -200,6 +202,8 @@ class PokerTrackerApp:
         self.last_live_scan_at = ""
         self.last_live_capture_path = ""
         self.cached_live_context: dict[str, object] = {}
+        self.cached_history_block_key = ""
+        self.cached_board_signature = ""
         self.full_ocr_thread: threading.Thread | None = None
         self.full_ocr_in_progress = False
         self.pending_full_ocr_result: tuple[int, object, object, OcrSnapshot | None] | None = None
@@ -212,7 +216,6 @@ class PokerTrackerApp:
         self.hero_turn_release_streak = 0
 
         self._build_layout()
-        self.refresh()
 
     def _build_layout(self) -> None:
         self.root.columnconfigure(0, weight=1)
@@ -252,11 +255,17 @@ class PokerTrackerApp:
         snapshot_button = ttk.Button(header, text="Capturer snapshot", command=self._record_snapshot)
         snapshot_button.grid(row=0, column=4, rowspan=2, padx=(12, 0))
 
+        ttk.Button(header, text="Snapshot live", command=self._capture_live_snapshot_once).grid(
+            row=0, column=5, rowspan=2, padx=(12, 0)
+        )
+        self.live_debug_button = ttk.Button(header, text="Lancer live debug", command=self._toggle_live_debug)
+        self.live_debug_button.grid(row=0, column=6, rowspan=2, padx=(12, 0))
+
         start_record_button = ttk.Button(header, text="Start recording", command=self._start_auto_recording)
-        start_record_button.grid(row=0, column=5, rowspan=2, padx=(12, 0))
+        start_record_button.grid(row=0, column=7, rowspan=2, padx=(12, 0))
 
         stop_record_button = ttk.Button(header, text="Stop recording", command=self._stop_auto_recording)
-        stop_record_button.grid(row=0, column=6, rowspan=2, padx=(12, 0))
+        stop_record_button.grid(row=0, column=8, rowspan=2, padx=(12, 0))
 
         notebook = ttk.Notebook(self.root)
         notebook.grid(row=1, column=0, sticky="nsew", padx=16, pady=(0, 12))
@@ -662,11 +671,23 @@ class PokerTrackerApp:
         return snapshot
 
     def _fill_live_state(self, history_file: object, window: object, ocr_snapshot: OcrSnapshot | None) -> None:
+        block_key = latest_hand_block_key(history_file)
+        board_signature = self._board_signature(ocr_snapshot.image_path if ocr_snapshot else "")
+        same_hand = bool(self.cached_history_block_key and block_key == self.cached_history_block_key)
+        reuse_hero = same_hand
+        reuse_board = same_hand and board_signature and board_signature == self.cached_board_signature
+        cached_names = {
+            field: str(self.cached_live_context.get(field, "") or "")
+            for field in ("top_left_name", "top_right_name", "left_name", "right_name", "hero_name")
+        }
         snapshot = build_live_snapshot(
             history_file,
             window,
             ocr_snapshot,
             hero_name_hint=str(self.cached_live_context.get("hero_name", "") or "RougeLion"),
+            hero_cards_hint=(str(self.cached_live_context.get("hero_cards", "") or "") if reuse_hero else ""),
+            visible_board_hint=(str(self.cached_live_context.get("visible_board", "") or "") if reuse_board else ""),
+            cached_names=cached_names if same_hand else None,
         )
         self.current_live_snapshot = snapshot
         self._update_cached_live_context(snapshot)
@@ -749,6 +770,35 @@ class PokerTrackerApp:
             self.root.after_cancel(self._after_id)
             self._after_id = None
 
+    def _toggle_live_debug(self) -> None:
+        self.live_debug_var.set(not self.live_debug_var.get())
+        if self.live_debug_var.get():
+            self.auto_refresh_var.set(True)
+            self.live_debug_button.configure(text="Arreter live debug")
+            self.status_var.set("Live debug actif : capture rapide et details OCR affiches.")
+            self._schedule_refresh()
+        else:
+            self.auto_refresh_var.set(False)
+            self.live_debug_button.configure(text="Lancer live debug")
+            self.status_var.set("Live debug arrete.")
+
+    def _capture_live_snapshot_once(self) -> None:
+        detection = summarize_detection()
+        self._apply_detection(detection)
+        window = detection.get("active_table_window")
+        if window is None:
+            self.status_var.set("Snapshot live impossible : aucune table Winamax detectee.")
+            return
+        image_path = capture_window(window)
+        if not image_path:
+            self.status_var.set("Snapshot live impossible : capture de fenetre echouee.")
+            return
+        self.last_live_capture_path = image_path
+        self.last_live_scan_at = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        ocr_snapshot = run_local_ocr_on_image_with_profile(image_path, profile="live")
+        self._set_ocr_text(self._format_ocr(window, ocr_snapshot))
+        self._fill_live_state(detection.get("latest_history_file"), window, ocr_snapshot)
+        self.status_var.set(f"Snapshot live termine : {image_path}")
     def _schedule_refresh(self) -> None:
         if self._after_id is not None:
             self.root.after_cancel(self._after_id)
@@ -892,7 +942,16 @@ class PokerTrackerApp:
 
         def worker() -> None:
             try:
-                snapshot = run_local_ocr_on_image_with_profile(image_path, profile="live") if image_path else None
+                block_key = latest_hand_block_key(history_file)
+                board_signature = self._board_signature(image_path)
+                same_hand = bool(self.cached_history_block_key and block_key == self.cached_history_block_key)
+                reuse_hero = same_hand and bool(self.cached_live_context.get("hero_cards"))
+                reuse_board = same_hand and bool(self.cached_board_signature) and board_signature == self.cached_board_signature
+                have_names = same_hand and any(self.cached_live_context.get(field) for field in ("top_left_name", "top_right_name", "left_name", "right_name"))
+                profile = ("live_without_hero_board_and_names" if reuse_hero and reuse_board and have_names else
+                           "live_without_hero_and_board" if reuse_hero and reuse_board else
+                           "live_without_hero_cards" if reuse_hero else "live")
+                snapshot = run_local_ocr_on_image_with_profile(image_path, profile=profile) if image_path else None
                 self.pending_full_ocr_result = (request_id, history_file, window, snapshot)
             finally:
                 self.full_ocr_in_progress = False
@@ -911,6 +970,8 @@ class PokerTrackerApp:
         if ocr_snapshot is not None:
             self.last_live_capture_path = ocr_snapshot.image_path or self.last_live_capture_path
             self._fill_live_state(history_file, window, ocr_snapshot)
+            self.cached_history_block_key = latest_hand_block_key(history_file)
+            self.cached_board_signature = self._board_signature(ocr_snapshot.image_path)
             self.last_full_ocr_at = time.monotonic()
             self.full_ocr_display_until = self.last_full_ocr_at + 1.2
             self.latest_applied_full_ocr_id = request_id
@@ -928,7 +989,27 @@ class PokerTrackerApp:
             "hero_cards": getattr(snapshot, "hero_cards", "") or "",
             "current_street": getattr(snapshot, "current_street", ""),
             "visible_board": getattr(snapshot, "visible_board", ""),
+            "top_left_name": (getattr(snapshot, "detected_fields", {}) or {}).get("top_left_name", ""),
+            "top_right_name": (getattr(snapshot, "detected_fields", {}) or {}).get("top_right_name", ""),
+            "left_name": (getattr(snapshot, "detected_fields", {}) or {}).get("left_name", ""),
+            "right_name": (getattr(snapshot, "detected_fields", {}) or {}).get("right_name", ""),
         }
+
+    @staticmethod
+    def _board_signature(image_path: str) -> str:
+        if not image_path:
+            return ""
+        try:
+            image = Image.open(image_path).convert("L")
+            zone = load_calibration().get("zones", {}).get("board")
+            if zone:
+                width, height = image.size
+                rect = tuple(int(value * (width if index % 2 == 0 else height)) for index, value in enumerate(zone))
+                image = image.crop(rect)
+            image.thumbnail((96, 32))
+            return hashlib.sha1(image.tobytes()).hexdigest()
+        except (OSError, ValueError):
+            return ""
 
     def _render_live_decision(
         self,

@@ -80,12 +80,22 @@ def build_live_snapshot(
     window: WinamaxWindow | None,
     ocr_snapshot: OcrSnapshot | None,
     hero_name_hint: str = "",
+    hero_cards_hint: str = "",
+    visible_board_hint: str = "",
+    cached_names: dict[str, str] | None = None,
 ) -> LiveHandSnapshot | None:
     if window is None and ocr_snapshot is None:
         return None
 
     zone_text = _zone_text_map(ocr_snapshot)
-    detected_values = _extract_live_fields(ocr_snapshot, hero_name_hint)
+    detected_values = _extract_live_fields(ocr_snapshot, hero_name_hint, hero_cards_hint)
+    for field, value in (cached_names or {}).items():
+        if value:
+            detected_values[field] = value
+    if visible_board_hint:
+        board_cards = visible_board_hint.split()
+        for index in range(1, 6):
+            detected_values[f"board_card_{index}"] = board_cards[index - 1] if index <= len(board_cards) else ""
     visual_states = analyze_action_buttons(ocr_snapshot.image_path) if ocr_snapshot and ocr_snapshot.image_path else []
     button_texts = [
         zone_text.get("action_left", ""),
@@ -457,11 +467,11 @@ def _extract_current_hero_cards(text: str) -> str:
     return " ".join(seen)
 
 
-def _extract_live_fields(ocr_snapshot: OcrSnapshot | None, hero_name: str) -> dict[str, str]:
+def _extract_live_fields(ocr_snapshot: OcrSnapshot | None, hero_name: str, hero_cards_hint: str = "") -> dict[str, str]:
     if ocr_snapshot is None:
         return {}
     try:
-        extracted = extract_live_table_facts(ocr_snapshot, hero_name)
+        extracted = extract_live_table_facts(ocr_snapshot, hero_name, hero_cards_hint)
     except Exception:
         return {}
     return extracted

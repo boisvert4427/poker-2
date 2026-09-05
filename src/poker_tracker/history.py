@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -56,6 +57,21 @@ def find_history_file_for_table(history_locations: Iterable[str], table_title: s
 
 def read_history_text(path: str) -> str:
     return Path(path).read_text(encoding="utf-8", errors="replace")
+
+
+def latest_hand_block_key(history_file: object | None) -> str:
+    """Return a stable key for the last hand block in a Winamax history file."""
+    path = getattr(history_file, "path", history_file)
+    if not path:
+        return ""
+    try:
+        text = Path(str(path)).read_text(encoding="utf-8", errors="replace")
+    except (OSError, UnicodeError):
+        return ""
+    blocks = [block.strip() for block in re.split(r"\r?\n\s*\r?\n", text) if block.strip()]
+    if not blocks:
+        return ""
+    return hashlib.sha1(blocks[-1].encode("utf-8", errors="replace")).hexdigest()
 
 
 def extract_table_token(window_title: str) -> str:
