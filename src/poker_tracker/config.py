@@ -36,6 +36,11 @@ DEFAULT_CALIBRATION = {
         "hero_name": [0.41, 0.75, 0.57, 0.79],
         "hero_stack": [0.41, 0.79, 0.57, 0.84],
         "hero_status": [0.42, 0.84, 0.56, 0.89],
+        "top_left_bet": [0.338, 0.327, 0.375, 0.357],
+        "top_right_bet": [0.538, 0.327, 0.583, 0.357],
+        "left_bet": [0.265, 0.565, 0.302, 0.595],
+        "right_bet": [0.615, 0.565, 0.652, 0.595],
+        "hero_bet": [0.440, 0.635, 0.475, 0.665],
         "dealer_button": [0.62, 0.57, 0.68, 0.65],
         # Zones candidates du bouton dealer. Elles sont testées dans l'ordre
         # des sièges et la recherche s'arrête dès qu'un bouton est trouvé.

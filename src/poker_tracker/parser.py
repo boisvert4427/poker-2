@@ -14,6 +14,7 @@ DEALT_RE = re.compile(r"Dealt to (?P<hero>.+?) \[(?P<cards>.+)\]")
 BOARD_RE = re.compile(r"\[(?P<cards>[^\]]+)\]")
 SUMMARY_BOARD_RE = re.compile(r"^Board:\s+\[(?P<cards>[^\]]+)\]")
 TOTAL_POT_RE = re.compile(r"^Total pot\s+(?P<pot>[\d.]+)")
+HAND_START_RE = re.compile(r"^Winamax Poker - .+? - HandId: #", re.MULTILINE)
 
 
 @dataclass(slots=True)
@@ -39,7 +40,27 @@ class ParsedHand:
     total_pot: float = 0.0
 
 
+def split_winamax_hands(raw_text: str) -> list[str]:
+    """Split a Winamax history file using hand headers, not blank lines."""
+    starts = [match.start() for match in HAND_START_RE.finditer(raw_text)]
+    if not starts:
+        stripped = raw_text.strip()
+        return [stripped] if stripped else []
+    chunks: list[str] = []
+    for index, start in enumerate(starts):
+        end = starts[index + 1] if index + 1 < len(starts) else len(raw_text)
+        chunk = raw_text[start:end].strip()
+        if chunk:
+            chunks.append(chunk)
+    return chunks
+
+
 def parse_winamax_hand(raw_text: str) -> ParsedHand:
+    # Some callers provide a complete daily history file. In that case the
+    # live view must parse only the newest hand instead of merging every hand.
+    chunks = split_winamax_hands(raw_text)
+    if chunks:
+        raw_text = chunks[-1]
     lines = [line.rstrip() for line in raw_text.splitlines() if line.strip()]
     hand = ParsedHand(streets={}, board_by_street={})
     current_street = "meta"
@@ -81,13 +102,19 @@ def parse_winamax_hand(raw_text: str) -> ParsedHand:
             hand.hero_cards = dealt_match.group("cards")
             continue
 
-        if line.startswith("*** ") and line.endswith(" ***"):
-            current_street = line.strip("* ").replace("-", "_").replace("/", "_").lower()
+        if line.startswith("*** "):
+            marker_end = line.find("***", 4)
+            if marker_end < 0:
+                continue
+            street_label = line[4:marker_end].strip()
+            current_street = street_label.replace("-", "_").replace("/", "_").lower()
             hand.current_street = current_street
             hand.streets.setdefault(current_street, [])
-            board_match = BOARD_RE.search(line)
-            if board_match and current_street in {"flop", "turn", "river"}:
-                hand.board_by_street[current_street] = board_match.group("cards")
+            board_parts = BOARD_RE.findall(line[marker_end + 3 :])
+            if board_parts and current_street in {"flop", "turn", "river"}:
+                hand.board_by_street[current_street] = " ".join(
+                    " ".join(board_parts).split()
+                )
             continue
 
         if current_street == "summary":

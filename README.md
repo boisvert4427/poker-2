@@ -169,6 +169,19 @@ python scripts\annotate_session_with_openai.py --apply-calibration
 - `config/calibration.json` : zones de calibration sauvegardees
 - `docs/cadrage-projet.md` : cadrage produit initial
 
+## Tests automatiques OCR
+
+Les captures vérifiées et leurs résultats attendus sont enregistrés dans
+`data/ocr_regression/live_expected.json`. Pour contrôler la précision et le
+temps maximal de quatre secondes par capture :
+
+```powershell
+python scripts\run_ocr_regression.py
+```
+
+La commande termine avec un code d'erreur si une valeur régresse, si une image
+manque ou si le traitement d'une capture dépasse la limite.
+
 ## Workflow Git
 
 Le workflow de travail conseille est documente ici :

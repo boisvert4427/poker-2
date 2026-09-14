@@ -1,21 +1,23 @@
 from __future__ import annotations
 
 import sqlite3
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from .detection import guess_history_locations
 from .history import read_history_text
-from .parser import ParsedHand, parse_winamax_hand
+from .parser import ParsedHand, parse_winamax_hand, split_winamax_hands
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DB_PATH = PROJECT_ROOT / "data" / "villains.sqlite3"
-ACTION_LINE_RE = __import__("re").compile(
+_SYNCED_HISTORY_SIZES: dict[str, int] = {}
+ACTION_LINE_RE = re.compile(
     r"^(?P<player>.+?)\s+"
     r"(?P<action>posts small blind|posts big blind|checks|calls|raises|bets|folds|shows|collected)\b"
     r"(?P<rest>.*)$",
-    __import__("re").IGNORECASE,
+    re.IGNORECASE,
 )
 
 
@@ -58,6 +60,45 @@ def import_all_histories(connection: sqlite3.Connection, history_dirs: list[str]
                 stats.actions_inserted += action_count
                 stats.players_upserted += player_count
     connection.commit()
+    return stats
+
+
+def sync_completed_history_file(
+    path: str | Path,
+    *,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> ImportStats:
+    """Incrementally add completed hands from one live Winamax history file."""
+    history_path = Path(path)
+    stats = ImportStats(files_seen=1)
+    try:
+        size = history_path.stat().st_size
+    except OSError:
+        return stats
+    cache_key = str(history_path.resolve())
+    if _SYNCED_HISTORY_SIZES.get(cache_key) == size:
+        return stats
+    try:
+        raw = history_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return stats
+
+    connection = open_db(db_path)
+    try:
+        for chunk in split_winamax_hands(raw):
+            hand = parse_winamax_hand(chunk)
+            if not hand.hand_id or not hand.is_complete:
+                continue
+            stats.hands_seen += 1
+            inserted, action_count, player_count = import_parsed_hand(connection, hand, str(history_path))
+            if inserted:
+                stats.hands_inserted += 1
+                stats.actions_inserted += action_count
+                stats.players_upserted += player_count
+        connection.commit()
+    finally:
+        connection.close()
+    _SYNCED_HISTORY_SIZES[cache_key] = size
     return stats
 
 
@@ -217,6 +258,9 @@ def compute_player_profiles(connection: sqlite3.Connection) -> list[dict[str, ob
 
 
 def get_player_profile(connection: sqlite3.Connection, player_name: str) -> dict[str, object] | None:
+    canonical_name = _resolve_player_name(connection, player_name)
+    if not canonical_name:
+        return None
     row = connection.execute(
         """
         WITH action_base AS (
@@ -252,7 +296,7 @@ def get_player_profile(connection: sqlite3.Connection, player_name: str) -> dict
             COALESCE((SELECT cnt FROM vpip_hands), 0) AS vpip_hands,
             COALESCE((SELECT cnt FROM pfr_hands), 0) AS pfr_hands
         """,
-        (player_name, player_name, player_name),
+        (canonical_name, canonical_name, canonical_name),
     ).fetchone()
 
     if row is None:
@@ -266,13 +310,66 @@ def get_player_profile(connection: sqlite3.Connection, player_name: str) -> dict
     pfr_hands = int(row["pfr_hands"] or 0)
     vpip = round(vpip_hands / hands_played, 3) if hands_played else 0.0
     pfr = round(pfr_hands / hands_played, 3) if hands_played else 0.0
+    response_row = connection.execute(
+        """
+        SELECT
+            COUNT(*) AS faced_bets,
+            SUM(CASE WHEN LOWER(current_action.action_type) = 'folds' THEN 1 ELSE 0 END) AS folds,
+            SUM(CASE WHEN LOWER(current_action.action_type) = 'calls' THEN 1 ELSE 0 END) AS calls
+        FROM actions AS current_action
+        WHERE current_action.player_name = ?
+          AND current_action.street IN ('flop', 'turn', 'river')
+          AND LOWER(current_action.action_type) IN ('folds', 'calls')
+          AND EXISTS (
+              SELECT 1
+              FROM actions AS prior_action
+              WHERE prior_action.hand_id = current_action.hand_id
+                AND prior_action.street = current_action.street
+                AND prior_action.sequence_no < current_action.sequence_no
+                AND prior_action.player_name != current_action.player_name
+                AND LOWER(prior_action.action_type) IN ('bets', 'raises')
+          )
+        """,
+        (canonical_name,),
+    ).fetchone()
+    faced_bets = int(response_row["faced_bets"] or 0) if response_row else 0
+    folds_vs_bet = int(response_row["folds"] or 0) if response_row else 0
+    calls_vs_bet = int(response_row["calls"] or 0) if response_row else 0
     return {
         "name": row["name"],
         "hands_played": hands_played,
         "vpip": vpip,
         "pfr": pfr,
         "profile": _classify_profile(vpip, pfr, hands_played),
+        "postflop_faced_bets": faced_bets,
+        "folds_vs_bet": folds_vs_bet,
+        "calls_vs_bet": calls_vs_bet,
+        "fold_to_bet": round(folds_vs_bet / faced_bets, 3) if faced_bets else None,
+        "call_vs_bet": round(calls_vs_bet / faced_bets, 3) if faced_bets else None,
     }
+
+
+def _resolve_player_name(connection: sqlite3.Connection, player_name: str) -> str:
+    """Match OCR names despite punctuation/spacing differences."""
+    cleaned = (player_name or "").strip()
+    if not cleaned:
+        return ""
+    exact = connection.execute("SELECT name FROM players WHERE name = ?", (cleaned,)).fetchone()
+    if exact:
+        return str(exact["name"])
+    key = _player_name_key(cleaned)
+    if not key:
+        return ""
+    matches = [
+        str(row["name"])
+        for row in connection.execute("SELECT name FROM players").fetchall()
+        if _player_name_key(str(row["name"])) == key
+    ]
+    return matches[0] if len(matches) == 1 else ""
+
+
+def _player_name_key(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (name or "").casefold())
 
 
 def _init_schema(connection: sqlite3.Connection) -> None:
@@ -346,7 +443,7 @@ def _iter_history_files(history_dirs: list[str] | None) -> list[Path]:
 
 
 def _split_history_chunks(raw: str) -> list[str]:
-    return [chunk.strip() for chunk in raw.split("\n\n\n") if chunk.strip()]
+    return split_winamax_hands(raw)
 
 
 def _parse_action_line(action_text: str) -> tuple[str, str, float | None]:

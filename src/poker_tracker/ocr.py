@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -48,15 +49,24 @@ class OcrSnapshot:
     zones: dict[str, OcrZoneResult] = field(default_factory=dict)
 
 
-def capture_window(window: WinamaxWindow) -> str | None:
+def capture_window(window: WinamaxWindow, *, destination: str | Path | None = None) -> str | None:
     left, top, right, bottom = window.rect
     if right <= left or bottom <= top:
         return None
 
-    temp_dir = Path(tempfile.gettempdir()) / "winamax_poker_tracker"
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    image_path = temp_dir / f"table_{window.pid}_{window.hwnd}.png"
-    temp_image_path = image_path.with_suffix(".tmp.png")
+    if destination is None:
+        temp_dir = Path(tempfile.gettempdir()) / "winamax_poker_tracker"
+        temp_dir.mkdir(parents=True, exist_ok=True)
+        image_path = temp_dir / f"table_{window.pid}_{window.hwnd}.png"
+    else:
+        image_path = Path(destination)
+        image_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Several live workers can capture the same table concurrently. A unique
+    # temporary file prevents one worker from replacing another worker's PNG.
+    temp_image_path = image_path.with_name(
+        f".{image_path.stem}.{uuid.uuid4().hex}.tmp{image_path.suffix or '.png'}"
+    )
 
     image = ImageGrab.grab(bbox=(left, top, right, bottom), all_screens=True)
     image.save(temp_image_path)
@@ -313,12 +323,18 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
     temp_dir.mkdir(parents=True, exist_ok=True)
     zones: dict[str, OcrZoneResult] = {}
     allowed = _zone_profile_names(profile)
+    image_only_zones = {"top_left_cards", "top_right_cards", "left_cards", "right_cards"}
 
     jobs: list[tuple[str, tuple[int, int, int, int], str, Path]] = []
     for name, rect, psm in _zone_definitions(width, height):
         if allowed is not None and name not in allowed:
             continue
         cropped = image.crop(rect)
+        skip_empty_bet = (
+            profile.startswith("live")
+            and name in {"top_left_bet", "top_right_bet", "left_bet", "right_bet", "hero_bet"}
+            and not _bet_marker_visible(cropped)
+        )
         if name in {"actions", "action_left", "action_center", "action_right"}:
             cropped = _preprocess_actions_zone(cropped)
         elif name in {
@@ -330,12 +346,17 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
             "hero_status",
             "top_left_name",
             "top_left_stack",
+            "top_left_bet",
             "top_right_name",
             "top_right_stack",
+            "top_right_bet",
             "left_name",
             "left_stack",
+            "left_bet",
             "right_name",
             "right_stack",
+            "right_bet",
+            "hero_bet",
             "dealer_button",
         }:
             cropped = _preprocess_text_zone(cropped)
@@ -343,6 +364,12 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
             cropped = _preprocess_card_zone(cropped)
         zone_path = temp_dir / f"{Path(image_path).stem}_{name}.png"
         cropped.save(zone_path)
+        # Card-back presence is determined from pixels by
+        # ``_detect_cards_visible``. OCR text from these four crops is never
+        # consumed, so launching Tesseract here was strictly redundant.
+        if profile.startswith("live") and (name in image_only_zones or skip_empty_bet):
+            zones[name] = OcrZoneResult(name=name, image_path=str(zone_path), text="", rect=rect)
+            continue
         jobs.append((name, rect, psm, zone_path))
 
     def read_zone(job: tuple[str, tuple[int, int, int, int], str, Path]) -> tuple[str, tuple[int, int, int, int], Path, str]:
@@ -354,13 +381,30 @@ def _run_zoned_ocr(engine_path: str, image_path: str, profile: str = "full") -> 
     # Each zone is independent.  Running the Tesseract processes concurrently
     # removes the sequential process-startup cost while keeping the same OCR
     # settings and the same fallback behavior.
-    worker_count = min(8, max(1, len(jobs)))
+    # Live contains many tiny independent crops. Tesseract is constrained to
+    # one OpenMP thread per process, so a larger pool reduces startup waves
+    # without multiplying the internal OCR thread count.
+    worker_limit = 16 if profile.startswith("live") else 8
+    worker_count = min(worker_limit, max(1, len(jobs)))
     with ThreadPoolExecutor(max_workers=worker_count) as executor:
         results = list(executor.map(read_zone, jobs))
     for name, rect, zone_path, text in results:
         zones[name] = OcrZoneResult(name=name, image_path=str(zone_path), text=text, rect=rect)
 
     return zones
+
+
+def _bet_marker_visible(crop: Image.Image) -> bool:
+    """Use the same orange-chip gate as live bet extraction."""
+    pixels = list(crop.convert("RGB").getdata())
+    if not pixels:
+        return False
+    orange = sum(
+        1
+        for red, green, blue in pixels
+        if red > 130 and 45 < green < 190 and blue < 120 and red > green * 1.25
+    )
+    return orange / len(pixels) >= 0.025
 
 
 def _zone_profile_names(profile: str) -> set[str] | None:
@@ -371,15 +415,19 @@ def _zone_profile_names(profile: str) -> set[str] | None:
             "top_left_cards",
             "top_left_name",
             "top_left_stack",
+            "top_left_bet",
             "top_right_cards",
             "top_right_name",
             "top_right_stack",
+            "top_right_bet",
             "left_cards",
             "left_name",
             "left_stack",
+            "left_bet",
             "right_cards",
             "right_name",
             "right_stack",
+            "right_bet",
             "pot",
             "pot_value",
             "board",
@@ -391,8 +439,10 @@ def _zone_profile_names(profile: str) -> set[str] | None:
             "hero",
             "hero_name",
             "hero_stack",
+            "hero_bet",
             "hero_status",
             "dealer_button",
+            "actions",
             "action_left",
             "action_center",
             "action_right",
@@ -428,26 +478,31 @@ def _zone_definitions(width: int, height: int) -> list[tuple[str, tuple[int, int
         ("top_left_cards", _scaled_rect(width, height, *zones["top_left_cards"]), "6"),
         ("top_left_name", _scaled_rect(width, height, *zones["top_left_name"]), "7"),
         ("top_left_stack", _scaled_rect(width, height, *zones["top_left_stack"]), "7"),
+        ("top_left_bet", _scaled_rect(width, height, *zones["top_left_bet"]), "7"),
         ("top_right_cards", _scaled_rect(width, height, *zones["top_right_cards"]), "6"),
         ("top_right_name", _scaled_rect(width, height, *zones["top_right_name"]), "7"),
         ("top_right_stack", _scaled_rect(width, height, *zones["top_right_stack"]), "7"),
+        ("top_right_bet", _scaled_rect(width, height, *zones["top_right_bet"]), "7"),
         ("left_cards", _scaled_rect(width, height, *zones["left_cards"]), "6"),
         ("left_name", _scaled_rect(width, height, *zones["left_name"]), "7"),
         ("left_stack", _scaled_rect(width, height, *zones["left_stack"]), "7"),
+        ("left_bet", _scaled_rect(width, height, *zones["left_bet"]), "7"),
         ("right_cards", _scaled_rect(width, height, *zones["right_cards"]), "6"),
         ("right_name", _scaled_rect(width, height, *zones["right_name"]), "7"),
         ("right_stack", _scaled_rect(width, height, *zones["right_stack"]), "7"),
+        ("right_bet", _scaled_rect(width, height, *zones["right_bet"]), "7"),
         ("pot", _scaled_rect(width, height, *zones["pot"]), "6"),
         ("pot_value", _scaled_rect(width, height, *zones["pot_value"]), "7"),
         ("board", _scaled_rect(width, height, *zones["board"]), "6"),
-        ("board_card_1", _scaled_rect(width, height, *zones["board_card_1"]), "10"),
-        ("board_card_2", _scaled_rect(width, height, *zones["board_card_2"]), "10"),
-        ("board_card_3", _scaled_rect(width, height, *zones["board_card_3"]), "10"),
-        ("board_card_4", _scaled_rect(width, height, *zones["board_card_4"]), "10"),
-        ("board_card_5", _scaled_rect(width, height, *zones["board_card_5"]), "10"),
+        ("board_card_1", _scaled_rect(width, height, *zones.get("board_card_1_value", zones["board_card_1"])), "10"),
+        ("board_card_2", _scaled_rect(width, height, *zones.get("board_card_2_value", zones["board_card_2"])), "10"),
+        ("board_card_3", _scaled_rect(width, height, *zones.get("board_card_3_value", zones["board_card_3"])), "10"),
+        ("board_card_4", _scaled_rect(width, height, *zones.get("board_card_4_value", zones["board_card_4"])), "10"),
+        ("board_card_5", _scaled_rect(width, height, *zones.get("board_card_5_value", zones["board_card_5"])), "10"),
         ("hero", _scaled_rect(width, height, *zones["hero"]), "6"),
         ("hero_name", _scaled_rect(width, height, *zones["hero_name"]), "7"),
         ("hero_stack", _scaled_rect(width, height, *zones["hero_stack"]), "7"),
+        ("hero_bet", _scaled_rect(width, height, *zones["hero_bet"]), "7"),
         ("hero_status", _scaled_rect(width, height, *zones["hero_status"]), "7"),
         ("dealer_button", _scaled_rect(width, height, *zones["dealer_button"]), "10"),
         ("actions", _scaled_rect(width, height, *zones["actions"]), "6"),

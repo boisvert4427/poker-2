@@ -6,16 +6,25 @@ from dataclasses import dataclass
 
 from .decision_support import (
     BluffAssessment,
+    DecisionRecommendation,
     VillainRangeProfile,
     assess_bluff_risk,
     build_villain_profiles,
     format_bluff_assessments,
     format_villain_profiles,
     format_villain_ranges,
+    recommend_action,
 )
 from .detection import WinamaxWindow
-from .local_snapshot_analysis import extract_live_table_facts
+from .history import read_history_text
+from .local_snapshot_analysis import (
+    detect_visible_opponent_seats,
+    extract_live_table_facts,
+    hero_cards_visible_on_table,
+)
 from .ocr import OcrSnapshot, run_action_ocr_on_image, run_local_ocr_on_image
+from .parser import ParsedHand, parse_winamax_hand
+from .villain_db import sync_completed_history_file
 from .visual import analyze_action_buttons
 
 
@@ -73,6 +82,7 @@ class LiveHandSnapshot:
     villain_range_summary: str
     bluff_assessments: list[BluffAssessment]
     bluff_summary: str
+    recommendation: DecisionRecommendation | None
 
 
 def build_live_snapshot(
@@ -88,7 +98,13 @@ def build_live_snapshot(
         return None
 
     zone_text = _zone_text_map(ocr_snapshot)
-    detected_values = _extract_live_fields(ocr_snapshot, hero_name_hint, hero_cards_hint)
+    detected_values = _extract_live_fields(
+        ocr_snapshot,
+        hero_name_hint,
+        hero_cards_hint,
+        visible_board_hint,
+        cached_names,
+    )
     for field, value in (cached_names or {}).items():
         if value:
             detected_values[field] = value
@@ -102,6 +118,7 @@ def build_live_snapshot(
         zone_text.get("action_center", ""),
         zone_text.get("action_right", ""),
     ]
+    raw_action_text = "\n".join(filter(None, [*button_texts, zone_text.get("actions", "")]))
     actions_text = _sanitize_action_texts(button_texts, zone_text.get("actions", ""))
     pot_zone_text = zone_text.get("pot", "")
     hero_zone_text = zone_text.get("hero", "")
@@ -119,10 +136,22 @@ def build_live_snapshot(
     visible_board = _format_visible_board(detected_values)
     current_street = _infer_street_from_board(visible_board)
     hero_name = _sanitize_hero_name(detected_values.get("hero_name", ""), hero_name_hint or "RougeLion")
+    hero_cards = _first_non_empty(detected_values.get("hero_cards", ""), _extract_current_hero_cards(hero_cards_text))
     table_name = _extract_table_name(window.title if window else "")
-    is_complete = False
+    history_hand = _read_current_history_hand(history_file)
+    if history_hand and not _history_matches_screen(history_hand, hero_cards, visible_board):
+        history_hand = None
+    if history_hand and history_hand.hero_cards and (not hero_cards or not history_hand.is_complete):
+        hero_cards = history_hand.hero_cards
+        detected_values["hero_cards"] = hero_cards
+    recent_actions = _history_actions_for_street(history_hand, current_street)
+    is_complete = bool(history_hand and history_hand.is_complete)
+    history_path = str(getattr(history_file, "path", "") or "")
+    if history_path:
+        sync_completed_history_file(history_path)
     villain_profiles = build_villain_profiles(detected_values)
     players_in_hand = _players_in_hand(detected_values)
+    active_villain_profiles = _active_villain_profiles(villain_profiles, players_in_hand)
     bluff_assessments = assess_bluff_risk(
         villain_profiles,
         street=current_street,
@@ -131,34 +160,96 @@ def build_live_snapshot(
         pot_text=_first_non_empty(detected_values.get("pot_value", ""), _extract_pot_text(pot_zone_text or merged_text)),
     )
     pot_text = _first_non_empty(detected_values.get("pot_value", ""), _extract_pot_text(pot_zone_text or merged_text))
+    available_actions = _enrich_available_actions(
+        _extract_actions(actions_text or merged_text),
+        visual_states,
+    )
+    # With a villain shove, the centre red button is necessarily CALL (not
+    # CHECK).  This repairs the frequent OCR case where only FOLD is read.
+    if _history_all_in_total(recent_actions) is not None and "FOLD" in available_actions:
+        active_button_names = {str(getattr(state, "name", "")) for state in visual_states if getattr(state, "active", False)}
+        # Depending on stack depth / side pots, Winamax may show two controls
+        # (FOLD + CALL) or three (FOLD + CALL + raise/all-in).  We only need a
+        # second active action region: faced with a recorded shove it is CALL.
+        if any(name != "left" for name in active_button_names) and "CALL" not in available_actions:
+            available_actions.append("CALL")
+    turn_confidence = _hero_turn_confidence(actions_text, hero_zone_text, merged_text, visual_states)
+    is_hero_turn = turn_confidence >= 0.6
+    pot_size, call_amount = _decision_amounts(
+        detected_values,
+        players_in_hand,
+        pot_text,
+        raw_action_text,
+        recent_actions,
+    )
+    aggressive_seats = _aggressive_villain_seats(detected_values, players_in_hand)
+    hero_position = _position_for_seat("hero", detected_values.get("dealer_button", ""))
+    preflop_context = _preflop_decision_context(
+        history_hand,
+        detected_values,
+        detected_values.get("dealer_button", ""),
+        hero_name,
+    )
+    effective_stack_bb = _effective_stack_bb(detected_values, players_in_hand, aggressive_seats)
+    spr = effective_stack_bb / pot_size if effective_stack_bb is not None and pot_size and pot_size > 0 else None
+    detected_values["hero_position"] = hero_position
+    detected_values["pot_type"] = str(preflop_context["pot_type"])
+    detected_values["preflop_aggressor"] = str(preflop_context["aggressor"])
+    detected_values["effective_stack_bb"] = "" if effective_stack_bb is None else f"{effective_stack_bb:g}"
+    detected_values["spr"] = "" if spr is None else f"{spr:.2f}"
+    recommendation = recommend_action(
+        hero_cards=hero_cards,
+        board=visible_board,
+        street=current_street,
+        available_actions=available_actions,
+        recent_actions=recent_actions,
+        villain_profiles=villain_profiles,
+        players_in_hand=players_in_hand,
+        is_hero_turn=is_hero_turn,
+        pot_size=pot_size,
+        call_amount=call_amount,
+        aggressive_seats=aggressive_seats,
+        free_big_blind_names=_free_big_blind_names(history_hand),
+        hero_position=hero_position,
+        hero_in_position=_hero_is_in_position(players_in_hand, detected_values.get("dealer_button", "")),
+        effective_stack_bb=effective_stack_bb,
+        spr=spr,
+        pot_type=str(preflop_context["pot_type"]),
+        preflop_aggressor=str(preflop_context["aggressor"]),
+        preflop_aggressor_position=str(preflop_context["aggressor_position"]),
+        hero_was_preflop_aggressor=bool(preflop_context["hero_is_aggressor"]),
+        limper_count=int(preflop_context["limper_count"]),
+        raise_size_bb=preflop_context["raise_size_bb"],
+    )
 
     return LiveHandSnapshot(
-        source_file="",
-        hand_id="",
+        source_file=str(getattr(history_file, "path", "") or ""),
+        hand_id=history_hand.hand_id if history_hand else "",
         table_name=table_name,
         hero_name=hero_name,
-        hero_cards=_first_non_empty(detected_values.get("hero_cards", ""), _extract_current_hero_cards(hero_cards_text)),
+        hero_cards=hero_cards,
         current_street=current_street,
         is_complete=is_complete,
         visible_board=visible_board,
-        recent_actions=[],
+        recent_actions=recent_actions,
         ocr_status=ocr_snapshot.status if ocr_snapshot else "not_run",
         ocr_preview=_ocr_preview(merged_text),
         inferred_amounts=_extract_amounts(merged_text),
         window_title=window.title if window else "",
-        available_actions=_extract_actions(actions_text or merged_text),
+        available_actions=available_actions,
         pot_text=pot_text,
-        hero_turn_confidence=_hero_turn_confidence(actions_text, hero_zone_text, merged_text, visual_states),
-        is_hero_turn=_hero_turn_confidence(actions_text, hero_zone_text, merged_text, visual_states) >= 0.6,
+        hero_turn_confidence=turn_confidence,
+        is_hero_turn=is_hero_turn,
         visual_buttons=[state.name for state in visual_states if state.active],
         detected_fields=detected_values,
         players_in_hand=players_in_hand,
         dealer_owner=detected_values.get("dealer_button", ""),
         villain_profiles=villain_profiles,
-        villain_profile_summary=format_villain_profiles(villain_profiles),
-        villain_range_summary=format_villain_ranges(villain_profiles),
+        villain_profile_summary=format_villain_profiles(active_villain_profiles),
+        villain_range_summary=format_villain_ranges(active_villain_profiles),
         bluff_assessments=bluff_assessments,
         bluff_summary=format_bluff_assessments(bluff_assessments),
+        recommendation=recommendation,
     )
 
 
@@ -195,6 +286,14 @@ def build_fast_live_snapshot(
         visual_states,
     )
     visual_buttons = [state.name for state in visual_states if state.active]
+    visible_opponents = detect_visible_opponent_seats(image_path or "")
+    fast_players_in_hand = list(visible_opponents)
+    if hero_cards_visible_on_table(image_path or ""):
+        fast_players_in_hand.append("hero")
+    fast_detected_fields = {
+        f"{seat}_cards_visible": "visible" if seat in visible_opponents else "not_visible"
+        for seat in ("top_left", "top_right", "left", "right")
+    }
     table_name = _extract_table_name(window.title if window else "")
     return LiveHandSnapshot(
         source_file="",
@@ -219,14 +318,15 @@ def build_fast_live_snapshot(
         hero_turn_confidence=confidence,
         is_hero_turn=confidence >= 0.6,
         visual_buttons=visual_buttons,
-        detected_fields={},
-        players_in_hand=[],
+        detected_fields=fast_detected_fields,
+        players_in_hand=fast_players_in_hand,
         dealer_owner="",
         villain_profiles=[],
         villain_profile_summary="-",
         villain_range_summary="-",
         bluff_assessments=[],
         bluff_summary="-",
+        recommendation=None,
     )
 
 
@@ -288,6 +388,7 @@ def format_live_snapshot(snapshot: LiveHandSnapshot | None) -> str:
         f"Pot OCR: {snapshot.pot_text or '-'}",
         f"OCR status: {snapshot.ocr_status}",
         f"Boutons visuels: {', '.join(snapshot.visual_buttons) if snapshot.visual_buttons else '-'}",
+        f"Recommandation: {snapshot.recommendation.summary if snapshot.recommendation else '-'}",
         "",
         "Actions recentes:",
     ]
@@ -467,11 +568,88 @@ def _extract_current_hero_cards(text: str) -> str:
     return " ".join(seen)
 
 
-def _extract_live_fields(ocr_snapshot: OcrSnapshot | None, hero_name: str, hero_cards_hint: str = "") -> dict[str, str]:
+def _read_current_history_hand(history_file: object | None) -> ParsedHand | None:
+    path = str(getattr(history_file, "path", "") or "")
+    if not path:
+        return None
+    try:
+        hand = parse_winamax_hand(read_history_text(path))
+    except (OSError, UnicodeError, ValueError):
+        return None
+    return hand if hand.hand_id else None
+
+
+def _history_matches_screen(hand: ParsedHand, hero_cards: str, visible_board: str) -> bool:
+    history_hero = _normalize_card_sequence(hand.hero_cards)
+    screen_hero = _normalize_card_sequence(hero_cards)
+    history_board = _normalize_card_sequence(_latest_history_board(hand))
+    screen_board = _normalize_card_sequence(visible_board)
+
+    if screen_board and history_board:
+        common = min(len(screen_board), len(history_board))
+        if screen_board[:common] != history_board[:common]:
+            return False
+    # A completed hand with different hole cards is almost certainly the
+    # previous hand still present in the file. Never let it overwrite OCR.
+    if hand.is_complete and screen_hero and history_hero and screen_hero != history_hero:
+        return False
+    return bool(history_hero or history_board)
+
+
+def _latest_history_board(hand: ParsedHand) -> str:
+    for street in ("summary", "river", "turn", "flop"):
+        board = hand.board_by_street.get(street, "")
+        if board:
+            return board
+    return ""
+
+
+def _normalize_card_sequence(cards: str) -> list[str]:
+    return [f"{rank.upper().replace('10', 'T')}{suit.lower()}" for rank, suit in CARD_RE.findall((cards or "").replace("10", "T"))]
+
+
+def _history_actions_for_street(hand: ParsedHand | None, street: str) -> list[str]:
+    if hand is None:
+        return []
+    key = "pre_flop" if (street or "").lower() == "preflop" else (street or "").lower()
+    return list(hand.streets.get(key, []))[-8:]
+
+
+def _enrich_available_actions(actions: list[str], visual_states: list[object]) -> list[str]:
+    """Fill predictable Winamax action pairs when one button OCR is missed."""
+    values = list(dict.fromkeys(action.upper() for action in actions))
+    active_count = sum(1 for state in visual_states if getattr(state, "active", False))
+    if active_count < 2:
+        return values
+    action_set = set(values)
+    if "CHECK" in action_set and "BET" not in action_set:
+        values.append("BET")
+    if "BET" in action_set and "CHECK" not in action_set:
+        values.append("CHECK")
+    if "CALL" in action_set:
+        for action in ("FOLD", "RAISE"):
+            if action not in action_set:
+                values.append(action)
+    return values
+
+
+def _extract_live_fields(
+    ocr_snapshot: OcrSnapshot | None,
+    hero_name: str,
+    hero_cards_hint: str = "",
+    visible_board_hint: str = "",
+    cached_names: dict[str, str] | None = None,
+) -> dict[str, str]:
     if ocr_snapshot is None:
         return {}
     try:
-        extracted = extract_live_table_facts(ocr_snapshot, hero_name, hero_cards_hint)
+        extracted = extract_live_table_facts(
+            ocr_snapshot,
+            hero_name,
+            hero_cards_hint,
+            visible_board_hint,
+            cached_names,
+        )
     except Exception:
         return {}
     return extracted
@@ -489,6 +667,265 @@ def _players_in_hand(fields: dict[str, str]) -> list[str]:
     if hero_cards and hero_cards not in {"-", "present", "active"}:
         active.append("hero")
     return active
+
+
+def _position_for_seat(seat: str, dealer_owner: str) -> str:
+    """Map a calibrated screen seat to its 5-max poker position."""
+    clockwise = ("top_left", "top_right", "right", "hero", "left")
+    if seat not in clockwise or dealer_owner not in clockwise:
+        return ""
+    offset = (clockwise.index(seat) - clockwise.index(dealer_owner)) % len(clockwise)
+    return {0: "BTN", 1: "SB", 2: "BB", 3: "UTG", 4: "CO"}[offset]
+
+
+def _hero_is_in_position(players_in_hand: list[str], dealer_owner: str) -> bool:
+    """True when hero acts last postflop among all detected active players."""
+    action_rank = {"SB": 0, "BB": 1, "UTG": 2, "CO": 3, "BTN": 4}
+    hero_position = _position_for_seat("hero", dealer_owner)
+    villain_positions = [
+        _position_for_seat(seat, dealer_owner)
+        for seat in players_in_hand
+        if seat != "hero"
+    ]
+    if hero_position not in action_rank or not villain_positions:
+        return False
+    return all(action_rank[hero_position] > action_rank.get(position, 99) for position in villain_positions)
+
+
+def _preflop_decision_context(
+    hand: ParsedHand | None,
+    fields: dict[str, str],
+    dealer_owner: str,
+    hero_name: str,
+) -> dict[str, object]:
+    context: dict[str, object] = {
+        "pot_type": "unknown",
+        "aggressor": "",
+        "aggressor_position": "",
+        "hero_is_aggressor": False,
+        "limper_count": 0,
+        "raise_size_bb": None,
+    }
+    if hand is None:
+        return context
+    actions = [str(action) for action in (hand.streets or {}).get("pre_flop", [])]
+    raises: list[tuple[str, float | None]] = []
+    limpers: list[str] = []
+    raise_seen = False
+    for action in actions:
+        raise_match = re.match(r"^(.+?)\s+raises(?:\s+[\d.,]+)?\s+to\s+([\d.,]+)", action, re.IGNORECASE)
+        if not raise_match:
+            raise_match = re.match(r"^(.+?)\s+raises\s+([\d.,]+)", action, re.IGNORECASE)
+        if raise_match:
+            raise_seen = True
+            raises.append((raise_match.group(1).strip(), _float_value(raise_match.group(2))))
+            continue
+        call_match = re.match(r"^(.+?)\s+calls\s+[\d.,]+", action, re.IGNORECASE)
+        if call_match and not raise_seen:
+            limpers.append(call_match.group(1).strip())
+
+    context["limper_count"] = len(limpers)
+    if raises:
+        aggressor, amount = raises[-1]
+        context["pot_type"] = "3bet" if len(raises) >= 2 else "single_raised"
+        context["aggressor"] = aggressor
+        context["hero_is_aggressor"] = _same_player(aggressor, hero_name)
+        aggressor_seat = _seat_for_player(aggressor, fields, hero_name)
+        context["aggressor_position"] = _position_for_seat(aggressor_seat, dealer_owner)
+        if amount is not None and hand.big_blind > 0:
+            context["raise_size_bb"] = amount / hand.big_blind
+    elif limpers:
+        context["pot_type"] = "limped"
+    else:
+        context["pot_type"] = "unopened"
+    return context
+
+
+def _seat_for_player(player_name: str, fields: dict[str, str], hero_name: str) -> str:
+    candidates = {
+        "hero": hero_name,
+        "top_left": fields.get("top_left_name", ""),
+        "top_right": fields.get("top_right_name", ""),
+        "left": fields.get("left_name", ""),
+        "right": fields.get("right_name", ""),
+    }
+    for seat, candidate in candidates.items():
+        if _same_player(player_name, candidate):
+            return seat
+    return ""
+
+
+def _same_player(left: str, right: str) -> bool:
+    left_key = re.sub(r"[^a-z0-9]", "", (left or "").casefold())
+    right_key = re.sub(r"[^a-z0-9]", "", (right or "").casefold())
+    if not left_key or not right_key:
+        return False
+    return left_key == right_key or (min(len(left_key), len(right_key)) >= 5 and (left_key in right_key or right_key in left_key))
+
+
+def _float_value(value: str) -> float | None:
+    try:
+        return float((value or "").replace(",", "."))
+    except ValueError:
+        return None
+
+
+def _effective_stack_bb(
+    fields: dict[str, str],
+    players_in_hand: list[str],
+    aggressive_seats: list[str],
+) -> float | None:
+    hero_stack = _bb_value(fields.get("hero_stack", ""))
+    if hero_stack is None:
+        return None
+    target_seats = [seat for seat in aggressive_seats if seat != "hero"] or [
+        seat for seat in players_in_hand if seat != "hero"
+    ]
+    villain_stacks = [
+        value
+        for seat in target_seats
+        for value in [_bb_value(fields.get(f"{seat}_stack", ""))]
+        if value is not None
+    ]
+    if not villain_stacks:
+        return None
+    return min(hero_stack, max(villain_stacks))
+
+
+def _decision_amounts(
+    fields: dict[str, str],
+    players_in_hand: list[str],
+    pot_text: str,
+    action_text: str = "",
+    history_actions: list[str] | None = None,
+) -> tuple[float | None, float | None]:
+    pot_size = _bb_value(pot_text)
+    if pot_size is None:
+        return None, None
+    direct_call = _call_amount_from_actions(action_text)
+    if direct_call is not None:
+        return pot_size, direct_call
+    hero_bet = _bb_value(fields.get("hero_bet", "")) or 0.0
+    # Winamax history gives the exact final amount for a shove ("raises X to
+    # Y and is all-in" / "bets Y and is all-in").  It is more reliable than
+    # a half-read CALL button, and remains available when the UI OCR is late.
+    all_in_total = _history_all_in_total(history_actions or [])
+    if all_in_total is not None:
+        amount = all_in_total - hero_bet
+        if amount > 0:
+            return pot_size, amount
+    villain_bets = [
+        value
+        for seat in players_in_hand
+        if seat != "hero"
+        for value in [_bb_value(fields.get(f"{seat}_bet", ""))]
+        if value is not None
+    ]
+    if not villain_bets:
+        return pot_size, None
+    amount = max(villain_bets) - hero_bet
+    return pot_size, amount if amount > 0 else None
+
+
+def _call_amount_from_actions(text: str) -> float | None:
+    normalized = " ".join((text or "").upper().replace(",", ".").split())
+    patterns = (
+        r"(\d+(?:\.\d+)?)\s*BB\s*CALL\b",
+        r"\bCALL\s*(\d+(?:\.\d+)?)\s*BB",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, normalized)
+        if match:
+            try:
+                value = float(match.group(1))
+            except ValueError:
+                continue
+            if value > 0:
+                return value
+    return None
+
+
+def _history_all_in_total(actions: list[str]) -> float | None:
+    for line in reversed(actions):
+        normalized = " ".join((line or "").lower().replace(",", ".").split())
+        if "all-in" not in normalized and "all in" not in normalized:
+            continue
+        to_match = re.search(r"\bto\s+(\d+(?:\.\d+)?)\b", normalized)
+        bet_match = re.search(r"\bbets?\s+(\d+(?:\.\d+)?)\b", normalized)
+        match = to_match or bet_match
+        if match:
+            try:
+                return float(match.group(1))
+            except ValueError:
+                continue
+    return None
+
+
+def _free_big_blind_names(history_hand: ParsedHand | None) -> list[str]:
+    """Return the BB only when they checked a limped preflop pot."""
+    if history_hand is None:
+        return []
+    actions = list((history_hand.streets or {}).get("pre_flop", []) or [])
+    if not actions:
+        return []
+    big_blind = ""
+    for action in actions:
+        match = re.match(r"^(.+?)\s+posts\s+big blind", str(action), re.IGNORECASE)
+        if match:
+            big_blind = match.group(1).strip()
+            break
+    if not big_blind:
+        return []
+    player_key = re.sub(r"[^a-z0-9]", "", big_blind.lower())
+    player_actions = [
+        str(action).lower()
+        for action in actions
+        if player_key and player_key in re.sub(r"[^a-z0-9]", "", str(action).lower())
+    ]
+    checked = any(" checks" in f" {action}" for action in player_actions)
+    voluntarily_entered = any(token in action for action in player_actions for token in (" calls", " raises", " all-in", " all in"))
+    return [big_blind] if checked and not voluntarily_entered else []
+
+
+def _aggressive_villain_seats(fields: dict[str, str], players_in_hand: list[str]) -> list[str]:
+    hero_bet = _bb_value(fields.get("hero_bet", "")) or 0.0
+    bets = {
+        seat: value
+        for seat in players_in_hand
+        if seat != "hero"
+        for value in [_bb_value(fields.get(f"{seat}_bet", ""))]
+        if value is not None
+    }
+    if not bets:
+        return []
+    maximum = max(bets.values())
+    if maximum <= hero_bet:
+        return []
+    return [seat for seat, value in bets.items() if abs(value - maximum) < 0.001]
+
+
+def _bb_value(text: str) -> float | None:
+    match = re.search(r"(?<!\d)(\d+(?:[.,]\d+)?)", text or "")
+    if not match:
+        return None
+    try:
+        return float(match.group(1).replace(",", "."))
+    except ValueError:
+        return None
+
+
+def _active_villain_profiles(
+    profiles: list[VillainRangeProfile],
+    players_in_hand: list[str],
+) -> list[VillainRangeProfile]:
+    """Keep only opponents whose face-down cards are currently visible.
+
+    The OCR can occasionally fail to classify a card back.  In that case we
+    deliberately show no range rather than presenting a folded player as if
+    they were still in the hand.
+    """
+    active_seats = set(players_in_hand)
+    return [profile for profile in profiles if profile.seat in active_seats]
 
 
 def _format_stacks(fields: dict[str, str]) -> str:
@@ -547,6 +984,11 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
     upper_hero = hero_text.upper()
     upper_all = fallback_text.upper()
     score = 0.0
+
+    # Grey preselection controls can contain FOLD/CHECK text, but are not an
+    # actionable hero turn. A real Winamax action bar has red buttons.
+    if visual_states and not any(getattr(state, "red_ratio", 0.0) >= 0.04 for state in visual_states):
+        return 0.0
 
     if (
         "PRESELECTION" in upper_hero

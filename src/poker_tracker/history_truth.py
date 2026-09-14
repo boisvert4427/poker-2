@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .history import read_history_text
-from .parser import ParsedHand, parse_winamax_hand
+from .parser import ParsedHand, parse_winamax_hand, split_winamax_hands
 
 
 @dataclass(slots=True)
@@ -58,8 +58,7 @@ def truth_from_snapshot_metadata(metadata: dict[str, Any]) -> SnapshotHistoryTru
 
 def _find_hand_in_history(history_file: str, hand_id: str) -> ParsedHand | None:
     raw = read_history_text(history_file)
-    for chunk in raw.split("\n\n\n"):
-        chunk = chunk.strip()
+    for chunk in split_winamax_hands(raw):
         if not chunk or hand_id not in chunk:
             continue
         hand = parse_winamax_hand(chunk)

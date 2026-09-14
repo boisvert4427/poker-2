@@ -8,7 +8,7 @@ from typing import Any
 
 from .detection import guess_history_locations
 from .history import extract_table_token, find_history_file_for_table, read_history_text
-from .parser import ParsedHand, parse_winamax_hand
+from .parser import ParsedHand, parse_winamax_hand, split_winamax_hands
 from .session_recorder import SessionRecorder
 
 
@@ -30,7 +30,7 @@ class HandMatch:
 
 def parse_all_hands_from_history(path: str) -> list[ParsedHand]:
     raw = read_history_text(path)
-    chunks = [chunk.strip() for chunk in raw.split("\n\n\n") if chunk.strip()]
+    chunks = split_winamax_hands(raw)
     hands: list[ParsedHand] = []
     for chunk in chunks:
         hand = parse_winamax_hand(chunk)

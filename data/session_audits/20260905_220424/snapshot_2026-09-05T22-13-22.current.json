@@ -1,0 +1,521 @@
+{
+  "image": "C:\\Users\\leona\\Documents\\python\\poker\\sessions\\20260905_220424\\snapshot_2026-09-05T22-13-22.png",
+  "runtime_seconds": 4.605979100000241,
+  "facts": {
+    "top_left_cards_visible": "visible",
+    "top_left_name": "Cash flow",
+    "top_left_stack": "102 BB",
+    "top_right_cards_visible": "visible",
+    "top_right_name": "Shaimed",
+    "top_right_stack": "84,5 BB",
+    "left_cards_visible": "not_visible",
+    "left_name": "Amatipo",
+    "left_stack": "102 BB",
+    "right_cards_visible": "visible",
+    "right_name": "Brain-fr",
+    "right_stack": "92,5 BB",
+    "hero_name": "RougeLion",
+    "hero_stack": "131 BB",
+    "top_left_bet": "",
+    "top_right_bet": "",
+    "left_bet": "",
+    "right_bet": "",
+    "hero_bet": "",
+    "hero_cards": "",
+    "hero_status": "",
+    "pot_value": "Pot: 3 BB",
+    "dealer_button": "top_left",
+    "board_card_1": "5c",
+    "board_card_2": "8s",
+    "board_card_3": "9d",
+    "board_card_4": "8d",
+    "board_card_5": "5d"
+  },
+  "live": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "",
+    "current_street": "river",
+    "is_complete": false,
+    "visible_board": "5c 8s 9d 8d 5d",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "Pot: 3 BB Eo",
+    "inferred_amounts": [
+      "3"
+    ],
+    "window_title": "",
+    "available_actions": [],
+    "pot_text": "Pot: 3 BB",
+    "hero_turn_confidence": 0.0,
+    "is_hero_turn": false,
+    "visual_buttons": [
+      "center"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "visible",
+      "top_left_name": "Cash flow",
+      "top_left_stack": "102 BB",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "Shaimed",
+      "top_right_stack": "84,5 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "Amatipo",
+      "left_stack": "102 BB",
+      "right_cards_visible": "visible",
+      "right_name": "Brain-fr",
+      "right_stack": "92,5 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "131 BB",
+      "top_left_bet": "",
+      "top_right_bet": "",
+      "left_bet": "",
+      "right_bet": "",
+      "hero_bet": "",
+      "hero_cards": "",
+      "hero_status": "",
+      "pot_value": "Pot: 3 BB",
+      "dealer_button": "top_left",
+      "board_card_1": "5c",
+      "board_card_2": "8s",
+      "board_card_3": "9d",
+      "board_card_4": "8d",
+      "board_card_5": "5d"
+    },
+    "players_in_hand": [
+      "top_left",
+      "top_right",
+      "right"
+    ],
+    "dealer_owner": "top_left",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "Cash flow",
+        "known": true,
+        "hands_played": 22,
+        "vpip": 0.682,
+        "pfr": 0.182,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut"
+      },
+      {
+        "seat": "top_right",
+        "name": "Shaimed",
+        "known": true,
+        "hands_played": 17,
+        "vpip": 0.765,
+        "pfr": 0.235,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes"
+      },
+      {
+        "seat": "left",
+        "name": "Amatipo",
+        "known": true,
+        "hands_played": 20,
+        "vpip": 0.2,
+        "pfr": 0.15,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut"
+      },
+      {
+        "seat": "right",
+        "name": "Brain-fr",
+        "known": true,
+        "hands_played": 22,
+        "vpip": 0.364,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "entre beaucoup dans les coups mais relance peu",
+        "note": "value bet plus et bluffe moins"
+      }
+    ],
+    "villain_profile_summary": "top_left Cash flow | standard | VPIP 0.682 PFR 0.182 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | connu\ntop_right Shaimed | lag | VPIP 0.765 PFR 0.235 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu\nright Brain-fr | loose_passive | VPIP 0.364 PFR 0.000 | 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) | connu",
+    "villain_range_summary": "top_left Cash flow : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | tendance profil neutre sans lecture forte | BDD\ntop_right Shaimed : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD\nright Brain-fr : 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) | tendance entre beaucoup dans les coups mais relance peu | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "Cash flow",
+        "score": 0.27,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Shaimed",
+        "score": 0.57,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "river : spot plus polarise, bluff possible",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "Amatipo",
+        "score": 0.27,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "Brain-fr",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "river : spot plus polarise, bluff possible",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left Cash flow : bluff faible (0.27) | profil standard ou inconnu; river : spot plus polarise, bluff possible; pot visible, spot actionnable\ntop_right Shaimed : bluff moyen (0.57) | profil lag, aggression preflop elevee; river : spot plus polarise, bluff possible; pot visible, spot actionnable\nleft Amatipo : bluff faible (0.27) | profil standard ou inconnu; river : spot plus polarise, bluff possible; pot visible, spot actionnable\nright Brain-fr : bluff faible (0.07) | profil loose passive, moins de bluffs agressifs naturels; river : spot plus polarise, bluff possible; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "ATTENDRE",
+      "sizing": "",
+      "confidence": 0.0,
+      "hand_strength": "analyse en attente du tour hero",
+      "villain_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+      "summary": "ATTENDRE — ce n'est pas le tour du hero.",
+      "reasons": [
+        "aucun bouton d'action hero actif"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 0,
+      "villain_ranges": [
+        "Cash flow (top_left) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) [range de participation]",
+        "Shaimed (top_right) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]",
+        "Brain-fr (right) : 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) [range de participation]"
+      ]
+    }
+  },
+  "zones": {
+    "top_left_cards": {
+      "text": "Fi",
+      "rect": [
+        522,
+        73,
+        658,
+        167
+      ]
+    },
+    "top_left_name": {
+      "text": "Cash flow —",
+      "rect": [
+        493,
+        183,
+        706,
+        220
+      ]
+    },
+    "top_left_stack": {
+      "text": "102 BB",
+      "rect": [
+        516,
+        214,
+        677,
+        262
+      ]
+    },
+    "top_left_bet": {
+      "text": "ZZ",
+      "rect": [
+        654,
+        342,
+        726,
+        374
+      ]
+    },
+    "top_right_cards": {
+      "text": "Ei",
+      "rect": [
+        1122,
+        83,
+        1297,
+        167
+      ]
+    },
+    "top_right_name": {
+      "text": "~Shaimed .",
+      "rect": [
+        1122,
+        183,
+        1316,
+        220
+      ]
+    },
+    "top_right_stack": {
+      "text": "84,5 BB",
+      "rect": [
+        1103,
+        214,
+        1268,
+        262
+      ]
+    },
+    "top_right_bet": {
+      "text": "~~",
+      "rect": [
+        1041,
+        342,
+        1128,
+        374
+      ]
+    },
+    "left_cards": {
+      "text": "oa\nO\no—",
+      "rect": [
+        329,
+        524,
+        464,
+        618
+      ]
+    },
+    "left_name": {
+      "text": "Amatipo",
+      "rect": [
+        271,
+        613,
+        522,
+        655
+      ]
+    },
+    "left_stack": {
+      "text": "102 BB,",
+      "rect": [
+        319,
+        644,
+        464,
+        702
+      ]
+    },
+    "left_bet": {
+      "text": "",
+      "rect": [
+        513,
+        592,
+        584,
+        623
+      ]
+    },
+    "right_cards": {
+      "text": "ja",
+      "rect": [
+        1335,
+        534,
+        1471,
+        618
+      ]
+    },
+    "right_name": {
+      "text": "~ Brain-fr",
+      "rect": [
+        1297,
+        613,
+        1490,
+        655
+      ]
+    },
+    "right_stack": {
+      "text": "92,5 BB",
+      "rect": [
+        1306,
+        644,
+        1481,
+        696
+      ]
+    },
+    "right_bet": {
+      "text": "a",
+      "rect": [
+        1190,
+        592,
+        1262,
+        623
+      ]
+    },
+    "pot": {
+      "text": "Pot: 3 BB",
+      "rect": [
+        832,
+        524,
+        1142,
+        597
+      ]
+    },
+    "pot_value": {
+      "text": "™ Pot: 3 BB",
+      "rect": [
+        784,
+        560,
+        1016,
+        613
+      ]
+    },
+    "board": {
+      "text": ": i ae alerler*\n+ + + + + +",
+      "rect": [
+        619,
+        356,
+        1180,
+        534
+      ]
+    },
+    "board_card_1": {
+      "text": "5",
+      "rect": [
+        611,
+        375,
+        654,
+        424
+      ]
+    },
+    "board_card_2": {
+      "text": "8",
+      "rect": [
+        724,
+        375,
+        766,
+        424
+      ]
+    },
+    "board_card_3": {
+      "text": "9",
+      "rect": [
+        836,
+        375,
+        878,
+        424
+      ]
+    },
+    "board_card_4": {
+      "text": "8",
+      "rect": [
+        948,
+        375,
+        991,
+        424
+      ]
+    },
+    "board_card_5": {
+      "text": "5.",
+      "rect": [
+        1060,
+        375,
+        1103,
+        424
+      ]
+    },
+    "hero": {
+      "text": "Eo",
+      "rect": [
+        809,
+        696,
+        960,
+        788
+      ]
+    },
+    "hero_name": {
+      "text": "RougeLion",
+      "rect": [
+        784,
+        770,
+        1026,
+        817
+      ]
+    },
+    "hero_stack": {
+      "text": "131 BB",
+      "rect": [
+        803,
+        806,
+        977,
+        854
+      ]
+    },
+    "hero_bet": {
+      "text": "=",
+      "rect": [
+        851,
+        665,
+        919,
+        696
+      ]
+    },
+    "hero_status": {
+      "text": "c=",
+      "rect": [
+        832,
+        681,
+        987,
+        817
+      ]
+    },
+    "dealer_button": {
+      "text": "D",
+      "rect": [
+        743,
+        256,
+        774,
+        303
+      ]
+    },
+    "actions": {
+      "text": "",
+      "rect": [
+        484,
+        969,
+        1316,
+        1037
+      ]
+    },
+    "action_left": {
+      "text": "a",
+      "rect": [
+        487,
+        971,
+        751,
+        1035
+      ]
+    },
+    "action_center": {
+      "text": "os",
+      "rect": [
+        753,
+        971,
+        1018,
+        1035
+      ]
+    },
+    "action_right": {
+      "text": "oO",
+      "rect": [
+        1020,
+        971,
+        1287,
+        1035
+      ]
+    }
+  }
+}

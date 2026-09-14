@@ -1,0 +1,60 @@
+{
+  "max_seconds_per_image": 4.0,
+  "cases": [
+    {
+      "image": "sessions/20260902_223643/snapshot_2026-09-02T22-36-58.png",
+      "expected": {
+        "board_card_1": "7c",
+        "board_card_2": "Ad",
+        "board_card_3": "Js",
+        "board_card_4": "8h",
+        "board_card_5": "6c",
+        "dealer_button": "right",
+        "pot_value": "Pot: 5 BB",
+        "top_left_stack": "270,5 BB",
+        "top_right_stack": "12,5 BB",
+        "right_stack": "366,5 BB",
+        "hero_stack": "100 BB"
+      }
+    },
+    {
+      "image": "sessions/20260902_223643/snapshot_2026-09-02T22-37-40.png",
+      "expected": {
+        "hero_cards": "4h 7s",
+        "board_card_1": "Qc",
+        "board_card_2": "2d",
+        "board_card_3": "7c",
+        "board_card_4": "Th",
+        "board_card_5": "",
+        "dealer_button": "top_left",
+        "pot_value": "Pot: 3 BB",
+        "top_left_name": "guillevic",
+        "top_left_stack": "275 BB",
+        "top_right_name": "jpaul47",
+        "top_right_stack": "11,5 BB",
+        "left_name": "Bobbybreak76",
+        "left_stack": "100 BB",
+        "right_stack": "365,5 BB",
+        "hero_stack": "99 BB"
+      }
+    },
+    {
+      "image": "sessions/20260902_223643/snapshot_2026-09-02T22-40-24.png",
+      "expected": {
+        "hero_cards": "9h Kh",
+        "board_card_1": "",
+        "board_card_2": "",
+        "board_card_3": "",
+        "board_card_4": "",
+        "board_card_5": "",
+        "dealer_button": "hero",
+        "pot_value": "Pot total : 32 BB",
+        "top_left_stack": "256,5 BB",
+        "top_right_stack": "0 BB",
+        "left_stack": "97 BB",
+        "right_stack": "364 BB",
+        "hero_stack": "103 BB"
+      }
+    }
+  ]
+}

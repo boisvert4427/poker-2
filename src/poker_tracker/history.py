@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import re
-import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+
+from .parser import split_winamax_hands
 
 
 @dataclass(slots=True)
@@ -15,6 +16,7 @@ class HistoryFile:
 
 
 TABLE_TOKEN_RE = re.compile(r"^Winamax\s+(.+?)$", re.IGNORECASE)
+HAND_ID_RE = re.compile(r"HandId:\s*#([\d-]+)")
 
 
 def find_latest_history_file(history_locations: Iterable[str]) -> HistoryFile | None:
@@ -68,10 +70,15 @@ def latest_hand_block_key(history_file: object | None) -> str:
         text = Path(str(path)).read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeError):
         return ""
-    blocks = [block.strip() for block in re.split(r"\r?\n\s*\r?\n", text) if block.strip()]
+    blocks = split_winamax_hands(text)
     if not blocks:
         return ""
-    return hashlib.sha1(blocks[-1].encode("utf-8", errors="replace")).hexdigest()
+    match = HAND_ID_RE.search(blocks[-1])
+    if match:
+        return match.group(1)
+    # Header-less legacy files are rare; their first line is still a more
+    # stable hand key than hashing actions appended during the hand.
+    return blocks[-1].splitlines()[0].strip()
 
 
 def extract_table_token(window_title: str) -> str:

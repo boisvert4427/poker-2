@@ -81,13 +81,33 @@ def analyze_snapshot_image(
 
 
 def extract_live_table_facts(
-    ocr_snapshot: OcrSnapshot, hero_name: str = "", hero_cards_hint: str = ""
+    ocr_snapshot: OcrSnapshot,
+    hero_name: str = "",
+    hero_cards_hint: str = "",
+    visible_board_hint: str = "",
+    cached_names: dict[str, str] | None = None,
 ) -> dict[str, str]:
     if ocr_snapshot.status == "ok_minimal":
         return _extract_minimal_live_table_facts(ocr_snapshot, hero_name)
-    extracted = extract_review_values(ocr_snapshot, {"live_snapshot": {"hero_name": hero_name}})
+    extracted = extract_review_values(
+        ocr_snapshot,
+        {
+            "live_snapshot": {
+                "hero_name": hero_name,
+                "hero_cards_hint": hero_cards_hint,
+                "visible_board_hint": visible_board_hint,
+                "cached_names": cached_names or {},
+            }
+        },
+    )
     values = {field: (payload.get("value", "") or "") for field, payload in extracted.items()}
-    values["hero_cards"] = hero_cards_hint or _extract_hero_cards_from_image(ocr_snapshot.image_path)
+    # ``extract_review_values`` has already read both hero cards. Reuse that
+    # result instead of starting two more Tesseract processes.
+    values["hero_cards"] = (
+        hero_cards_hint
+        or values.get("hero_cards", "")
+        or _extract_hero_cards_from_image(ocr_snapshot.image_path)
+    )
     return values
 
 
@@ -151,6 +171,7 @@ def _extract_minimal_live_table_facts(ocr_snapshot: OcrSnapshot, hero_name: str)
 
 def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -> dict[str, dict[str, Any]]:
     live = metadata.get("live_snapshot") or {}
+    cached_names = live.get("cached_names") or {}
     previous_fields = metadata.get("previous_fields") or {}
     zones = ocr_snapshot.zones or {}
     full_text = _clean_ocr_text(ocr_snapshot.text)
@@ -165,17 +186,28 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
         return ((zones.get(name) or {}).image_path or "").strip() if zones.get(name) else ""
 
     board_text = zone_text("board")
-    # The board zone is already OCR'd above.  Prefer it so we do not launch
-    # five additional Tesseract processes for the individual card zones.
-    board_cards = _extract_board_cards_fast(ocr_snapshot.image_path, board_text)
-    if not any(board_cards):
-        board_cards = _extract_board_cards_from_image(ocr_snapshot.image_path)
+    board_hint = str(live.get("visible_board_hint", "") or "")
+    if board_hint:
+        board_cards = board_hint.split()[:5]
+        board_cards.extend([""] * (5 - len(board_cards)))
+    else:
+        # The board zone is already OCR'd above. Prefer it so we do not launch
+        # five additional Tesseract processes for the individual card zones.
+        board_cards = _extract_board_cards_fast(
+            ocr_snapshot.image_path,
+            board_text,
+            [zone_text(f"board_card_{index}") for index in range(1, 6)],
+        )
+        if not any(board_cards):
+            board_cards = _extract_board_cards_from_image(ocr_snapshot.image_path)
     hero_block = _clean_ocr_text(zone_text("hero"))
     # Les cartes héros sont une donnée indépendante du texte de statut.
     # On les extrait directement depuis les deux cartes, puis on les expose
     # dans le résultat pour que l'évaluation et le mode live puissent les
     # utiliser sans confondre la valeur avec « Hauteur », « Paire », etc.
-    hero_cards = _extract_hero_cards_from_image(ocr_snapshot.image_path)
+    hero_cards = str(live.get("hero_cards_hint", "") or "") or _extract_hero_cards_from_image(
+        ocr_snapshot.image_path
+    )
     hero_cards_visible = _hero_cards_visible_on_table(ocr_snapshot.image_path)
     hero_footer_status = _extract_hero_footer_status(ocr_snapshot.image_path)
     hero_name_from_block = _extract_hero_name(hero_block)
@@ -189,11 +221,41 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     pot_total_from_zone = _extract_pot_total_value(zone_text("pot_value"))
     top_left_opponent = _clean_ocr_text(zone_text("left_opponent"))
     right_opponent = _clean_ocr_text(zone_text("right_opponent"))
-    left_stack_expanded = _extract_stack(_extract_expanded_stack_text(ocr_snapshot.image_path, "left_stack", 0.60, 0.20))
-    top_left_stack_expanded = _extract_stack(_extract_expanded_stack_text(ocr_snapshot.image_path, "top_left_stack", 0.35, 0.55))
-    top_right_stack_expanded = _extract_stack(_extract_expanded_stack_text(ocr_snapshot.image_path, "top_right_stack", 0.25, 1.00))
-    right_name_expanded = _clean_player_name(_extract_expanded_zone_text(ocr_snapshot.image_path, "right_name", 0.25, 0.10))
-    right_stack_expanded = _extract_stack(_extract_expanded_stack_text(ocr_snapshot.image_path, "right_stack", 0.35, 0.10))
+    # Expanded crops are expensive, so only use them when the already OCR'd
+    # calibrated crop is empty.
+    left_stack_direct = _extract_stack(zone_text("left_stack"))
+    top_left_stack_direct = _extract_stack(zone_text("top_left_stack"))
+    top_right_stack_direct = _extract_stack(zone_text("top_right_stack"))
+    right_stack_direct = _extract_stack(zone_text("right_stack"))
+    left_stack_expanded = "" if left_stack_direct else _extract_stack(
+        _extract_expanded_stack_text(ocr_snapshot.image_path, "left_stack", 0.60, 0.20)
+    )
+    top_left_stack_expanded = "" if top_left_stack_direct else _extract_stack(
+        _extract_expanded_stack_text(ocr_snapshot.image_path, "top_left_stack", 0.35, 0.55)
+    )
+    top_right_stack_expanded = "" if top_right_stack_direct else _extract_stack(
+        _extract_expanded_stack_text(ocr_snapshot.image_path, "top_right_stack", 0.25, 1.00)
+    )
+    right_stack_expanded = "" if right_stack_direct else _extract_stack(
+        _extract_expanded_stack_text(ocr_snapshot.image_path, "right_stack", 0.35, 0.10)
+    )
+    def bet(seat: str) -> str:
+        return _extract_bet_from_zone(ocr_snapshot.image_path, seat, zone_text(f"{seat}_bet"))
+    top_left_name_direct = str(cached_names.get("top_left_name", "") or "") or _name_from_crop_if_needed(
+        ocr_snapshot.image_path, "top_left_name", zone_text("top_left_name")
+    )
+    top_right_name_direct = str(cached_names.get("top_right_name", "") or "") or _name_from_crop_if_needed(
+        ocr_snapshot.image_path, "top_right_name", zone_text("top_right_name")
+    )
+    left_name_direct = str(cached_names.get("left_name", "") or "") or _name_from_crop_if_needed(
+        ocr_snapshot.image_path, "left_name", zone_text("left_name")
+    )
+    right_name_direct = str(cached_names.get("right_name", "") or "") or _name_from_crop_if_needed(
+        ocr_snapshot.image_path, "right_name", zone_text("right_name")
+    )
+    right_name_expanded = "" if right_name_direct else _clean_player_name(
+        _extract_expanded_zone_text(ocr_snapshot.image_path, "right_name", 0.25, 0.10)
+    )
 
     def first_non_empty(*values: str) -> str:
         for value in values:
@@ -204,12 +266,12 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     values = {
         "top_left_cards_visible": _detect_cards_visible(zone_image_path("top_left_cards")),
         "top_left_name": first_non_empty(
-            _name_from_crop_if_needed(ocr_snapshot.image_path, "top_left_name", zone_text("top_left_name")),
+            top_left_name_direct,
             _row_value(name_rows, 0, 0),
             _candidate_name(name_candidates, 0),
         ),
         "top_left_stack": first_non_empty(
-            _select_best_stack(_extract_stack(zone_text("top_left_stack")), top_left_stack_expanded),
+            _select_best_stack(top_left_stack_direct, top_left_stack_expanded),
             top_left_stack_expanded,
             _candidate_value(stack_candidates, 0),
             _row_value(stack_rows, 0, 0),
@@ -217,25 +279,25 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
         ),
         "top_right_cards_visible": _detect_cards_visible(zone_image_path("top_right_cards")),
         "top_right_name": first_non_empty(
-            _name_from_crop_if_needed(ocr_snapshot.image_path, "top_right_name", zone_text("top_right_name")),
+            top_right_name_direct,
             _row_value(name_rows, 0, 1),
             _candidate_name(name_candidates, 1),
         ),
         "top_right_stack": first_non_empty(
-            _select_best_stack(_extract_stack(zone_text("top_right_stack")), top_right_stack_expanded),
+            _select_best_stack(top_right_stack_direct, top_right_stack_expanded),
             top_right_stack_expanded,
             _candidate_value(stack_candidates, 1),
             _row_value(stack_rows, 0, 1),
         ),
         "left_cards_visible": _detect_cards_visible(zone_image_path("left_cards")),
         "left_name": first_non_empty(
-            _name_from_crop_if_needed(ocr_snapshot.image_path, "left_name", zone_text("left_name")),
+            left_name_direct,
             _row_value(name_rows, 1, 0),
             _clean_player_name(top_left_opponent),
             _candidate_name(name_candidates, 2),
         ),
         "left_stack": first_non_empty(
-            _select_best_stack(_extract_stack(zone_text("left_stack")), left_stack_expanded),
+            _select_best_stack(left_stack_direct, left_stack_expanded),
             left_stack_expanded,
             _row_value(stack_rows, 1, 0),
             _candidate_value(stack_candidates, 2),
@@ -243,19 +305,20 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
         ),
         "right_cards_visible": _detect_cards_visible(zone_image_path("right_cards")),
         "right_name": first_non_empty(
-            _name_from_crop_if_needed(ocr_snapshot.image_path, "right_name", zone_text("right_name")),
+            right_name_direct,
             right_name_expanded,
             _row_value(name_rows, 1, 1),
             _clean_player_name(right_opponent),
             _candidate_name(name_candidates, 3),
         ),
         "right_stack": first_non_empty(
-            _select_best_stack(_extract_stack(zone_text("right_stack")), right_stack_expanded),
+            _select_best_stack(right_stack_direct, right_stack_expanded),
             _row_value(stack_rows, 1, 1),
             _candidate_value(stack_candidates, 3),
             _extract_stack(right_opponent),
         ),
         "hero_name": first_non_empty(
+            str(cached_names.get("hero_name", "") or ""),
             _clean_player_name(zone_text("hero_name")),
             hero_name_from_block,
             live.get("hero_name", ""),
@@ -265,6 +328,11 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
             _select_best_stack(hero_stack_from_block, hero_stack_zone),
             hero_stack_from_block,
         ),
+        "top_left_bet": bet("top_left"),
+        "top_right_bet": bet("top_right"),
+        "left_bet": bet("left"),
+        "right_bet": bet("right"),
+        "hero_bet": bet("hero"),
         "hero_cards": hero_cards,
         "hero_status": _clean_hero_status(zone_text("hero_status"), hero_block, action_text, full_text, hero_cards_visible, hero_footer_status),
         "pot_value": first_non_empty(
@@ -441,6 +509,25 @@ def _extract_bet_from_image(image_path: str, seat: str) -> str:
     return _extract_stack(_extract_expanded_stack_text(image_path, f"{seat}_bet", 0, 0))
 
 
+def _extract_bet_from_zone(image_path: str, seat: str, zone_text: str) -> str:
+    """Use the already-parallel OCR zone; retry only for a real bet."""
+    image_file = Path(image_path)
+    ratios = load_calibration().get("zones", {}).get(f"{seat}_bet")
+    if not image_file.exists() or not ratios:
+        return ""
+    try:
+        image = Image.open(image_file).convert("RGB")
+    except OSError:
+        return ""
+    crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+    rgb = np.asarray(crop)
+    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+    orange = (r > 130) & (g > 45) & (g < 190) & (b < 120) & (r > g * 1.25)
+    if float(orange.mean()) < 0.025:
+        return ""
+    return _extract_stack(zone_text) or _extract_bet_from_image(image_path, seat)
+
+
 def _extract_expanded_stack_text(image_path: str, zone_name: str, expand_left: float, expand_right: float) -> str:
     image_file = Path(image_path)
     if not image_file.exists():
@@ -510,7 +597,11 @@ def _detect_cards_visible(image_path: str) -> str:
     except OSError:
         return "-"
 
-    pixels = list(image.getdata())
+    return _detect_cards_visible_in_image(image)
+
+
+def _detect_cards_visible_in_image(image: Image.Image) -> str:
+    pixels = list(image.convert("RGB").getdata())
     total = max(1, len(pixels))
     red_ratio = sum(1 for r, g, b in pixels if r > 120 and r > g * 1.2 and r > b * 1.2) / total
     bright_ratio = sum(1 for r, g, b in pixels if (r + g + b) / 3 > 160) / total
@@ -519,22 +610,33 @@ def _detect_cards_visible(image_path: str) -> str:
 
     # Les cartes adverses fermées sont affichées comme des dos rouges avec une
     # bordure blanche. Leur texte n'est pas lisible, mais leur présence l'est.
-    if red_ratio > 0.55 and bright_ratio > 0.10 and white_ratio > 0.08:
+    if red_ratio > 0.45 and bright_ratio > 0.08 and white_ratio > 0.05:
         return "visible"
     # Les cartes ouvertes sont majoritairement blanches, même si leur couleur
     # dominante n'est ni rouge ni verte.
-    if white_ratio > 0.24 and bright_ratio > 0.18:
+    if red_ratio > 0.65 and bright_ratio > 0.10 and dark_ratio < 0.35:
         return "visible"
+    return "not_visible"
 
-    if red_ratio > 0.78 and bright_ratio > 0.18 and dark_ratio < 0.20:
-        return "visible"
-    if red_ratio < 0.55 and bright_ratio < 0.14:
-        return "not_visible"
-    if red_ratio < 0.68 and bright_ratio < 0.24:
-        return "not_visible"
-    if dark_ratio > 0.45 or (red_ratio > 0.50 and bright_ratio < 0.18):
-        return "not_visible"
-    return "uncertain"
+
+def detect_visible_opponent_seats(image_path: str) -> list[str]:
+    """Cheap card-back scan used between full OCR passes."""
+    if not image_path or not Path(image_path).exists():
+        return []
+    try:
+        image = Image.open(image_path).convert("RGB")
+    except OSError:
+        return []
+    zones = load_calibration().get("zones", {})
+    active: list[str] = []
+    for seat in ("top_left", "top_right", "left", "right"):
+        ratios = zones.get(f"{seat}_cards")
+        if not ratios:
+            continue
+        crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+        if _detect_cards_visible_in_image(crop) == "visible":
+            active.append(seat)
+    return active
 
 
 def _extract_board_cards(board_text: str) -> list[str]:
@@ -546,11 +648,28 @@ def _extract_board_cards(board_text: str) -> list[str]:
     return cards
 
 
-def _extract_board_cards_fast(image_path: str, board_text: str) -> list[str]:
+def _extract_single_card_rank(card_text: str) -> str:
+    """Normalize OCR from one tightly cropped Winamax rank glyph."""
+    token = re.sub(r"[^A-Z0-9]", "", _clean_ocr_text(card_text).upper())
+    if "10" in token:
+        return "t"
+    if token in {"A", "K", "Q", "J", "T", "2", "3", "4", "5", "6", "7", "8", "9"}:
+        return token.lower()
+    # Stable Tesseract confusions observed on the calibrated value crops.
+    if token in {"OQ", "QO", "0Q", "Q0"}:
+        return "q"
+    if token in {"ZT", "Z7", "T7", "L7"}:
+        return "7"
+    return ""
+
+
+def _extract_board_cards_fast(
+    image_path: str,
+    board_text: str,
+    card_rank_texts: list[str] | None = None,
+) -> list[str]:
     """Combine one board OCR pass with cheap per-card colour detection."""
     ranks = _extract_board_cards(board_text)
-    if not any(ranks):
-        return []
     image_file = Path(image_path)
     if not image_file.exists():
         return ranks
@@ -560,40 +679,43 @@ def _extract_board_cards_fast(image_path: str, board_text: str) -> list[str]:
         return ranks
 
     calibration = load_calibration().get("zones", {})
-    visible_count = 0
-    for index in range(1, 6):
-        ratios = calibration.get(f"board_card_{index}")
-        if not ratios:
-            continue
-        crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
-        if _looks_like_card_crop(crop):
-            visible_count += 1
-    if visible_count > sum(bool(rank) for rank in ranks):
-        # The global OCR missed at least one visible rank; use the accurate
-        # per-card fallback rather than returning an incomplete board.
-        return _extract_board_cards_from_image(image_path)
-
     cards: list[str] = []
-    for index, rank in enumerate(ranks):
-        ratios = calibration.get(f"board_card_{index + 1}")
+    engine_path = ""
+    for index in range(1, 6):
+        zone_name = f"board_card_{index}"
+        ratios = calibration.get(zone_name)
         if not ratios:
-            cards.append(rank)
-            continue
+            break
         crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
         # L'OCR global peut renvoyer un chiffre parasite provenant d'une
         # autre zone. Ne jamais attribuer ce chiffre Ã  un emplacement vide.
         if not _looks_like_card_crop(crop) and _card_white_ratio(crop) < 0.18:
             break
+        rank = ""
+        if card_rank_texts and index <= len(card_rank_texts):
+            rank = _extract_single_card_rank(card_rank_texts[index - 1])
+        if not rank:
+            rank = ranks[index - 1] if index <= len(ranks) else ""
         value_ratios = calibration.get(f"{zone_name}_value")
         rank_crop = (
             image.crop(_scaled_rect(image.width, image.height, *value_ratios))
             if value_ratios
             else crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
         )
-        # Template matching is local and does not start a Tesseract process.
-        # Use the global OCR rank as fallback when the crop is marginal.
-        local_rank = _match_board_rank_reference(rank_crop) or rank
-        if rank == "3" and _value_crop_has_two_holes(rank_crop):
+        # If the broad board OCR missed a rank, read only that card instead of
+        # relaunching OCR on all five cards.
+        local_rank = rank
+        if not local_rank:
+            local_rank = _match_board_rank_reference(rank_crop)
+        if not local_rank:
+            engine_path = engine_path or _find_tesseract() or ""
+            if engine_path:
+                local_rank = _extract_rank_from_value_crop(rank_crop, engine_path)
+        if local_rank == "3" and _value_crop_has_two_holes(rank_crop):
+            local_rank = "8"
+        # A tight rank crop can identify the two loops of an 8 even when the
+        # per-card OCR has incorrectly returned A (seen on blue diamond 8s).
+        if local_rank in {"", "a", "3"} and _rank_from_glyph_shape(rank_crop) == "8":
             local_rank = "8"
         suit = _extract_card_suit(crop)
         cards.append(f"{local_rank}{suit}" if suit else local_rank)
@@ -811,10 +933,14 @@ def _extract_rank_from_value_crop(value_crop: Image.Image, engine_path: str) -> 
         return ""
     rgb = np.asarray(value_crop.convert("RGB"))
     gray = ImageOps.autocontrast(value_crop.convert("L"))
+    def enlarged(source: Image.Image, resample: Image.Resampling) -> Image.Image:
+        padded = ImageOps.expand(source, border=12, fill=255)
+        return padded.resize((padded.width * 7, padded.height * 7), resample)
+
     variants = [
-        gray.resize((gray.width * 7, gray.height * 7), Image.Resampling.LANCZOS),
-        gray.point(lambda p: 255 if p > 135 else 0).resize((gray.width * 7, gray.height * 7), Image.Resampling.NEAREST),
-        gray.point(lambda p: 255 if p > 175 else 0).resize((gray.width * 7, gray.height * 7), Image.Resampling.NEAREST),
+        enlarged(gray, Image.Resampling.LANCZOS),
+        enlarged(gray.point(lambda p: 255 if p > 135 else 0), Image.Resampling.NEAREST),
+        enlarged(gray.point(lambda p: 255 if p > 175 else 0), Image.Resampling.NEAREST),
     ]
     # Pour les rangs colorés, fournir aussi à Tesseract un masque de la
     # couleur dominante. Le traitement bleu ne s'applique qu'aux crops bleus.
@@ -828,7 +954,7 @@ def _extract_rank_from_value_crop(value_crop: Image.Image, engine_path: str) -> 
         else:
             ink = (g > r * 1.05) & (g > b * 1.01)
         color_mask = Image.fromarray(np.where(ink, 0, 255).astype("uint8"))
-        variants.insert(0, color_mask.resize((color_mask.width * 7, color_mask.height * 7), Image.Resampling.NEAREST))
+        variants.insert(0, enlarged(color_mask, Image.Resampling.NEAREST))
     candidates: list[str] = []
     temp_dir = Path(Path.cwd()) / "tmp_board_rank"
     temp_dir.mkdir(exist_ok=True)
@@ -883,7 +1009,16 @@ def _extract_rank_from_value_crop(value_crop: Image.Image, engine_path: str) -> 
                     candidates.append(match.group(0).lower())
         if candidates:
             counts = {rank: candidates.count(rank) for rank in set(candidates)}
-            return max(counts, key=counts.get)
+            candidate = max(counts, key=counts.get)
+            shape_rank = _rank_from_glyph_shape(value_crop)
+            if shape_rank in {"q", "8", "t"}:
+                return shape_rank
+            if candidate == "2" and _unbordered_rank_is_seven(value_crop, engine_path):
+                return "7"
+            return candidate
+        shape_rank = _rank_from_glyph_shape(value_crop)
+        if shape_rank:
+            return shape_rank
         # Certains ``10`` bleus trÃ¨s petits sont vus par Tesseract comme une
         # tache continue. On dÃ©tecte alors automatiquement deux formes par
         # projection horizontale, sans connaÃ®tre la valeur Ã  l'avance.
@@ -905,7 +1040,59 @@ def _extract_rank_from_value_crop(value_crop: Image.Image, engine_path: str) -> 
                 return "t"
         return ""
     counts = {rank: candidates.count(rank) for rank in set(candidates)}
-    return max(counts, key=counts.get)
+    candidate = max(counts, key=counts.get)
+    # A two-glyph 10 may be read as 7 by OCR. Its enclosed zero is a much
+    # stronger signal, as are the characteristic holes of Q and 8.
+    shape_rank = _rank_from_glyph_shape(value_crop)
+    if shape_rank in {"q", "8", "t"}:
+        return shape_rank
+    if candidate == "2" and _unbordered_rank_is_seven(value_crop, engine_path):
+        return "7"
+    return candidate
+
+
+def _unbordered_rank_is_seven(value_crop: Image.Image, engine_path: str) -> bool:
+    """Resolve the only recurrent 2/7 ambiguity without a reference set."""
+    gray = ImageOps.autocontrast(value_crop.convert("L"))
+    temp_dir = Path(Path.cwd()) / "tmp_board_rank"
+    temp_dir.mkdir(exist_ok=True)
+    path = temp_dir / "value_crop_two_seven.png"
+    gray.resize((gray.width * 7, gray.height * 7), Image.Resampling.LANCZOS).save(path)
+    completed = _run_tesseract(
+        engine_path, str(path), psm="10",
+        extra_args=["-c", "tessedit_char_whitelist=27"],
+    )
+    return (completed.stdout or "").strip() == "7"
+
+
+def _rank_from_glyph_shape(value_crop: Image.Image) -> str:
+    """Conservative fallback for a rank when OCR returned nothing."""
+    width, height = value_crop.size
+    if width < 10 or height < 15:
+        return ""
+    crop = value_crop.crop((3, max(6, int(height * 0.20)), max(4, int(width * 0.88)), max(7, int(height * 0.94))))
+    rgb = np.asarray(crop.convert("RGB"))
+    saturation = rgb.max(axis=2).astype(int) - rgb.min(axis=2).astype(int)
+    brightness = rgb.mean(axis=2)
+    ink = (((saturation > 30) & (brightness < 235)) | (brightness < 120)).astype("uint8") * 255
+    contours, hierarchy = cv2.findContours(ink, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    if hierarchy is None:
+        return ""
+    hole_indexes = [index for index, node in enumerate(hierarchy[0]) if node[3] >= 0]
+    holes = [cv2.boundingRect(contours[index]) for index in hole_indexes]
+    if len(holes) >= 2:
+        return "8"
+    if len(holes) != 1:
+        return ""
+    _, _, hole_width, hole_height = holes[0]
+    hole_area = float(cv2.contourArea(contours[hole_indexes[0]]))
+    if hole_area >= 180 and hole_width >= 13:
+        return "q"
+    if hole_height >= 18 and hole_width <= 11:
+        return "t"
+    if hole_area <= 90 and hole_height <= 14:
+        return "a"
+    return ""
 
 
 def _extract_card_rank(card_image: Image.Image, engine_path: str, suit: str = "", tight: bool = False) -> str:
@@ -1122,6 +1309,11 @@ def _hero_cards_visible_on_table(image_path: str) -> bool:
     total = max(1, len(pixels))
     white_ratio = sum(1 for r, g, b in pixels if r > 175 and g > 175 and b > 175) / total
     return white_ratio > 0.12
+
+
+def hero_cards_visible_on_table(image_path: str) -> bool:
+    """Public cheap hero-card presence check for the fast live loop."""
+    return _hero_cards_visible_on_table(image_path)
 
 
 def _extract_hero_footer_status(image_path: str) -> str:
