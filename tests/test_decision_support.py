@@ -4,11 +4,14 @@ from dataclasses import replace
 import unittest
 
 from poker_tracker.decision_support import VillainRangeProfile, _preflop_raise_range, recommend_action
+from poker_tracker.gto_preflop import recommend_preflop_baseline
 from poker_tracker.live_state import (
     _decision_amounts,
     _effective_stack_bb,
+    _hero_turn_confidence,
     _hero_is_in_position,
     _history_names_for_screen,
+    _merge_recent_actions,
     _position_for_seat,
     _preflop_decision_context,
 )
@@ -48,6 +51,57 @@ class DecisionSupportTests(unittest.TestCase):
         result = self.recommend()
         self.assertEqual(result.action, "RAISE")
         self.assertEqual(result.sizing, "3 BB preflop")
+
+    def test_aggressive_opening_profile_widens_from_utg_to_button(self):
+        self.assertEqual(
+            recommend_preflop_baseline("Kh 6d", "BTN", "unopened").action,
+            "RAISE",
+        )
+        self.assertEqual(
+            recommend_preflop_baseline("Kh 6d", "UTG", "unopened").action,
+            "FOLD",
+        )
+
+    def test_button_small_pair_calls_single_raise_with_a_caller_when_deep(self):
+        result = self.recommend(
+            hero_cards="5h 5d",
+            hero_position="BTN",
+            recent_actions=["UTG raises 2.5", "CO calls 2.5"],
+            players_in_hand=["right", "left", "hero"],
+            effective_stack_bb=100.0,
+            raise_size_bb=2.5,
+            pot_size=6.5,
+            call_amount=2.5,
+        )
+        self.assertEqual(result.action, "CALL")
+        self.assertIn("cote implicite", " ".join(result.reasons))
+
+    def test_aggressive_button_defends_ato_against_unknown_small_open(self):
+        result = self.recommend(
+            hero_cards="As Td",
+            hero_position="BTN",
+            recent_actions=["Villain raises 2.5"],
+            raise_size_bb=2.5,
+            pot_size=4.0,
+            call_amount=2.5,
+        )
+        self.assertEqual(result.action, "CALL")
+
+    def test_live_preflop_bet_maps_raiser_seat_to_position_without_history(self):
+        context = _preflop_decision_context(
+            None,
+            {"top_left_bet": "2,5 BB", "top_left_name": "OpenRaiser"},
+            "right",
+            "RougeLion",
+            is_preflop=True,
+        )
+        self.assertEqual(context["aggressor"], "OpenRaiser")
+        self.assertEqual(context["aggressor_position"], "UTG")
+        self.assertEqual(context["raise_size_bb"], 2.5)
+
+    def test_live_actions_are_kept_when_history_is_late(self):
+        actions = _merge_recent_actions(["Hero calls 2 BB"], ["Villain bets 4 BB", "Hero calls 2 BB"])
+        self.assertEqual(actions, ["Hero calls 2 BB", "Villain bets 4 BB"])
 
     def test_made_flush_raises_against_bet(self):
         result = self.recommend(
@@ -110,6 +164,24 @@ class DecisionSupportTests(unittest.TestCase):
         result = self.recommend(available_actions=["FOLD"], recent_actions=[])
         self.assertEqual(result.action, "ATTENDRE")
 
+    def test_visible_check_can_never_be_recommended_as_fold(self):
+        result = self.recommend(
+            hero_cards="7c 2d",
+            board="Ah Kd Qs",
+            street="flop",
+            available_actions=["FOLD", "CHECK", "RAISE"],
+            recent_actions=["VilainTest bets 10"],
+        )
+        self.assertEqual(result.action, "CHECK")
+
+    def test_two_colored_actions_detect_hero_turn_when_fold_is_greyed(self):
+        states = [
+            type("Button", (), {"name": "left", "active": True, "red_ratio": 0.0})(),
+            type("Button", (), {"name": "center", "active": True, "red_ratio": 0.82})(),
+            type("Button", (), {"name": "right", "active": True, "red_ratio": 0.79})(),
+        ]
+        self.assertGreaterEqual(_hero_turn_confidence("", "", "", states), 0.6)
+
     def test_all_in_with_a_readable_call_uses_call_fold_math(self):
         result = self.recommend(
             hero_cards="Kh Qh",
@@ -156,6 +228,17 @@ class DecisionSupportTests(unittest.TestCase):
             call_amount=1.0,
         )
         self.assertEqual(result.action, "CALL")
+
+    def test_starting_blinds_are_not_mistaken_for_a_limper(self):
+        result = self.recommend(
+            hero_cards="Ah Js",
+            recent_actions=[],
+            pot_size=1.5,
+            call_amount=1.0,
+            hero_position="CO",
+        )
+        self.assertEqual(result.action, "RAISE")
+        self.assertEqual(result.sizing, "2,5 BB")
 
     def test_gto_baseline_isolates_kj_from_button(self):
         result = self.recommend(

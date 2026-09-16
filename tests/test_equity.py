@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from poker_tracker.equity import _combos
+from poker_tracker.equity import _combos, range_hand_distribution
 from poker_tracker.villain_db import get_player_profile, open_db
 
 
@@ -27,6 +27,12 @@ class EquityRangeTests(unittest.TestCase):
         # The end point is unreachable when both ranks are decremented.  It
         # must still return promptly rather than blocking the live assistant.
         self.assertTrue(_combos("86s-54s", set()))
+
+    def test_postflop_distribution_separates_top_middle_and_small_pairs(self):
+        distribution = range_hand_distribution("22+, A2s+, K7s+", "Ah 7d 2c", "Qh Jd")
+        self.assertGreater(distribution.get("top paire", 0.0), 0.0)
+        self.assertGreater(distribution.get("middle paire", 0.0), 0.0)
+        self.assertGreater(distribution.get("petite paire", 0.0), 0.0)
 
     def test_database_name_ignores_dot_and_space(self):
         with tempfile.TemporaryDirectory() as folder:

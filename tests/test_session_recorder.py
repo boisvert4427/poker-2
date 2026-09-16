@@ -26,7 +26,15 @@ class SessionRecorderTests(unittest.TestCase):
             image = root / "source.png"
             image.write_bytes(b"fake-png")
             history = root / "history.txt"
-            history.write_text("Winamax Poker - HandId: #123\n*** PRE-FLOP ***\n", encoding="utf-8")
+            history.write_text(
+                "Winamax Poker - CashGame - HandId: #123 - Holdem no limit (0.01/0.02) - 2026/09/16 19:31:32 UTC\n"
+                "Table: 'Nice 06' 5-max Seat #1 is the button\n"
+                "Dealt to RougeLion [Ah Kh]\n"
+                "*** SUMMARY ***\n"
+                "Total pot 0.10 | Rake 0.00\n"
+                "Seat 1: RougeLion showed [Ah Kh] and won 0.10\n",
+                encoding="utf-8",
+            )
             ocr = OcrSnapshot(
                 image_path=str(image),
                 engine_available=True,
@@ -56,6 +64,9 @@ class SessionRecorderTests(unittest.TestCase):
             self.assertEqual(payload["timing"]["full_analysis_seconds"], 1.2346)
             self.assertEqual(payload["live_snapshot"]["hero_cards"], "Ah Kh")
             self.assertIn("HandId: #123", payload["history_hand"])
+            self.assertEqual(payload["hand_link"]["hand_id"], "123")
+            self.assertEqual(payload["hand_link"]["outcome"], "won")
+            self.assertIn("summary", payload["hand_link"]["actions_by_street"])
 
 
 if __name__ == "__main__":

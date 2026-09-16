@@ -94,6 +94,7 @@ def build_live_snapshot(
     hero_cards_hint: str = "",
     visible_board_hint: str = "",
     cached_names: dict[str, str] | None = None,
+    local_recent_actions: list[str] | None = None,
 ) -> LiveHandSnapshot | None:
     if window is None and ocr_snapshot is None:
         return None
@@ -151,7 +152,10 @@ def build_live_snapshot(
     if history_hand and history_hand.hero_cards and (not hero_cards or not history_hand.is_complete):
         hero_cards = history_hand.hero_cards
         detected_values["hero_cards"] = hero_cards
-    recent_actions = _history_actions_for_street(history_hand, current_street)
+    recent_actions = _merge_recent_actions(
+        _history_actions_for_street(history_hand, current_street),
+        local_recent_actions or [],
+    )
     is_complete = bool(history_hand and history_hand.is_complete)
     history_path = str(getattr(history_file, "path", "") or "")
     if history_path:
@@ -196,6 +200,7 @@ def build_live_snapshot(
         detected_values,
         detected_values.get("dealer_button", ""),
         hero_name,
+        is_preflop=current_street == "preflop",
     )
     effective_stack_bb = _effective_stack_bb(detected_values, players_in_hand, aggressive_seats)
     spr = effective_stack_bb / pot_size if effective_stack_bb is not None and pot_size and pot_size > 0 else None
@@ -586,6 +591,18 @@ def _read_current_history_hand(history_file: object | None) -> ParsedHand | None
     return hand if hand.hand_id else None
 
 
+def _merge_recent_actions(history_actions: list[str], local_actions: list[str]) -> list[str]:
+    """Prefer exact history lines but retain actions seen live before flush."""
+    merged: list[str] = []
+    seen: set[str] = set()
+    for action in [*history_actions, *local_actions]:
+        normalized = " ".join(str(action or "").casefold().split())
+        if normalized and normalized not in seen:
+            merged.append(str(action))
+            seen.add(normalized)
+    return merged
+
+
 def _history_matches_screen(hand: ParsedHand, hero_cards: str, visible_board: str) -> bool:
     history_hero = _normalize_card_sequence(hand.hero_cards)
     screen_hero = _normalize_card_sequence(hero_cards)
@@ -731,6 +748,8 @@ def _preflop_decision_context(
     fields: dict[str, str],
     dealer_owner: str,
     hero_name: str,
+    *,
+    is_preflop: bool = False,
 ) -> dict[str, object]:
     context: dict[str, object] = {
         "pot_type": "unknown",
@@ -740,6 +759,29 @@ def _preflop_decision_context(
         "limper_count": 0,
         "raise_size_bb": None,
     }
+    # Live source of truth: before the history file is flushed, the raise is
+    # still visible as a bet beside a fixed seat.  Convert that seat directly
+    # through the Dealer mapping instead of waiting for history actions.
+    if is_preflop:
+        hero_bet = _bb_value(fields.get("hero_bet", "")) or 0.0
+        visible_bets = {
+            seat: amount
+            for seat in ("top_left", "top_right", "left", "right")
+            for amount in [_bb_value(fields.get(f"{seat}_bet", ""))]
+            if amount is not None and amount > hero_bet and amount > 1.0
+        }
+        if visible_bets:
+            aggressor_seat, amount = max(visible_bets.items(), key=lambda item: item[1])
+            aggressor = str(fields.get(f"{aggressor_seat}_name", "") or aggressor_seat)
+            context.update(
+                pot_type="single_raised",
+                aggressor=aggressor,
+                aggressor_position=_position_for_seat(aggressor_seat, dealer_owner),
+                hero_is_aggressor=False,
+                raise_size_bb=amount,
+            )
+            return context
+
     if hand is None:
         return context
     actions = [str(action) for action in (hand.streets or {}).get("pre_flop", [])]
@@ -1061,6 +1103,17 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
         score -= 0.05
     active_names = [getattr(state, "name", "") for state in visual_states if getattr(state, "active", False)]
     active_visual = len(active_names)
+    colored_action_names = {
+        getattr(state, "name", "")
+        for state in visual_states
+        if getattr(state, "red_ratio", 0.0) >= 0.04
+    }
+    # In a free-check spot Winamax greys out Fold but leaves CHECK and BET
+    # colored.  Treat two independently colored action zones as a positive
+    # turn signal.  This does not match the grey preselection bar: its three
+    # zones have a zero red ratio (verified on the live table).
+    if len(colored_action_names) >= 2:
+        score += 0.70
     if {"left", "center"}.issubset(set(active_names)):
         red_active = any(
             getattr(state, "active", False) and getattr(state, "red_ratio", 0.0) >= 0.04

@@ -15,6 +15,12 @@ class MiniSnapshot:
 
 
 class LiveBoardStabilityTests(unittest.TestCase):
+    def test_new_board_signature_forces_a_fresh_full_analysis(self):
+        snapshot = type("Fast", (), {"is_hero_turn": True, "available_actions": ["FOLD", "CHECK", "RAISE"], "visual_buttons": ["left", "center", "right"]})()
+        preflop = PokerTrackerApp._fast_live_signature(snapshot, board_signature="pre", hero_signature="hero")
+        flop = PokerTrackerApp._fast_live_signature(snapshot, board_signature="flop", hero_signature="hero")
+        self.assertNotEqual(preflop, flop)
+
     def test_same_board_glyph_keeps_previous_rank(self):
         tracker = object.__new__(PokerTrackerApp)
         tracker.current_live_snapshot = MiniSnapshot(

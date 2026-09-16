@@ -46,6 +46,46 @@ def estimate_multiway_equity(hero_cards: str, board: str, ranges: list[str], sim
     return won / completed if completed else None
 
 
+def range_hand_distribution(range_text: str, board: str, hero_cards: str = "") -> dict[str, float]:
+    """Break a compatible opponent range into current postflop hand classes."""
+    board_cards = _cards(board)
+    dead = set(board_cards + _cards(hero_cards))
+    if len(board_cards) < 3 or len(dead) != len(board_cards) + len(_cards(hero_cards)):
+        return {}
+    combos = _combos(range_text, dead)
+    if not combos:
+        return {}
+    board_values = sorted((RANK_VALUE[card[0]] for card in board_cards), reverse=True)
+    paired_board = len(set(board_values)) != len(board_values)
+    counts: Counter[str] = Counter()
+    for combo in combos:
+        score = _score(list(combo) + board_cards)
+        kind = score[0]
+        if kind >= 5:
+            label = "couleur+"
+        elif kind == 4:
+            label = "quinte"
+        elif kind == 3:
+            label = "brelan"
+        elif kind == 2:
+            label = "deux paires"
+        elif kind == 1:
+            pair_rank = score[1]
+            if paired_board:
+                label = "paire"
+            elif pair_rank == board_values[0]:
+                label = "top paire"
+            elif len(board_values) > 1 and pair_rank == board_values[1]:
+                label = "middle paire"
+            else:
+                label = "petite paire"
+        else:
+            label = "air / tirage"
+        counts[label] += 1
+    total = sum(counts.values())
+    return {label: count / total for label, count in counts.items()} if total else {}
+
+
 def _cards(text: str) -> list[str]:
     return [rank.upper().replace("10", "T") + suit.lower() for rank, suit in CARD_RE.findall(text or "")]
 

@@ -6,7 +6,7 @@ import re
 from typing import Iterable
 
 from .villain_db import DEFAULT_DB_PATH, get_player_profile, open_db
-from .equity import estimate_multiway_equity
+from .equity import estimate_multiway_equity, range_hand_distribution
 from .gto_preflop import recommend_preflop_baseline
 from .gto_postflop import classify_board_texture, recommend_postflop_baseline
 
@@ -72,6 +72,7 @@ class DecisionRecommendation:
     call_amount: float | None = None
     opponent_count: int = 0
     villain_ranges: list[str] = field(default_factory=list)
+    villain_hand_probabilities: list[str] = field(default_factory=list)
     strategy_mix: str = ""
     effective_stack_bb: float | None = None
     spr: float | None = None
@@ -370,6 +371,12 @@ def recommend_action(
         f"{profile.name} ({profile.seat}) : {range_value} [{line}]"
         for profile, (range_value, line) in zip(profiles, effective_ranges)
     ]
+    hand_probability_lines = _postflop_probability_lines(
+        profiles,
+        effective_ranges,
+        board=board,
+        hero_cards=hero_cards,
+    )
     known_sample = bool(primary and primary.known and primary.hands_played >= 20)
     confidence = 0.72 if known_sample else 0.52
     actions = {action.upper() for action in available_actions}
@@ -378,11 +385,19 @@ def recommend_action(
         for action in recent_actions
         for token in (" raises ", " bets ", " all-in", " all in")
     )
+    preflop_caller_count = sum(
+        1
+        for action in recent_actions
+        if " calls " in f" {action.lower()} "
+    )
     cheap_limp_call = (
         (street or "preflop").lower() == "preflop"
         and "CALL" in actions
         and call_amount is not None
         and call_amount <= 1.0
+        # A 1.5 BB pot is merely the SB/BB already posted. Calling 1 BB here
+        # must not be mistaken for an earlier limp.
+        and (pot_type == "limped" or (pot_size is not None and pot_size >= 2.25))
         and not preflop_raise_seen
     )
     # The first displayed villain is not necessarily the player who shoved.
@@ -390,7 +405,15 @@ def recommend_action(
     # player on the other side of the table can be mistaken for an unopened
     # pot and produce a nonsensical raise recommendation.
     facing_all_in = _facing_all_in(recent_actions)
-    facing_aggression = _facing_aggression(recent_actions, "") or ("CALL" in actions and not cheap_limp_call)
+    implicit_call_pressure = (
+        "CALL" in actions
+        and (
+            (street or "preflop").lower() != "preflop"
+            or (call_amount is not None and call_amount > 1.0)
+            or (pot_size is not None and pot_size >= 3.0)
+        )
+    )
+    facing_aggression = _facing_aggression(recent_actions, "") or implicit_call_pressure
     profile = primary.profile if primary else "standard"
     reasons: list[str] = []
     equity = estimate_multiway_equity(
@@ -446,6 +469,7 @@ def recommend_action(
             effective_stack_bb=effective_stack_bb,
             limper_count=limper_count,
             raise_size_bb=raise_size_bb,
+            caller_count=preflop_caller_count,
         )
         if baseline is not None:
             action, sizing = baseline.action, baseline.sizing
@@ -479,6 +503,7 @@ def recommend_action(
         result = DecisionRecommendation(action, sizing, confidence, strength, range_text, summary, reasons[:5])
         result.strategy_mix = f"{action} 100%"
         _set_decision_context(result, effective_stack_bb, spr, pot_type, preflop_aggressor)
+        result.villain_hand_probabilities = hand_probability_lines
         return _apply_call_math(result, actions, equity, pot_odds, call_amount, len(profiles), range_lines)
 
     strength_score, strength, draws, postflop_reasons = _postflop_strength(hero_cards, board)
@@ -590,7 +615,29 @@ def recommend_action(
         result.value_equity_when_called = value_plan.equity_when_called
         result.value_ev_bb = value_plan.ev_bb
         result.value_summary = value_plan.summary
+    result.villain_hand_probabilities = hand_probability_lines
     return _apply_call_math(result, actions, equity, pot_odds, call_amount, len(profiles), range_lines)
+
+
+def _postflop_probability_lines(
+    profiles: list[VillainRangeProfile],
+    effective_ranges: list[tuple[str, str]],
+    *,
+    board: str,
+    hero_cards: str,
+) -> list[str]:
+    if len((board or "").split()) < 3:
+        return []
+    order = ("couleur+", "quinte", "brelan", "deux paires", "top paire", "middle paire", "petite paire", "air / tirage")
+    lines: list[str] = []
+    for profile, (range_text, _reason) in zip(profiles, effective_ranges):
+        distribution = range_hand_distribution(range_text, board, hero_cards)
+        if not distribution:
+            continue
+        parts = [f"{label} {distribution[label]:.0%}" for label in order if distribution.get(label, 0.0) >= 0.01]
+        if parts:
+            lines.append(f"{profile.name} ({profile.seat}) : " + " · ".join(parts))
+    return lines
 
 
 def _set_decision_context(
@@ -1003,6 +1050,11 @@ def _facing_all_in(recent_actions: list[str]) -> bool:
 
 
 def _legal_action(preferred: str, available: set[str], facing_aggression: bool) -> str:
+    # A visible CHECK is definitive: no chip is required to stay in the hand.
+    # Never advise folding in that situation, even if stale history/OCR made
+    # the strategic layer believe that a bet had occurred.
+    if preferred == "FOLD" and "CHECK" in available:
+        return "CHECK"
     if not available or preferred in available:
         return preferred
     aliases = {"BET": "RAISE", "RAISE": "BET"}

@@ -12,7 +12,7 @@ from .detection import summarize_detection
 from .live_state import build_live_snapshot
 from .ocr import capture_window, run_local_ocr_on_image
 from .history import read_history_text
-from .parser import split_winamax_hands
+from .parser import parse_winamax_hand, split_winamax_hands
 
 
 @dataclass(slots=True)
@@ -120,6 +120,11 @@ class SessionRecorder:
                 "live_snapshot": asdict(live_snapshot) if is_dataclass(live_snapshot) else None,
             }
             target_meta.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            # Winamax may write the history only after the decision frame was
+            # archived.  Reconcile any earlier audit frames whenever a newer
+            # full analysis arrives; this makes the audit searchable by the
+            # definitive Winamax HandId after the hand has ended.
+            self.reconcile_completed_hand(history_path)
             return RecordedSnapshot(
                 timestamp=timestamp,
                 session_id=self.session_id or "",
@@ -130,6 +135,70 @@ class SessionRecorder:
             )
         finally:
             self._audit_lock.release()
+
+    def reconcile_completed_hand(self, history_path: str) -> int:
+        """Attach the latest completed Winamax hand to matching live audits.
+
+        The OCR decision exists before Winamax flushes its history file.  We
+        therefore match an audit afterwards using the source file, hero cards
+        and visible board (when present).  The link is stored inside the audit
+        JSON so a later review has the decision, HandId and outcome together.
+        """
+        if not history_path or self.session_dir is None:
+            return 0
+        try:
+            blocks = split_winamax_hands(read_history_text(history_path))
+            if not blocks:
+                return 0
+            hand = parse_winamax_hand(blocks[-1])
+        except (OSError, UnicodeError, ValueError):
+            return 0
+        if not hand.hand_id or not hand.is_complete or not hand.hero_cards:
+            return 0
+
+        hero_cards = _normal_cards(hand.hero_cards)
+        hand_board = _normal_cards(_history_board(hand))
+        candidates: list[tuple[Path, dict[str, Any], int]] = []
+        for metadata_path in self.session_dir.glob("*.live.json"):
+            try:
+                payload = json.loads(metadata_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            if str(payload.get("history_file", "")) != str(history_path):
+                continue
+            existing = payload.get("hand_link", {}) or {}
+            if existing.get("hand_id"):
+                continue
+            snapshot = payload.get("live_snapshot", {}) or {}
+            if _normal_cards(str(snapshot.get("hero_cards", ""))) != hero_cards:
+                continue
+            audit_board = _normal_cards(str(snapshot.get("visible_board", "")))
+            # A full board match is the strongest key; preflop records remain
+            # eligible so an entire hand's decisions can be grouped together.
+            # OCR can misread a board card, but matching hero cards inside the
+            # same active session is still valuable for retrospective repair.
+            score = 2 if audit_board == hand_board and audit_board else 1 if not audit_board else 0
+            candidates.append((metadata_path, payload, score))
+        if not candidates:
+            return 0
+
+        linked = 0
+        for metadata_path, payload, _score in candidates:
+            payload["hand_link"] = {
+                "status": "linked",
+                "hand_id": hand.hand_id,
+                "table_name": hand.table_name,
+                "played_at": hand.played_at,
+                "hero_cards": hand.hero_cards,
+                "board": _history_board(hand),
+                "total_pot": hand.total_pot,
+                "outcome": _hero_outcome(hand),
+                "actions_by_street": getattr(hand, "streets", {}) or {},
+                "source": "post_hand_history_reconciliation",
+            }
+            metadata_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+            linked += 1
+        return linked
 
     def _record_snapshot_locked(self) -> RecordedSnapshot | None:
         session_dir = self.ensure_session()
@@ -235,3 +304,27 @@ class SessionRecorder:
 
     def save_snapshot_review(self, review_path: str, review_payload: dict[str, Any]) -> None:
         Path(review_path).write_text(json.dumps(review_payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _history_board(hand: object) -> str:
+    boards = getattr(hand, "board_by_street", {}) or {}
+    for street in ("summary", "river", "turn", "flop"):
+        if boards.get(street):
+            return str(boards[street])
+    return ""
+
+
+def _normal_cards(value: str) -> str:
+    return " ".join((value or "").replace("10", "T").lower().split())
+
+
+def _hero_outcome(hand: object) -> str:
+    hero = str(getattr(hand, "hero_name", "") or "").lower()
+    for line in getattr(hand, "summary", []) or []:
+        lowered = str(line).lower()
+        if hero and hero in lowered:
+            if " won " in f" {lowered} ":
+                return "won"
+            if " lost " in f" {lowered} ":
+                return "lost"
+    return "unknown"

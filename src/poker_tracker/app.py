@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import hashlib
 import random
+import ctypes
+import re
 import tkinter as tk
 from dataclasses import is_dataclass, replace
 from datetime import datetime
@@ -205,10 +207,18 @@ class PokerTrackerApp:
         self.live_decision_text: tk.Text | None = None
         self.last_live_scan_at = ""
         self.last_live_capture_path = ""
+        self.last_live_window: WinamaxWindow | None = None
+        self.decision_overlay: tk.Toplevel | None = None
+        self.decision_overlay_label: tk.Label | None = None
+        self.player_range_overlays: dict[str, tuple[tk.Toplevel, tk.Label]] = {}
+        self.live_action_memory: list[str] = []
+        self.live_action_memory_hand = ""
+        self.live_action_memory_seen: set[str] = set()
         self.cached_live_context: dict[str, object] = {}
         self.cached_history_block_key = ""
         self.cached_board_signature = ""
         self.cached_board_card_fingerprints: dict[str, bytes] = {}
+        self.pending_board_cards: dict[str, tuple[str, int]] = {}
         self.cached_hero_signature = ""
         self.full_ocr_thread: threading.Thread | None = None
         self.full_ocr_in_progress = False
@@ -679,6 +689,8 @@ class PokerTrackerApp:
         return snapshot
 
     def _fill_live_state(self, history_file: object, window: object, ocr_snapshot: OcrSnapshot | None) -> None:
+        if isinstance(window, WinamaxWindow):
+            self.last_live_window = window
         block_key = latest_hand_block_key(history_file)
         board_signature = self._board_signature(ocr_snapshot.image_path if ocr_snapshot else "")
         hero_signature = self._hero_signature(ocr_snapshot.image_path if ocr_snapshot else "")
@@ -861,6 +873,8 @@ class PokerTrackerApp:
 
         history_file = detection.get("latest_history_file")
         window = detection.get("active_table_window")
+        if isinstance(window, WinamaxWindow):
+            self.last_live_window = window
         self._sync_completed_history(history_file)
         history_block_key = latest_hand_block_key(history_file)
         if (
@@ -893,7 +907,14 @@ class PokerTrackerApp:
             action_texts,
             self.cached_live_context,
         )
-        fast_signature = self._fast_live_signature(fast_snapshot)
+        # The action buttons can stay identical (FOLD/CHECK/RAISE) when a
+        # street changes. Include the card glyphs so a hero who acts first on
+        # the flop/turn/river still receives a fresh decision.
+        fast_signature = self._fast_live_signature(
+            fast_snapshot,
+            board_signature=self._board_signature(image_path or ""),
+            hero_signature=self._hero_signature(image_path or ""),
+        )
 
         if (
             self.current_live_snapshot is not None
@@ -995,7 +1016,12 @@ class PokerTrackerApp:
         )
 
     @staticmethod
-    def _fast_live_signature(snapshot: object) -> tuple | None:
+    def _fast_live_signature(
+        snapshot: object,
+        *,
+        board_signature: str = "",
+        hero_signature: str = "",
+    ) -> tuple | None:
         """Stable cheap state key used before deciding to keep old details."""
         if snapshot is None:
             return None
@@ -1003,6 +1029,8 @@ class PokerTrackerApp:
             bool(getattr(snapshot, "is_hero_turn", False)),
             tuple(getattr(snapshot, "available_actions", []) or []),
             tuple(getattr(snapshot, "visual_buttons", []) or []),
+            board_signature,
+            hero_signature,
         )
 
     def _queue_full_ocr_request(self, history_file: object, window: object, image_path: str) -> None:
@@ -1024,6 +1052,7 @@ class PokerTrackerApp:
 
         def worker() -> None:
             try:
+                local_actions = list(self.live_action_memory)
                 analysis_started = time.perf_counter()
                 block_key = latest_hand_block_key(history_file)
                 board_signature = self._board_signature(image_path)
@@ -1053,6 +1082,7 @@ class PokerTrackerApp:
                     hero_cards_hint=(str(self.cached_live_context.get("hero_cards", "") or "") if reuse_hero else ""),
                     visible_board_hint=(str(self.cached_live_context.get("visible_board", "") or "") if reuse_board else ""),
                     cached_names=cached_names if same_hand else None,
+                    local_recent_actions=local_actions,
                 ) if snapshot is not None else None
                 elapsed_seconds = time.perf_counter() - analysis_started
                 self.pending_full_ocr_result = (
@@ -1092,6 +1122,7 @@ class PokerTrackerApp:
                     live_snapshot,
                     same_hand=same_hand,
                 )
+                self._remember_live_actions(self.current_live_snapshot)
                 self._update_cached_live_context(self.current_live_snapshot)
                 self._render_live_decision(self.current_live_snapshot, full_ocr=True)
                 audit_record = self.session_recorder.record_live_analysis(
@@ -1123,6 +1154,33 @@ class PokerTrackerApp:
             self.pending_turn_snapshot = None
             self.hero_turn_release_streak = 0
         self._start_next_full_ocr_job()
+
+    def _remember_live_actions(self, snapshot: object) -> None:
+        """Record visible villain bets by street before Winamax writes history."""
+        if snapshot is None:
+            return
+        hero_cards = str(getattr(snapshot, "hero_cards", "") or "")
+        if hero_cards and hero_cards != self.live_action_memory_hand:
+            self.live_action_memory_hand = hero_cards
+            self.live_action_memory = []
+            self.live_action_memory_seen = set()
+        street = str(getattr(snapshot, "current_street", "preflop") or "preflop")
+        fields = getattr(snapshot, "detected_fields", {}) or {}
+        for seat in ("top_left", "top_right", "left", "right"):
+            raw = str(fields.get(f"{seat}_bet", "") or "")
+            match = re.search(r"(\d+(?:[.,]\d+)?)", raw)
+            if not match:
+                continue
+            amount = float(match.group(1).replace(",", "."))
+            # Blinds are not aggressive preflop actions.
+            if street == "preflop" and amount <= 1.0:
+                continue
+            name = str(fields.get(f"{seat}_name", "") or seat)
+            key = f"{street}|{seat}|{amount:.2f}"
+            if key in self.live_action_memory_seen:
+                continue
+            self.live_action_memory_seen.add(key)
+            self.live_action_memory.append(f"{name} bets {amount:g} BB")
 
     def _update_cached_live_context(self, snapshot: object) -> None:
         if snapshot is None:
@@ -1180,8 +1238,13 @@ class PokerTrackerApp:
         same_hand: bool,
     ) -> object | None:
         """Do not let OCR rename an already visible board card mid-street."""
-        if snapshot is None or not same_hand or not is_dataclass(snapshot):
+        if snapshot is None or not is_dataclass(snapshot):
             return snapshot
+        if not same_hand:
+            self.pending_board_cards = {}
+            return snapshot
+        if not hasattr(self, "pending_board_cards"):
+            self.pending_board_cards = {}
         fields = dict(getattr(snapshot, "detected_fields", {}) or {})
         previous = getattr(self.current_live_snapshot, "detected_fields", {}) or {}
         changed = False
@@ -1189,6 +1252,20 @@ class PokerTrackerApp:
             key = f"board_card_{index}"
             old_value = str(previous.get(key, "") or "")
             new_value = str(fields.get(key, "") or "")
+            # A newly dealt community card must be seen twice with the same
+            # rank/suit before it enters the decision engine.  It prevents a
+            # single OCR glitch (notably 9/Q and 7/J) from changing equity.
+            if not old_value and new_value:
+                candidate, count = self.pending_board_cards.get(key, ("", 0))
+                count = count + 1 if candidate == new_value else 1
+                self.pending_board_cards[key] = (new_value, count)
+                if count < 2:
+                    fields[key] = ""
+                    changed = True
+                    continue
+                self.pending_board_cards.pop(key, None)
+            elif old_value:
+                self.pending_board_cards.pop(key, None)
             old_mask = self.cached_board_card_fingerprints.get(key, b"")
             new_mask = fingerprints.get(key, b"")
             if not old_value or not new_mask or len(old_mask) != len(new_mask):
@@ -1390,6 +1467,9 @@ class PokerTrackerApp:
             else:
                 active_ranges = "- Aucun adversaire actif détecté avec certitude."
 
+            probability_lines = list(getattr(recommendation, "villain_hand_probabilities", []) or [])
+            hand_probabilities = "\n".join(f"- {line}" for line in probability_lines) or "- Disponible a partir du flop."
+
             if hero_turn:
                 if full_ocr:
                     robot_action = "Analyse complète terminée ; résultat conservé."
@@ -1440,12 +1520,183 @@ class PokerTrackerApp:
                 f"- Raisons : {recommendation_reasons}\n"
                 "\nRANGES DES JOUEURS EN JEU\n"
                 f"{active_ranges}\n"
+                "\nREPARTITION POSTFLOP ESTIMEE\n"
+                f"{hand_probabilities}\n"
             )
 
         self.live_decision_text.configure(state="normal")
         self.live_decision_text.delete("1.0", tk.END)
         self.live_decision_text.insert("1.0", content)
         self.live_decision_text.configure(state="disabled")
+        self._render_table_decision_overlay(snapshot, full_ocr=full_ocr)
+        self._render_player_range_overlays(snapshot, full_ocr=full_ocr)
+
+    def _render_table_decision_overlay(self, snapshot: object, *, full_ocr: bool) -> None:
+        """Show the verified recommendation beside the hero seat, click-through."""
+        recommendation = getattr(snapshot, "recommendation", None) if snapshot is not None else None
+        hero_turn = bool(getattr(snapshot, "is_hero_turn", False)) if snapshot is not None else False
+        action = str(getattr(recommendation, "action", "") or "").upper()
+        window = self.last_live_window
+        if not full_ocr or not hero_turn or action in {"", "ATTENDRE"} or window is None:
+            self._hide_table_decision_overlay()
+            return
+
+        overlay = self._ensure_table_decision_overlay()
+        label = self.decision_overlay_label
+        if overlay is None or label is None:
+            return
+        sizing = str(getattr(recommendation, "sizing", "") or "")
+        call_amount = getattr(recommendation, "call_amount", None)
+        detail = sizing
+        if action == "CALL" and call_amount is not None:
+            detail = f"{call_amount:g} BB"
+        label.configure(
+            text=f"{action}\n{detail}" if detail else action,
+            fg={"FOLD": "#ff6b6b", "CALL": "#ffd166", "RAISE": "#69db7c", "BET": "#69db7c", "CHECK": "#74c0fc"}.get(action, "#ffffff"),
+        )
+        overlay.deiconify()
+        overlay.update_idletasks()
+        left, top, right, bottom = window.rect
+        width, height = max(1, right - left), max(1, bottom - top)
+        # To the right of the hero cards/name, above the native action bar.
+        x = left + int(width * 0.575)
+        y = top + int(height * 0.685)
+        overlay.geometry(f"+{x}+{y}")
+        overlay.lift()
+
+    def _ensure_table_decision_overlay(self) -> tk.Toplevel | None:
+        if self.decision_overlay is not None and self.decision_overlay.winfo_exists():
+            return self.decision_overlay
+        try:
+            overlay = tk.Toplevel(self.root)
+            overlay.withdraw()
+            overlay.overrideredirect(True)
+            overlay.attributes("-topmost", True)
+            overlay.attributes("-alpha", 0.94)
+            overlay.configure(background="#10151f")
+            label = tk.Label(
+                overlay,
+                background="#10151f",
+                font=("Segoe UI", 14, "bold"),
+                justify="center",
+                padx=12,
+                pady=6,
+                relief="solid",
+                borderwidth=1,
+            )
+            label.pack()
+            self.decision_overlay = overlay
+            self.decision_overlay_label = label
+            self._make_window_click_through(overlay)
+            return overlay
+        except tk.TclError:
+            return None
+
+    @staticmethod
+    def _make_window_click_through(window: tk.Toplevel) -> None:
+        """Avoid stealing poker-table clicks on Windows."""
+        try:
+            hwnd = window.winfo_id()
+            get_style = ctypes.windll.user32.GetWindowLongW
+            set_style = ctypes.windll.user32.SetWindowLongW
+            style = get_style(hwnd, -20)  # GWL_EXSTYLE
+            set_style(hwnd, -20, style | 0x20 | 0x08000000)  # TRANSPARENT | NOACTIVATE
+        except (AttributeError, OSError):
+            pass
+
+    def _hide_table_decision_overlay(self) -> None:
+        if self.decision_overlay is not None and self.decision_overlay.winfo_exists():
+            self.decision_overlay.withdraw()
+
+    def _render_player_range_overlays(self, snapshot: object, *, full_ocr: bool) -> None:
+        """Place the current action-adjusted range beside each active villain."""
+        if snapshot is None:
+            self._hide_player_range_overlays()
+            return
+        # Fast scans deliberately avoid recomputing ranges.  Keep the last
+        # verified labels visible until the next full analysis updates them.
+        if not full_ocr:
+            return
+        window = self.last_live_window
+        recommendation = getattr(snapshot, "recommendation", None)
+        if window is None or recommendation is None:
+            self._hide_player_range_overlays()
+            return
+        active_seats = set(getattr(snapshot, "players_in_hand", []) or []) - {"hero"}
+        range_by_seat: dict[str, str] = {}
+        for line in getattr(recommendation, "villain_ranges", []) or []:
+            match = re.search(r"\((top_left|top_right|left|right)\)\s*:\s*(.*?)\s*(?:\[|$)", str(line))
+            if match:
+                range_by_seat[match.group(1)] = match.group(2).strip()
+        probabilities_by_seat: dict[str, str] = {}
+        for line in getattr(recommendation, "villain_hand_probabilities", []) or []:
+            match = re.search(r"\((top_left|top_right|left|right)\)\s*:\s*(.*)$", str(line))
+            if match:
+                probabilities_by_seat[match.group(1)] = match.group(2).strip()
+
+        fields = getattr(snapshot, "detected_fields", {}) or {}
+        anchors = {
+            "top_left": (0.22, 0.135),
+            "top_right": (0.66, 0.135),
+            "left": (0.06, 0.575),
+            "right": (0.77, 0.575),
+        }
+        left, top, right, bottom = window.rect
+        width, height = max(1, right - left), max(1, bottom - top)
+        visible: set[str] = set()
+        for seat in active_seats:
+            range_text = range_by_seat.get(seat, "")
+            if not range_text or seat not in anchors:
+                continue
+            overlay, label = self._ensure_player_range_overlay(seat)
+            name = str(fields.get(f"{seat}_name", "") or seat)
+            probabilities = probabilities_by_seat.get(seat, "")
+            probability_text = "\n".join(probabilities.split(" · "))
+            label.configure(
+                text=f"{name}\nRange : {range_text}" + (f"\n—\n{probability_text}" if probability_text else ""),
+            )
+            overlay.deiconify()
+            overlay.update_idletasks()
+            x_ratio, y_ratio = anchors[seat]
+            overlay.geometry(f"+{left + int(width * x_ratio)}+{top + int(height * y_ratio)}")
+            overlay.lift()
+            visible.add(seat)
+        for seat, (overlay, _label) in self.player_range_overlays.items():
+            if seat not in visible and overlay.winfo_exists():
+                overlay.withdraw()
+
+    def _ensure_player_range_overlay(self, seat: str) -> tuple[tk.Toplevel, tk.Label]:
+        existing = self.player_range_overlays.get(seat)
+        if existing is not None and existing[0].winfo_exists():
+            return existing
+        overlay = tk.Toplevel(self.root)
+        overlay.withdraw()
+        overlay.overrideredirect(True)
+        overlay.attributes("-topmost", True)
+        overlay.attributes("-alpha", 0.88)
+        overlay.configure(background="#10151f")
+        label = tk.Label(
+            overlay,
+            background="#10151f",
+            foreground="#d7e3fc",
+            font=("Segoe UI", 8, "bold"),
+            justify="left",
+            anchor="w",
+            wraplength=230,
+            padx=6,
+            pady=3,
+            relief="solid",
+            borderwidth=1,
+        )
+        label.pack()
+        self.player_range_overlays[seat] = (overlay, label)
+        self._make_window_click_through(overlay)
+        return overlay, label
+
+    def _hide_player_range_overlays(self) -> None:
+        for overlay, _label in self.player_range_overlays.values():
+            if overlay.winfo_exists():
+                overlay.withdraw()
 
     @staticmethod
     def _safe_live_hero_name(value: object) -> str:
@@ -2223,6 +2474,11 @@ class PokerTrackerApp:
         if self._record_after_id is not None:
             self.root.after_cancel(self._record_after_id)
             self._record_after_id = None
+        if self.decision_overlay is not None and self.decision_overlay.winfo_exists():
+            self.decision_overlay.destroy()
+        for overlay, _label in self.player_range_overlays.values():
+            if overlay.winfo_exists():
+                overlay.destroy()
         self.root.destroy()
 
 
