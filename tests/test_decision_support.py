@@ -3,11 +3,12 @@ from __future__ import annotations
 from dataclasses import replace
 import unittest
 
-from poker_tracker.decision_support import VillainRangeProfile, recommend_action
+from poker_tracker.decision_support import VillainRangeProfile, _preflop_raise_range, recommend_action
 from poker_tracker.live_state import (
     _decision_amounts,
     _effective_stack_bb,
     _hero_is_in_position,
+    _history_names_for_screen,
     _position_for_seat,
     _preflop_decision_context,
 )
@@ -138,8 +139,14 @@ class DecisionSupportTests(unittest.TestCase):
     def test_preflop_aggressor_uses_pfr_range(self):
         result = self.recommend(aggressive_seats=["right"])
         self.assertTrue(result.villain_ranges)
-        self.assertIn("88+", result.villain_ranges[0])
+        self.assertIn("66+", result.villain_ranges[0])
         self.assertIn("raise/3-bet", result.villain_ranges[0])
+
+    def test_short_sample_frequent_raiser_is_not_kept_at_default_raise_range(self):
+        frequent_raiser = replace(PROFILE, hands_played=8, pfr=0.50, profile="insufficient_data")
+        range_text = _preflop_raise_range(frequent_raiser)
+        self.assertIn("~20-28%", range_text)
+        self.assertIn("echantillon court", range_text)
 
     def test_kj_calls_one_big_blind_in_a_limped_five_max_pot(self):
         result = self.recommend(
@@ -174,6 +181,21 @@ class DecisionSupportTests(unittest.TestCase):
         self.assertEqual(_position_for_seat("hero", "hero"), "BTN")
         self.assertEqual(_position_for_seat("hero", "right"), "SB")
         self.assertEqual(_position_for_seat("hero", "left"), "CO")
+
+    def test_confirmed_history_overrides_ocr_names_by_screen_seat(self):
+        hand = ParsedHand(
+            hero_name="RougeLion",
+            seats=[
+                {"seat": "1", "player": "destroumpelz", "stack": "2"},
+                {"seat": "2", "player": "VillainTwo", "stack": "2"},
+                {"seat": "3", "player": "RougeLion", "stack": "2"},
+                {"seat": "4", "player": "VillainFour", "stack": "2"},
+                {"seat": "5", "player": "VillainFive", "stack": "2"},
+            ],
+        )
+        names = _history_names_for_screen(hand)
+        self.assertEqual(names["top_right_name"], "destroumpelz")
+        self.assertNotIn("stroymeplz", names.values())
 
     def test_postflop_position_accounts_for_active_button(self):
         self.assertFalse(_hero_is_in_position(["hero", "left"], "left"))
@@ -262,9 +284,26 @@ class DecisionSupportTests(unittest.TestCase):
             pot_size=10.0,
         )
         self.assertEqual(result.action, "BET")
+        self.assertEqual(result.sizing, "60-75% du pot")
         self.assertGreater(result.value_call_probability or 0.0, 0.60)
         self.assertIsNotNone(result.value_equity_when_called)
         self.assertIsNotNone(result.value_ev_bb)
+
+    def test_thin_pair_checks_more_often_against_confirmed_nit(self):
+        nit = replace(PROFILE, profile="nit", hands_played=50, vpip=0.16, pfr=0.10)
+        result = self.recommend(
+            hero_cards="Ah 7d",
+            board="As Kd 3c",
+            street="flop",
+            available_actions=["CHECK", "BET"],
+            recent_actions=["VilainTest checks"],
+            villain_profiles=[nit],
+            players_in_hand=["right", "hero"],
+            hero_position="BTN",
+            hero_in_position=True,
+            pot_size=8.0,
+        )
+        self.assertEqual(result.action, "CHECK")
 
 
 if __name__ == "__main__":

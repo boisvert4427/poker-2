@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from .decision_support import (
     BluffAssessment,
     DecisionRecommendation,
+    TABLE_MAX_PLAYERS,
     VillainRangeProfile,
     assess_bluff_risk,
     build_villain_profiles,
@@ -141,6 +142,12 @@ def build_live_snapshot(
     history_hand = _read_current_history_hand(history_file)
     if history_hand and not _history_matches_screen(history_hand, hero_cards, visible_board):
         history_hand = None
+    if history_hand:
+        # Pseudos in the hand history are exact; OCR is only useful to locate
+        # the visual seat.  Once the hand is confirmed for this table, never
+        # let a typo such as "stroymeplz" replace "destroumpelz" in the
+        # profiles, ranges or action matching.
+        detected_values.update(_history_names_for_screen(history_hand))
     if history_hand and history_hand.hero_cards and (not hero_cards or not history_hand.is_complete):
         hero_cards = history_hand.hero_cards
         detected_values["hero_cards"] = hero_cards
@@ -676,6 +683,33 @@ def _position_for_seat(seat: str, dealer_owner: str) -> str:
         return ""
     offset = (clockwise.index(seat) - clockwise.index(dealer_owner)) % len(clockwise)
     return {0: "BTN", 1: "SB", 2: "BB", 3: "UTG", 4: "CO"}[offset]
+
+
+def _history_names_for_screen(hand: ParsedHand) -> dict[str, str]:
+    """Map exact Winamax seat names to the fixed five-max screen positions."""
+    try:
+        hero_seat = next(
+            int(item["seat"])
+            for item in hand.seats
+            if item.get("player") == hand.hero_name and item.get("seat")
+        )
+    except (KeyError, StopIteration, TypeError, ValueError):
+        return {}
+    seats_by_number = {
+        int(item["seat"]): str(item.get("player", "") or "")
+        for item in hand.seats
+        if item.get("seat")
+    }
+
+    def relative(offset: int) -> int:
+        return ((hero_seat - 1 - offset) % TABLE_MAX_PLAYERS) + 1
+
+    result = {"hero_name": hand.hero_name}
+    for screen_seat, offset in (("right", 1), ("top_right", 2), ("top_left", 3), ("left", 4)):
+        name = seats_by_number.get(relative(offset), "")
+        if name:
+            result[f"{screen_seat}_name"] = name
+    return result
 
 
 def _hero_is_in_position(players_in_hand: list[str], dealer_owner: str) -> bool:

@@ -501,6 +501,26 @@ def recommend_action(
     )
     action, sizing = baseline.action, baseline.sizing
     strategy_mix = baseline.mix
+    # Explicit exploit: a confirmed calling station is paid by worse hands
+    # often enough that made hands should value bet more boldly.  Conversely,
+    # one thin pair has little reason to bet into a confirmed nit that mostly
+    # continues with strong hands.
+    confirmed_calling_station = any(
+        profile.profile == "loose_passive" and profile.known and profile.hands_played >= 10
+        for profile in profiles
+    )
+    confirmed_tight = any(
+        profile.profile == "nit" and profile.known and profile.hands_played >= 20
+        for profile in profiles
+    )
+    if not facing_aggression and action == "BET" and strength_score >= 2 and confirmed_calling_station:
+        sizing = "70-85% du pot" if strength_score >= 3 else "60-75% du pot"
+        strategy_mix = "BET 80% / CHECK 20% exploit : value contre calling station"
+        reasons.insert(0, "calling station confirmée : value bet plus cher avec main faite")
+    elif not facing_aggression and action == "BET" and strength_score == 1 and not draws and confirmed_tight:
+        action, sizing = "CHECK", ""
+        strategy_mix = "CHECK 70% / BET 30% exploit : range tight"
+        reasons.insert(0, "nit confirmé : contrôler une paire moyenne plutôt que value thin")
     bluff_plan = _estimate_bluff_plan(
         profiles,
         pot_size=pot_size,
@@ -849,15 +869,22 @@ def _postflop_action_range(profile: VillainRangeProfile, *, action: str) -> str:
 
 
 def _preflop_raise_range(profile: VillainRangeProfile) -> str:
-    if profile.hands_played < 20:
-        return "77+, A9s+, KQs, AJo+, KQo (~12-16%)"
-    if profile.pfr <= 0.10:
+    # Do not freeze an observed raiser into the generic 12-16% range just
+    # because the sample is young.  We shrink PFR toward a 5-max population
+    # prior, so eight raises in eight hands widen the range materially without
+    # pretending that eight hands are a conclusive read.
+    sample = max(0, profile.hands_played)
+    smoothed_pfr = (profile.pfr * sample + 0.18 * 20.0) / (sample + 20.0)
+    uncertainty = " (echantillon court)" if sample < 20 else ""
+    if smoothed_pfr <= 0.10:
         return "JJ+, AQs+, AKo (~5-7%)"
-    if profile.pfr <= 0.16:
+    if smoothed_pfr <= 0.16:
         return "88+, ATs+, KQs, AQo+ (~9-12%)"
-    if profile.pfr <= 0.24:
+    if smoothed_pfr <= 0.24:
         return "66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)"
-    return "44+, A2s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~20-28%)"
+    if smoothed_pfr <= 0.32:
+        return "44+, A2s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~20-28%)" + uncertainty
+    return "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)" + uncertainty
 
 
 def _name_key(value: str) -> str:

@@ -6,14 +6,14 @@ from dataclasses import dataclass, field
 
 HEADER_RE = re.compile(
     r"Winamax Poker - (?P<game_type>.+?) - HandId: #(?P<hand_id>[\d-]+) - "
-    r"(?P<variant>.+?) \((?P<sb>[\d.]+)/(?P<bb>[\d.]+)\) - (?P<played_at>.+)"
+    r"(?P<variant>.+?) \((?P<sb>[\d.]+)(?:\s*[€$£])?\s*/\s*(?P<bb>[\d.]+)(?:\s*[€$£])?\) - (?P<played_at>.+)"
 )
 TABLE_RE = re.compile(r"Table: '(?P<table_name>.+?)' (?P<table_format>.+?) Seat #(?P<button>\d+) is the button")
-SEAT_RE = re.compile(r"Seat (?P<seat>\d+): (?P<player>.+?) \((?P<stack>[\d.]+)\)")
+SEAT_RE = re.compile(r"Seat (?P<seat>\d+): (?P<player>.+?) \((?P<stack>[\d.]+)(?:\s*[€$£])?\)")
 DEALT_RE = re.compile(r"Dealt to (?P<hero>.+?) \[(?P<cards>.+)\]")
 BOARD_RE = re.compile(r"\[(?P<cards>[^\]]+)\]")
 SUMMARY_BOARD_RE = re.compile(r"^Board:\s+\[(?P<cards>[^\]]+)\]")
-TOTAL_POT_RE = re.compile(r"^Total pot\s+(?P<pot>[\d.]+)")
+TOTAL_POT_RE = re.compile(r"^Total pot\s+(?P<pot>[\d.]+)(?:\s*[€$£])?")
 HAND_START_RE = re.compile(r"^Winamax Poker - .+? - HandId: #", re.MULTILINE)
 
 

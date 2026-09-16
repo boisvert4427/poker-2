@@ -79,7 +79,7 @@ def sync_completed_history_file(
     if _SYNCED_HISTORY_SIZES.get(cache_key) == size:
         return stats
     try:
-        raw = history_path.read_text(encoding="utf-8", errors="replace")
+        raw = read_history_text(str(history_path))
     except OSError:
         return stats
 
@@ -458,11 +458,12 @@ def _parse_action_line(action_text: str) -> tuple[str, str, float | None]:
 
 
 def _extract_amount(text: str) -> float | None:
-    for token in text.replace(",", ".").split():
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(?:[€$£])?", text or "")
+    if match:
         try:
-            return float(token)
+            return float(match.group(1).replace(",", "."))
         except ValueError:
-            continue
+            return None
     return None
 
 

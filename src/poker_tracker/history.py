@@ -58,7 +58,15 @@ def find_history_file_for_table(history_locations: Iterable[str], table_title: s
 
 
 def read_history_text(path: str) -> str:
-    return Path(path).read_text(encoding="utf-8", errors="replace")
+    raw = Path(path).read_bytes()
+    # Winamax real-money histories are commonly written in Windows-1252
+    # (the euro sign is a single byte), whereas older play-money files are
+    # UTF-8.  Never silently replace bytes here: that broke the hand header
+    # and prevented both seat names and actions from reaching the BDD.
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return raw.decode("cp1252", errors="replace")
 
 
 def latest_hand_block_key(history_file: object | None) -> str:
@@ -67,7 +75,7 @@ def latest_hand_block_key(history_file: object | None) -> str:
     if not path:
         return ""
     try:
-        text = Path(str(path)).read_text(encoding="utf-8", errors="replace")
+        text = read_history_text(str(path))
     except (OSError, UnicodeError):
         return ""
     blocks = split_winamax_hands(text)

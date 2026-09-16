@@ -8,6 +8,7 @@ from poker_tracker.history import latest_hand_block_key
 from poker_tracker.parser import parse_winamax_hand, split_winamax_hands
 from poker_tracker.villain_db import get_player_profile, open_db, sync_completed_history_file
 from poker_tracker.live_state import _decision_amounts
+from poker_tracker.villain_db import import_parsed_hand
 
 
 HISTORY = """Winamax Poker - CashGame - HandId: #1-1-1 - Holdem no limit (0.01/0.02) - date
@@ -91,6 +92,34 @@ class ParserTests(unittest.TestCase):
         )
         self.assertEqual(pot, 18.0)
         self.assertEqual(call, 8.5)
+
+    def test_real_money_euro_history_keeps_hand_id_seats_and_actions(self):
+        raw = """Winamax Poker - CashGame - HandId: #1-2-3 - Holdem no limit (0.01€ /0.02€) - now
+Table: 'Aalen 02' 5-max (real money) Seat #2 is the button
+Seat 1: DESTROYMEPLZ (2.47€)
+Seat 2: RougeLion (2.01€)
+Dealt to RougeLion [4c 3c]
+*** PRE-FLOP ***
+DESTROYMEPLZ raises 0.03€ to 0.05€
+RougeLion folds
+*** SUMMARY ***
+Total pot 0.09€ | No rake
+"""
+        hand = parse_winamax_hand(raw)
+        self.assertEqual(hand.hand_id, "1-2-3")
+        self.assertEqual(hand.big_blind, 0.02)
+        self.assertEqual(hand.seats[0]["player"], "DESTROYMEPLZ")
+        with tempfile.TemporaryDirectory() as folder:
+            connection = open_db(Path(folder) / "test.sqlite3")
+            try:
+                inserted, actions, _ = import_parsed_hand(connection, hand, "history.txt")
+                connection.commit()
+                amount = connection.execute("SELECT amount FROM actions WHERE player_name = ?", ("DESTROYMEPLZ",)).fetchone()["amount"]
+            finally:
+                connection.close()
+        self.assertTrue(inserted)
+        self.assertEqual(actions, 2)
+        self.assertEqual(amount, 0.03)
 
 
 if __name__ == "__main__":

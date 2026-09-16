@@ -24,10 +24,10 @@ RFI_RANGES = {
 
 ISO_RAISE_RANGE = "22+, A2s+, K7s+, Q8s+, J8s+, T8s+, 98s-65s, A8o+, KTo+, QTo+, JTo"
 OVER_LIMP_RANGE = "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 86s+, 75s+, 65s, A2o+, K7o+, Q8o+, J8o+, T9o"
-VS_RAISE_CALL_RANGE = "77+, ATs+, KQs, AQo+"
+VS_RAISE_CALL_RANGE = "88+, AJs+, KQs, AQo+"
 VS_RAISE_RERAISE_RANGE = "QQ+, AKs, AKo"
 VS_EARLY_RAISE_CALL_RANGE = "88+, AJs+, KQs, AQo+"
-VS_LATE_RAISE_CALL_RANGE = "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo"
+VS_LATE_RAISE_CALL_RANGE = "66+, A9s+, KTs+, QTs+, JTs, ATo+, KQo"
 
 
 def recommend_preflop_baseline(
