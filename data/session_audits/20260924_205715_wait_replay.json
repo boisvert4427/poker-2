@@ -1,0 +1,309 @@
+[
+  {
+    "file": "live_turn_2026-09-24T21-00-04-381.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 3.5,
+    "retry": "",
+    "seconds": 4.68
+  },
+  {
+    "file": "live_turn_2026-09-24T21-00-27-713.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 9.5,
+    "retry": "",
+    "seconds": 5.0
+  },
+  {
+    "file": "live_turn_2026-09-24T21-00-50-510.live.json",
+    "old_issues": [
+      "joueurs encore en jeu incertains",
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 33.0,
+    "retry": "",
+    "seconds": 5.68
+  },
+  {
+    "file": "live_turn_2026-09-24T21-04-28-686.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "FOLD",
+    "new_issues": [],
+    "call": 8.5,
+    "retry": "",
+    "seconds": 6.5
+  },
+  {
+    "file": "live_turn_2026-09-24T21-04-47-245.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 18.5,
+    "retry": "",
+    "seconds": 6.05
+  },
+  {
+    "file": "live_turn_2026-09-24T21-05-32-933.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "FOLD",
+    "new_issues": [],
+    "call": 4.0,
+    "retry": "",
+    "seconds": 4.99
+  },
+  {
+    "file": "live_turn_2026-09-24T21-06-31-087.live.json",
+    "old_issues": [
+      "cartes hero incompletes ou invalides",
+      "position hero inconnue"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "cartes hero incompletes ou invalides",
+      "position hero inconnue"
+    ],
+    "call": null,
+    "retry": "",
+    "seconds": 7.55
+  },
+  {
+    "file": "live_turn_2026-09-24T21-08-12-445.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "FOLD",
+    "new_issues": [],
+    "call": 3.5,
+    "retry": "",
+    "seconds": 5.77
+  },
+  {
+    "file": "live_turn_2026-09-24T21-08-43-522.live.json",
+    "old_issues": [
+      "board incoherent avec la street (1/3)"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "board incoherent avec la street (1/3)"
+    ],
+    "call": null,
+    "retry": "",
+    "seconds": 4.26
+  },
+  {
+    "file": "live_turn_2026-09-24T21-08-55-939.live.json",
+    "old_issues": [
+      "board incoherent avec la street (2/3)"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "board incoherent avec la street (3/4)"
+    ],
+    "call": null,
+    "retry": "",
+    "seconds": 4.7
+  },
+  {
+    "file": "live_turn_2026-09-24T21-15-15-341.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 1.0,
+    "retry": "",
+    "seconds": 4.95
+  },
+  {
+    "file": "live_turn_2026-09-24T21-18-24-854.live.json",
+    "old_issues": [
+      "board incoherent avec la street (3/4)"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "board incoherent avec la street (3/4)"
+    ],
+    "call": null,
+    "retry": "",
+    "seconds": 5.64
+  },
+  {
+    "file": "live_turn_2026-09-24T21-18-48-471.live.json",
+    "old_issues": [
+      "board incoherent avec la street (3/4)",
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "RAISE",
+    "new_issues": [],
+    "call": 4.5,
+    "retry": "",
+    "seconds": 6.57
+  },
+  {
+    "file": "live_turn_2026-09-24T21-19-45-050.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 3.5,
+    "retry": "",
+    "seconds": 5.7
+  },
+  {
+    "file": "live_turn_2026-09-24T21-20-06-484.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "call": null,
+    "retry": "ee",
+    "seconds": 6.05
+  },
+  {
+    "file": "live_turn_2026-09-24T21-20-38-953.live.json",
+    "old_issues": [
+      "position hero inconnue",
+      "joueurs encore en jeu incertains"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "cartes hero incompletes ou invalides",
+      "position hero inconnue",
+      "joueurs encore en jeu incertains"
+    ],
+    "call": null,
+    "retry": "1 BB c\nCALL",
+    "seconds": 3.58
+  },
+  {
+    "file": "live_turn_2026-09-24T21-20-49-697.live.json",
+    "old_issues": [],
+    "new_action": "ATTENDRE",
+    "new_issues": [],
+    "call": null,
+    "retry": "",
+    "seconds": 2.59
+  },
+  {
+    "file": "live_turn_2026-09-24T21-22-37-692.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 3.5,
+    "retry": "",
+    "seconds": 2.97
+  },
+  {
+    "file": "live_turn_2026-09-24T21-22-55-149.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "call": null,
+    "retry": "ta",
+    "seconds": 3.29
+  },
+  {
+    "file": "live_turn_2026-09-24T21-31-33-161.live.json",
+    "old_issues": [
+      "board incoherent avec la street (3/4)"
+    ],
+    "new_action": "ATTENDRE",
+    "new_issues": [
+      "board incoherent avec la street (3/4)"
+    ],
+    "call": null,
+    "retry": "",
+    "seconds": 3.14
+  },
+  {
+    "file": "live_turn_2026-09-24T21-31-46-202.live.json",
+    "old_issues": [
+      "board incoherent avec la street (4/5)"
+    ],
+    "new_action": "BET",
+    "new_issues": [],
+    "call": null,
+    "retry": "",
+    "seconds": 3.18
+  },
+  {
+    "file": "live_turn_2026-09-24T21-32-37-871.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "FOLD",
+    "new_issues": [],
+    "call": 14.5,
+    "retry": "",
+    "seconds": 4.12
+  },
+  {
+    "file": "live_turn_2026-09-24T21-34-44-051.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "FOLD",
+    "new_issues": [],
+    "call": 4.0,
+    "retry": "",
+    "seconds": 4.26
+  },
+  {
+    "file": "live_turn_2026-09-24T21-36-27-969.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 2.0,
+    "retry": "",
+    "seconds": 4.93
+  },
+  {
+    "file": "live_turn_2026-09-24T21-36-54-761.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 7.5,
+    "retry": "",
+    "seconds": 5.52
+  },
+  {
+    "file": "live_turn_2026-09-24T21-37-16-585.live.json",
+    "old_issues": [
+      "montant du call ou pot non fiable"
+    ],
+    "new_action": "CALL",
+    "new_issues": [],
+    "call": 13.5,
+    "retry": "",
+    "seconds": 5.36
+  }
+]

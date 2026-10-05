@@ -1,0 +1,481 @@
+{
+  "file": "live_turn_2026-09-29T20-33-18-403.live.json",
+  "seconds": 3.720431900001131,
+  "old": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "4c ah",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [
+      "Ogalaxy bets 67 and is all-in",
+      "Ogalaxy raises 67 BB and is all-in"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "ALL-IN FOLD CALL RAISE total : 68.5 BB Ae",
+    "inferred_amounts": [
+      "68.5"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "ALL-IN",
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 68,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "Hogier",
+      "top_left_stack": "113,5 BB",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "Ogalaxy",
+      "top_right_stack": "0 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "bingomanking",
+      "left_stack": "115,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "68 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "99 BB",
+      "top_left_bet": "",
+      "top_left_action": "he) {ae a",
+      "top_right_bet": "67 BB",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "rw,” —",
+      "right_bet": "0,5 BB",
+      "right_action": "TE",
+      "hero_bet": "1 BB",
+      "hero_cards": "4c ah",
+      "hero_status": "",
+      "pot_value": "Pot total : 68,5 BB",
+      "dealer_button": "top_right",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "top_right_status": "all-in",
+      "hero_position": "BB",
+      "pot_type": "single_raised",
+      "preflop_aggressor": "Ogalaxy",
+      "effective_stack_bb": "0",
+      "spr": "0.00",
+      "decision_data_issues": "",
+      "action_state_issue": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "hero"
+    ],
+    "dealer_owner": "top_right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "Hogier",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Ogalaxy",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      }
+    ],
+    "villain_profile_summary": "top_right Ogalaxy | standard | VPIP 0.240 PFR 0.180 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | defaut",
+    "villain_range_summary": "top_right Ogalaxy : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | tendance joueur inconnu : hypothese neutre, pas une calling station | defaut",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "Hogier",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Ogalaxy",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left Hogier : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\ntop_right Ogalaxy : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.52,
+      "hand_strength": "main marginale",
+      "villain_range": "66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)",
+      "summary": "FOLD - equite 36.7%, cote requise 49.1%.",
+      "reasons": [
+        "equite multiway 36.7% vs cote 49.1% (marge -12.4%)",
+        "all-in adverse detecte : decision limitee a call ou fold",
+        "hors range de défense contre relance",
+        "main offsuit",
+        "Ogalaxy: 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)"
+      ],
+      "equity": 0.36714285714285716,
+      "pot_odds": 0.49070631970260226,
+      "call_amount": 66.0,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "Ogalaxy (top_right) : 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%) [raise/3-bet estime]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "FOLD 100% (cote calculee)",
+      "effective_stack_bb": 0.0,
+      "spr": 0.0,
+      "pot_type": "single_raised",
+      "preflop_aggressor": "Ogalaxy",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "FOLD : ton equite est de 36.7%; il faut environ 51.1% avec la marge de securite, il manque 14.4%."
+    },
+    "local_action_events": [
+      {
+        "street": "preflop",
+        "seat": "top_right",
+        "player": "Ogalaxy",
+        "action": "raise",
+        "amount_bb": 67.0,
+        "source": "bet_crop",
+        "confidence": 0.98,
+        "raw": "Ogalaxy raises 67 BB and is all-in"
+      }
+    ]
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "4c ah",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [
+      "Ogalaxy bets 67 and is all-in"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "ALL-IN FOLD CALL RAISE total : 68.5 BB Ae",
+    "inferred_amounts": [
+      "68.5"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "ALL-IN",
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 68,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "Hogier",
+      "top_left_stack": "113,5 BB",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "Ogalaxy",
+      "top_right_stack": "0 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "bingomanking",
+      "left_stack": "115,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "68 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "99 BB",
+      "top_left_bet": "",
+      "top_left_action": "i, ins",
+      "top_right_bet": "67 BB",
+      "top_right_action": "ge _",
+      "left_bet": "",
+      "left_action": "es se EE",
+      "right_bet": "0,5 BB",
+      "right_action": "FOLD",
+      "hero_bet": "1 BB",
+      "hero_cards": "4c ah",
+      "hero_status": "",
+      "pot_value": "Pot total : 68,5 BB",
+      "dealer_button": "top_right",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "top_right_status": "all-in",
+      "hero_position": "BB",
+      "pot_type": "single_raised",
+      "preflop_aggressor": "Ogalaxy",
+      "effective_stack_bb": "0",
+      "spr": "0.00",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "hero"
+    ],
+    "dealer_owner": "top_right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "Hogier",
+        "known": true,
+        "hands_played": 8,
+        "vpip": 0.0,
+        "pfr": 0.0,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Ogalaxy",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.48,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "top_right Ogalaxy | standard | VPIP 0.240 PFR 0.180 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | defaut",
+    "villain_range_summary": "top_right Ogalaxy : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | tendance joueur inconnu : hypothese neutre, pas une calling station | defaut",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "Hogier",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Ogalaxy",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.62,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left Hogier : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\ntop_right Ogalaxy : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.62) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.52,
+      "hand_strength": "main marginale",
+      "villain_range": "66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)",
+      "summary": "FOLD - equite 36.4%, cote requise 49.1%.",
+      "reasons": [
+        "equite multiway 36.4% vs cote 49.1% (marge -12.7%)",
+        "all-in adverse detecte : decision limitee a call ou fold",
+        "hors range de défense contre relance",
+        "main offsuit",
+        "Ogalaxy: 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)"
+      ],
+      "equity": 0.36357142857142855,
+      "pot_odds": 0.49070631970260226,
+      "call_amount": 66.0,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "Ogalaxy (top_right) : 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%) [raise/3-bet estime]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "FOLD 100% (cote calculee)",
+      "effective_stack_bb": 0.0,
+      "spr": 0.0,
+      "pot_type": "single_raised",
+      "preflop_aggressor": "Ogalaxy",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "FOLD : ton equite est de 36.4%; il faut environ 51.1% avec la marge de securite, il manque 14.7%."
+    },
+    "local_action_events": []
+  },
+  "truth": {}
+}

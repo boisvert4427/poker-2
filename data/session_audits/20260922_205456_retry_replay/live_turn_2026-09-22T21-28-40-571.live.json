@@ -1,0 +1,495 @@
+{
+  "file": "live_turn_2026-09-22T21-28-40-571.live.json",
+  "seconds": 7.484605300007388,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260922_Aalen 13_real_holdem_no-limit.txt",
+    "hand_id": "22956227-635-1790105220",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "tc ks",
+    "current_street": "river",
+    "is_complete": true,
+    "visible_board": "6h kc 7d 4c 8h",
+    "recent_actions": [
+      "M00L00D bets 10.5 BB",
+      "Montagrizz22 folds"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot : 63,5 BB poi fo Oe |",
+    "inferred_amounts": [
+      "63.5"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot : 63,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "-",
+      "top_left_name": "svengali68",
+      "top_left_stack": "111 BB",
+      "top_right_cards_visible": "-",
+      "top_right_name": "M00L00D",
+      "top_right_stack": "70 BB",
+      "left_cards_visible": "-",
+      "left_name": "Montagrizz22",
+      "left_stack": "100 BB",
+      "right_cards_visible": "-",
+      "right_name": "Epsilon05",
+      "right_stack": "130,5 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "124 BB",
+      "top_left_bet": "",
+      "top_left_action": "etl",
+      "top_right_bet": "",
+      "top_right_action": "CALL >»",
+      "left_bet": "",
+      "left_action": "| ed —",
+      "right_bet": "",
+      "right_action": "ee Se",
+      "hero_bet": "",
+      "hero_cards": "tc ks",
+      "hero_status": "",
+      "pot_value": "Pot : 63,5 BB",
+      "dealer_button": "right",
+      "board_card_1": "6h",
+      "board_card_2": "kc",
+      "board_card_3": "7d",
+      "board_card_4": "4c",
+      "board_card_5": "8h",
+      "board_visible_count": "5",
+      "hero_position": "SB",
+      "pot_type": "unopened",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "",
+      "spr": "",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "hero",
+      "top_right"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "known": true,
+        "hands_played": 29,
+        "vpip": 0.276,
+        "pfr": 0.207,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 1,
+        "fold_to_bet": 1.0,
+        "call_vs_bet": 0.0
+      },
+      {
+        "seat": "top_right",
+        "name": "M00L00D",
+        "known": true,
+        "hands_played": 51,
+        "vpip": 0.255,
+        "pfr": 0.255,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 6,
+        "fold_to_bet": 0.5,
+        "call_vs_bet": 0.5
+      },
+      {
+        "seat": "left",
+        "name": "Montagrizz22",
+        "known": true,
+        "hands_played": 6,
+        "vpip": 0.167,
+        "pfr": 0.0,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "right",
+        "name": "Epsilon05",
+        "known": true,
+        "hands_played": 10,
+        "vpip": 0.1,
+        "pfr": 0.1,
+        "profile": "nit",
+        "estimated_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%)",
+        "preflop_tendency": "ouvre et continue plutot fort, peu de calls marginaux",
+        "note": "respecter davantage les relances et 3-bets",
+        "postflop_faced_bets": 1,
+        "fold_to_bet": 0.0,
+        "call_vs_bet": 1.0
+      }
+    ],
+    "villain_profile_summary": "-",
+    "villain_range_summary": "-",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "score": 0.32,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "M00L00D",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "Montagrizz22",
+        "score": 0.32,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "Epsilon05",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil nit, bluffs moins frequents",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left svengali68 : bluff faible (0.32) | profil standard ou inconnu; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\ntop_right M00L00D : bluff faible (0.22) | profil tag, line plutot value par defaut; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\nleft Montagrizz22 : bluff faible (0.32) | profil standard ou inconnu; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\nright Epsilon05 : bluff faible (0.00) | profil nit, bluffs moins frequents; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant",
+    "recommendation": {
+      "action": "BET",
+      "sizing": "50-65% du pot",
+      "confidence": 0.72,
+      "hand_strength": "top paire",
+      "villain_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~16-24%)",
+      "summary": "BET 50-65% du pot — top paire.",
+      "reasons": [
+        "base postflop 5-max : board charge; value moyenne",
+        "pot unopened",
+        "value : call estime 48% contre M00L00D, equite vs range de call 71%",
+        "top paire détectée",
+        "tirage quinte"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "M00L00D (top_right) : 55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~16-24%) [mise/relance postflop : range resserrée]"
+      ],
+      "villain_hand_probabilities": [
+        "M00L00D (top_right) [individuel] : quinte 5% · brelan 8% · top paire 16% · middle paire 2% · petite paire 22% · air / tirage 47%"
+      ],
+      "strategy_mix": "BET 60% / CHECK 40%",
+      "effective_stack_bb": null,
+      "spr": null,
+      "pot_type": "unopened",
+      "preflop_aggressor": "",
+      "bluff_success_probability": 0.42449999999999993,
+      "bluff_break_even_probability": 0.36507936507936506,
+      "bluff_ev_bb": 5.942806249999993,
+      "bluff_summary": "fold equity estimee 42% contre M00L00D; seuil 37%; M00L00D: 6 spots",
+      "value_call_probability": 0.4794615384615384,
+      "value_equity_when_called": 0.7055555555555556,
+      "value_ev_bb": 61.732451720085464,
+      "value_summary": "value : call estime 48% contre M00L00D, equite vs range de call 71%",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": []
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "tc ks",
+    "current_street": "river",
+    "is_complete": false,
+    "visible_board": "6h kc 7d 4c 8h",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot : 63,5 BB poi fo Oe |",
+    "inferred_amounts": [
+      "63.5"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot : 63,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "svengali68",
+      "top_left_stack": "111 BB",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "MOOLOOD",
+      "top_right_stack": "70 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "Montagrizz22",
+      "left_stack": "100 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "Epsilon05",
+      "right_stack": "130,5 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "124 BB",
+      "top_left_bet": "",
+      "top_left_action": "etl",
+      "top_right_bet": "",
+      "top_right_action": "CALL >»",
+      "left_bet": "",
+      "left_action": "| ed —",
+      "right_bet": "",
+      "right_action": "ee Se",
+      "hero_bet": "",
+      "hero_cards": "tc ks",
+      "hero_status": "",
+      "pot_value": "Pot : 63,5 BB",
+      "dealer_button": "right",
+      "board_card_1": "6h",
+      "board_card_2": "kc",
+      "board_card_3": "7d",
+      "board_card_4": "4c",
+      "board_card_5": "8h",
+      "board_visible_count": "5",
+      "hero_position": "SB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "70",
+      "spr": "1.10",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "hero"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "known": true,
+        "hands_played": 49,
+        "vpip": 0.306,
+        "pfr": 0.245,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.6,
+        "call_vs_bet": 0.4
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "Montagrizz22",
+        "known": true,
+        "hands_played": 26,
+        "vpip": 0.308,
+        "pfr": 0.0,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 4,
+        "fold_to_bet": 0.25,
+        "call_vs_bet": 0.75
+      },
+      {
+        "seat": "right",
+        "name": "Epsilon05",
+        "known": true,
+        "hands_played": 30,
+        "vpip": 0.1,
+        "pfr": 0.1,
+        "profile": "nit",
+        "estimated_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%)",
+        "preflop_tendency": "ouvre et continue plutot fort, peu de calls marginaux",
+        "note": "respecter davantage les relances et 3-bets",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.333,
+        "call_vs_bet": 0.667
+      }
+    ],
+    "villain_profile_summary": "top_right MOOLOOD | standard | VPIP 0.240 PFR 0.180 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | defaut",
+    "villain_range_summary": "top_right MOOLOOD : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | tendance joueur inconnu : hypothese neutre, pas une calling station | defaut",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "score": 0.62,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "score": 0.32,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "Montagrizz22",
+        "score": 0.32,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "Epsilon05",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil nit, bluffs moins frequents",
+          "stats serrees, range plus value heavy",
+          "river : spot plus polarise, bluff possible",
+          "peu de joueurs en course, line plus souvent polarisee"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left svengali68 : bluff moyen (0.62) | profil lag, aggression preflop elevee; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\ntop_right MOOLOOD : bluff faible (0.32) | profil standard ou inconnu; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\nleft Montagrizz22 : bluff faible (0.32) | profil standard ou inconnu; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee; ligne plus passive a cet instant\nright Epsilon05 : bluff faible (0.00) | profil nit, bluffs moins frequents; stats serrees, range plus value heavy; river : spot plus polarise, bluff possible; peu de joueurs en course, line plus souvent polarisee",
+    "recommendation": {
+      "action": "BET",
+      "sizing": "50-65% du pot",
+      "confidence": 0.52,
+      "hand_strength": "top paire",
+      "villain_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+      "summary": "BET 50-65% du pot — top paire.",
+      "reasons": [
+        "base postflop 5-max : board charge; value moyenne",
+        "pot unknown, SPR 1.10",
+        "value : call estime 51% contre MOOLOOD, equite vs range de call 77%",
+        "top paire détectée",
+        "tirage quinte"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "MOOLOOD (top_right) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [
+        "MOOLOOD (top_right) [individuel] : quinte 6% · brelan 6% · top paire 14% · middle paire 5% · petite paire 20% · air / tirage 49%"
+      ],
+      "strategy_mix": "BET 60% / CHECK 40%",
+      "effective_stack_bb": 70.0,
+      "spr": 1.1023622047244095,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": 0.379,
+      "bluff_break_even_probability": 0.36507936507936506,
+      "bluff_ev_bb": 1.3922375000000038,
+      "bluff_summary": "fold equity estimee 38% contre MOOLOOD; seuil 37%; profils par defaut",
+      "value_call_probability": 0.5065,
+      "value_equity_when_called": 0.7722222222222223,
+      "value_ev_bb": 66.24276784722221,
+      "value_summary": "value : call estime 51% contre MOOLOOD, equite vs range de call 77%",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22956227-635-1790105220",
+    "table_name": "Aalen 13",
+    "played_at": "2026/09/22 19:27:00 UTC",
+    "hero_cards": "Tc Ks",
+    "board": "",
+    "total_pot": 0.03,
+    "outcome": "won",
+    "actions_by_street": {
+      "ante_blinds": [
+        "Epsilon05 posts small blind 0.01€",
+        "RougeLion posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "Montagrizz22 folds",
+        "svengali68 folds",
+        "M00L00D folds",
+        "Epsilon05 folds",
+        "RougeLion collected 0.03€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

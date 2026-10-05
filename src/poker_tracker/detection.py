@@ -154,13 +154,19 @@ def list_winamax_windows() -> list[WinamaxWindow]:
             continue
         if int(rect.right) - int(rect.left) < 100 or int(rect.bottom) - int(rect.top) < 100:
             continue
-        roots[root_hwnd] = WinamaxWindow(
+        candidate = WinamaxWindow(
             hwnd=root_hwnd,
             pid=window.pid,
             title=window.title,
             visible=window.visible,
             rect=(int(rect.left), int(rect.top), int(rect.right), int(rect.bottom)),
         )
+        existing = roots.get(root_hwnd)
+        # Several Winamax child windows share the same full-screen root. Keep
+        # the informative table title ("Aalen 07 - ...") instead of letting a
+        # later generic "Winamax" child overwrite it.
+        if existing is None or _table_title_score(candidate.title) > _table_title_score(existing.title):
+            roots[root_hwnd] = candidate
     return list(roots.values())
 
 
@@ -213,10 +219,13 @@ def summarize_detection() -> dict[str, object]:
     histories = guess_history_locations()
     active_table_window = select_preferred_table_window(windows)
     history_dirs = [item.path for item in histories if item.exists and item.accessible and item.path.lower().endswith("history")]
-    latest_history_file = None
     if active_table_window is not None:
+        # Never attach another table's latest file as a fallback. A missing
+        # exact match is safer than feeding stale positions/actions into live
+        # advice; the next background scan will bind it once Winamax creates
+        # the matching history file.
         latest_history_file = find_history_file_for_table(history_dirs, active_table_window.title)
-    if latest_history_file is None:
+    else:
         latest_history_file = find_latest_history_file(history_dirs)
     return {
         "processes": processes,
@@ -313,6 +322,13 @@ def _history_details(path: Path) -> str:
 def _window_area(rect: tuple[int, int, int, int]) -> int:
     left, top, right, bottom = rect
     return max(0, right - left) * max(0, bottom - top)
+
+
+def _table_title_score(title: str) -> tuple[int, int]:
+    """Prefer an actual table title over Winamax's generic root caption."""
+    cleaned = (title or "").strip()
+    generic = cleaned.lower() in {"winamax", "playground"}
+    return (0 if generic else 1, len(cleaned))
 
 
 def _process_executable_for_pid(pid: int) -> str:

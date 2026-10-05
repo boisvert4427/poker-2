@@ -2,6 +2,14 @@
 
 Prototype Python desktop pour Winamax sous Windows.
 
+## Documentation de suivi
+
+- [Ordre de marche du moteur de decision](docs/decision-engine-roadmap.md)
+- [Corrections live, strategie et validations du 24 septembre 2026](docs/live-decision-validation.md)
+
+Ces documents distinguent les corrections implementees, les mesures hors ligne
+et les limites encore a valider en live.
+
 Le projet sert a :
 
 - detecter les fenetres Winamax ;

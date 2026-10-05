@@ -13,6 +13,7 @@ class HistoryFile:
     path: str
     last_modified: float
     size: int
+    snapshot_text: str | None = None
 
 
 TABLE_TOKEN_RE = re.compile(r"^Winamax\s+(.+?)$", re.IGNORECASE)
@@ -69,15 +70,53 @@ def read_history_text(path: str) -> str:
         return raw.decode("cp1252", errors="replace")
 
 
+def freeze_history_file(history_file: object | None) -> HistoryFile | None:
+    """Freeze history at capture time so later writes cannot alter analysis."""
+    path = str(getattr(history_file, "path", "") or "")
+    if not path:
+        return None
+    try:
+        text = read_history_text(path)
+    except (OSError, UnicodeError):
+        text = ""
+    return HistoryFile(
+        path=path,
+        last_modified=float(getattr(history_file, "last_modified", 0.0) or 0.0),
+        size=int(getattr(history_file, "size", 0) or 0),
+        snapshot_text=text,
+    )
+
+
+def table_layout_from_history(history_file: object | None) -> str | None:
+    """Read the table capacity from the newest Winamax ``Table:`` line."""
+    path = str(getattr(history_file, "path", history_file) or "")
+    if not path:
+        return None
+    try:
+        text = read_history_text(path)
+    except (OSError, UnicodeError):
+        return None
+    matches = re.findall(
+        r"^Table:\s*'.+?'\s+(\d+)\s*-?\s*max\b",
+        text,
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+    if not matches:
+        return None
+    return {3: "3max", 5: "5max"}.get(int(matches[-1]))
+
+
 def latest_hand_block_key(history_file: object | None) -> str:
     """Return a stable key for the last hand block in a Winamax history file."""
     path = getattr(history_file, "path", history_file)
     if not path:
         return ""
-    try:
-        text = read_history_text(str(path))
-    except (OSError, UnicodeError):
-        return ""
+    text = getattr(history_file, "snapshot_text", None)
+    if text is None:
+        try:
+            text = read_history_text(str(path))
+        except (OSError, UnicodeError):
+            return ""
     blocks = split_winamax_hands(text)
     if not blocks:
         return ""
@@ -90,8 +129,13 @@ def latest_hand_block_key(history_file: object | None) -> str:
 
 
 def extract_table_token(window_title: str) -> str:
-    match = TABLE_TOKEN_RE.match((window_title or "").strip())
-    if not match:
+    raw = (window_title or "").strip()
+    if not raw or raw.lower() in {"winamax", "playground"}:
         return ""
-    raw = match.group(1).strip()
-    return raw.strip()
+    match = TABLE_TOKEN_RE.match(raw)
+    if match:
+        raw = match.group(1).strip()
+    # Actual Winamax table captions look like
+    # "Aalen 07 - 0,01-0,02 - No Limit Holdem". The history filename uses
+    # only the first segment: ``..._Aalen 07_real_holdem_no-limit.txt``.
+    return raw.split(" - ", 1)[0].strip()

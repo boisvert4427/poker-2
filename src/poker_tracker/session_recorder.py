@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import threading
 from dataclasses import asdict, dataclass, is_dataclass
@@ -83,7 +84,10 @@ class SessionRecorder:
             history_block = ""
             if history_path:
                 try:
-                    blocks = split_winamax_hands(read_history_text(history_path))
+                    frozen_text = getattr(history_file, "snapshot_text", None)
+                    blocks = split_winamax_hands(
+                        frozen_text if frozen_text is not None else read_history_text(history_path)
+                    )
                     history_block = blocks[-1] if blocks else ""
                 except (OSError, UnicodeError, ValueError):
                     history_block = ""
@@ -103,6 +107,10 @@ class SessionRecorder:
                     "rect": list(getattr(window, "rect", ()) or ()),
                 },
                 "history_file": history_path,
+                # Immutable source used by the live decision. Later
+                # reconciliation may replace ``history_hand`` with the final
+                # completed hand, but this field keeps capture-time truth.
+                "history_hand_at_capture": history_block,
                 "history_hand": history_block,
                 "ocr": {
                     "status": str(getattr(ocr_snapshot, "status", "") or ""),
@@ -194,8 +202,17 @@ class SessionRecorder:
                 "total_pot": hand.total_pot,
                 "outcome": _hero_outcome(hand),
                 "actions_by_street": getattr(hand, "streets", {}) or {},
+                "big_blind": getattr(hand, "big_blind", 0.0) or 0.0,
                 "source": "post_hand_history_reconciliation",
             }
+            # Keep the human-readable block and the structured link on the
+            # same definitive hand.  At capture time the file commonly still
+            # ends with the preceding completed hand.
+            payload["history_hand"] = blocks[-1]
+            payload["action_audit"] = compare_live_actions_to_history(
+                (payload.get("live_snapshot", {}) or {}).get("local_action_events", []) or [],
+                hand,
+            )
             metadata_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
             linked += 1
         return linked
@@ -328,3 +345,106 @@ def _hero_outcome(hand: object) -> str:
             if " lost " in f" {lowered} ":
                 return "lost"
     return "unknown"
+
+
+def compare_live_actions_to_history(
+    live_events: list[dict[str, Any]],
+    hand: object,
+) -> dict[str, Any]:
+    """Compare only locally observed actions with definitive history lines."""
+    parsed_history: list[dict[str, Any]] = []
+    big_blind = float(getattr(hand, "big_blind", 0.0) or 0.0)
+    for street_key, lines in (getattr(hand, "streets", {}) or {}).items():
+        street = "preflop" if street_key == "pre_flop" else str(street_key)
+        if street not in {"preflop", "flop", "turn", "river"}:
+            continue
+        for sequence, line in enumerate(lines or []):
+            parsed = _parse_history_action(str(line), street, sequence, big_blind)
+            if parsed:
+                parsed_history.append(parsed)
+
+    items: list[dict[str, Any]] = []
+    counts = {"match": 0, "amount_mismatch": 0, "not_found": 0}
+    for event in live_events:
+        action = str(event.get("action", "") or "").lower()
+        street = str(event.get("street", "") or "").lower()
+        player = str(event.get("player", "") or "")
+        candidates = [
+            candidate for candidate in parsed_history
+            if candidate["street"] == street
+            and candidate["action"] == action
+            and _same_audit_player(player, candidate["player"])
+        ]
+        matched = candidates[0] if candidates else None
+        status = "not_found"
+        if matched is not None:
+            status = "match"
+            live_amount = event.get("amount_bb")
+            history_amount = matched.get("amount_bb")
+            if (
+                action in {"bet", "raise"}
+                and live_amount is not None
+                and history_amount is not None
+                and abs(float(live_amount) - float(history_amount)) > max(0.15, float(history_amount) * 0.05)
+            ):
+                status = "amount_mismatch"
+        counts[status] += 1
+        items.append(
+            {
+                "status": status,
+                "live": event,
+                "history": matched,
+            }
+        )
+    total = len(items)
+    return {
+        "summary": {
+            **counts,
+            "total": total,
+            "accuracy": round(counts["match"] / total, 3) if total else None,
+        },
+        "items": items,
+    }
+
+
+def _parse_history_action(line: str, street: str, sequence: int, big_blind: float) -> dict[str, Any] | None:
+    match = re.match(r"^(.+?)\s+(folds|checks|calls|bets|raises)\b", line, re.IGNORECASE)
+    if not match:
+        return None
+    raw_action = match.group(2).lower()
+    action = {"folds": "fold", "checks": "check", "calls": "call", "bets": "bet", "raises": "raise"}[raw_action]
+    amount = None
+    if action == "raise":
+        amount_match = re.search(r"\bto\s+([\d.,]+)", line, re.IGNORECASE)
+    else:
+        amount_match = re.search(rf"\b{raw_action}\s+([\d.,]+)", line, re.IGNORECASE)
+    if amount_match and big_blind > 0:
+        amount = float(amount_match.group(1).replace(",", ".")) / big_blind
+    return {
+        "street": street,
+        "sequence": sequence,
+        "player": match.group(1).strip(),
+        "action": action,
+        "amount_bb": round(amount, 3) if amount is not None else None,
+        "raw": line,
+    }
+
+
+def _same_audit_player(left: str, right: str) -> bool:
+    def key(value: str) -> str:
+        return re.sub(r"[^a-z0-9]", "", (value or "").casefold())
+
+    left_key, right_key = key(left), key(right)
+    if not left_key or not right_key:
+        return False
+    if left_key == right_key:
+        return True
+    # Usernames frequently mix letters O and digits 0. Tesseract cannot
+    # distinguish them reliably at this size; use this equivalence only for
+    # comparison, never to rewrite the displayed player name.
+    if left_key.translate(str.maketrans({"o": "0"})) == right_key.translate(str.maketrans({"o": "0"})):
+        return True
+    return (
+        min(len(left_key), len(right_key)) >= 5
+        and (left_key in right_key or right_key in left_key)
+    )

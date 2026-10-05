@@ -1,0 +1,515 @@
+{
+  "file": "live_turn_2026-09-22T21-18-36-682.live.json",
+  "seconds": 4.770057900008396,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260922_Aalen 13_real_holdem_no-limit.txt",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "4h qd",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "td kc 3d",
+    "recent_actions": [
+      "svengali68 bets 1 BB"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE Pot : 2 BB Pot total : 3 BB",
+    "inferred_amounts": [
+      "2",
+      "3"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total: 3 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "visible",
+      "top_left_name": "svengali68",
+      "top_left_stack": "99,5 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "MOOLOOD",
+      "top_right_stack": "113,5 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "affable 4343",
+      "left_stack": "12,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kaafm7407",
+      "right_stack": "209 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "161,5 BB",
+      "top_left_bet": "1 BB",
+      "top_left_action": "_ BETS 1 BB",
+      "top_right_bet": "",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "i ~~",
+      "right_bet": "",
+      "right_action": "fa eZ he he",
+      "hero_bet": "",
+      "hero_cards": "4h qd",
+      "hero_status": "",
+      "pot_value": "Pot total: 3 BB",
+      "dealer_button": "right",
+      "board_card_1": "td",
+      "board_card_2": "kc",
+      "board_card_3": "3d",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "SB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "99.5",
+      "spr": "33.17",
+      "decision_data_issues": "",
+      "action_state_issue": ""
+    },
+    "players_in_hand": [
+      "top_left",
+      "hero"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "known": true,
+        "hands_played": 16,
+        "vpip": 0.25,
+        "pfr": 0.125,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 1,
+        "fold_to_bet": 1.0,
+        "call_vs_bet": 0.0
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "known": true,
+        "hands_played": 38,
+        "vpip": 0.211,
+        "pfr": 0.0,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 6,
+        "fold_to_bet": 0.833,
+        "call_vs_bet": 0.167
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "known": true,
+        "hands_played": 38,
+        "vpip": 0.158,
+        "pfr": 0.132,
+        "profile": "nit",
+        "estimated_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%)",
+        "preflop_tendency": "ouvre et continue plutot fort, peu de calls marginaux",
+        "note": "respecter davantage les relances et 3-bets",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.667,
+        "call_vs_bet": 0.333
+      }
+    ],
+    "villain_profile_summary": "top_left svengali68 | standard | VPIP 0.250 PFR 0.125 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | connu",
+    "villain_range_summary": "top_left svengali68 : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | tendance profil neutre sans lecture forte | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil nit, bluffs moins frequents",
+          "stats serrees, range plus value heavy",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left svengali68 : bluff faible (0.22) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\ntop_right MOOLOOD : bluff faible (0.22) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\nleft affable 4343 : bluff faible (0.22) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\nright kaafm7407 : bluff faible (0.00) | profil nit, bluffs moins frequents; stats serrees, range plus value heavy; flop : c-bet ou stab possibles; ligne agressive detectee",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.52,
+      "hand_strength": "hauteur",
+      "villain_range": "44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%)",
+      "summary": "FOLD - equite 13.4%, cote requise 25.0%.",
+      "reasons": [
+        "equite multiway 13.4% vs cote 25.0% (marge -11.6%)",
+        "base postflop 5-max : board semi-connecte; bas de range sans equite suffisante",
+        "pot unknown, SPR 33.17",
+        "aucune main faite",
+        "svengali68: 44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%)"
+      ],
+      "equity": 0.13428571428571429,
+      "pot_odds": 0.25,
+      "call_amount": 1.0,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "svengali68 (top_left) : 44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%) [mise/relance postflop : range resserrée]"
+      ],
+      "villain_hand_probabilities": [
+        "svengali68 (top_left) [individuel] : brelan 4% · deux paires 1% · top paire 15% · middle paire 13% · petite paire 31% · air / tirage 35%"
+      ],
+      "strategy_mix": "FOLD 100% (cote calculee)",
+      "effective_stack_bb": 99.5,
+      "spr": 33.17,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": [
+      {
+        "street": "flop",
+        "seat": "top_left",
+        "player": "svengali68",
+        "action": "bet",
+        "amount_bb": 1.0,
+        "source": "bet_crop",
+        "confidence": 0.98,
+        "raw": "svengali68 bets 1 BB"
+      }
+    ]
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "4h qd",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "td kc 3d",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE Pot : 2 BB Pot total : 3 BB",
+    "inferred_amounts": [
+      "2",
+      "3"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total: 3 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "visible",
+      "top_left_name": "svengali68",
+      "top_left_stack": "99,5 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "MOOLOOD",
+      "top_right_stack": "113,5 BB",
+      "left_cards_visible": "not_visible",
+      "left_name": "affable 4343",
+      "left_stack": "12,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kaafm7407",
+      "right_stack": "209 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "161,5 BB",
+      "top_left_bet": "1 BB",
+      "top_left_action": "_ BETS 1 BB",
+      "top_right_bet": "",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "i ~~",
+      "right_bet": "",
+      "right_action": "fa eZ he he",
+      "hero_bet": "",
+      "hero_cards": "4h qd",
+      "hero_status": "",
+      "pot_value": "Pot total: 3 BB",
+      "dealer_button": "right",
+      "board_card_1": "td",
+      "board_card_2": "kc",
+      "board_card_3": "3d",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "SB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "99.5",
+      "spr": "33.17",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "top_left",
+      "hero"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "known": true,
+        "hands_played": 49,
+        "vpip": 0.306,
+        "pfr": 0.245,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.6,
+        "call_vs_bet": 0.4
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "known": true,
+        "hands_played": 43,
+        "vpip": 0.209,
+        "pfr": 0.0,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 7,
+        "fold_to_bet": 0.714,
+        "call_vs_bet": 0.286
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "known": true,
+        "hands_played": 41,
+        "vpip": 0.146,
+        "pfr": 0.122,
+        "profile": "nit",
+        "estimated_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%)",
+        "preflop_tendency": "ouvre et continue plutot fort, peu de calls marginaux",
+        "note": "respecter davantage les relances et 3-bets",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.667,
+        "call_vs_bet": 0.333
+      }
+    ],
+    "villain_profile_summary": "top_left svengali68 | lag | VPIP 0.306 PFR 0.245 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu",
+    "villain_range_summary": "top_left svengali68 : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "svengali68",
+        "score": 0.52,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "score": 0.22,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil nit, bluffs moins frequents",
+          "stats serrees, range plus value heavy",
+          "flop : c-bet ou stab possibles",
+          "ligne agressive detectee"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left svengali68 : bluff moyen (0.52) | profil lag, aggression preflop elevee; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\ntop_right MOOLOOD : bluff faible (0.22) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\nleft affable 4343 : bluff faible (0.22) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne agressive detectee; pot visible, spot actionnable\nright kaafm7407 : bluff faible (0.00) | profil nit, bluffs moins frequents; stats serrees, range plus value heavy; flop : c-bet ou stab possibles; ligne agressive detectee",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.72,
+      "hand_strength": "hauteur",
+      "villain_range": "22+, A2s+, K6s+, Q8s+, J8s+, T8s+, 98s-65s, A7o+, KTo+, QTo+, JTo (~25-38%)",
+      "summary": "FOLD - equite 20.4%, cote requise 25.0%.",
+      "reasons": [
+        "equite multiway 20.4% vs cote 25.0% (marge -4.6%)",
+        "base postflop 5-max : board semi-connecte; bas de range sans equite suffisante",
+        "pot unknown, SPR 33.17",
+        "aucune main faite",
+        "svengali68: 22+, A2s+, K6s+, Q8s+, J8s+, T8s+, 98s-65s, A7o+, KTo+, QTo+, JTo (~25-38%)"
+      ],
+      "equity": 0.2042857142857143,
+      "pot_odds": 0.25,
+      "call_amount": 1.0,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "svengali68 (top_left) : 22+, A2s+, K6s+, Q8s+, J8s+, T8s+, 98s-65s, A7o+, KTo+, QTo+, JTo (~25-38%) [mise/relance postflop : range resserrée]"
+      ],
+      "villain_hand_probabilities": [
+        "svengali68 (top_left) [individuel] : brelan 3% · deux paires 3% · top paire 15% · middle paire 13% · petite paire 20% · air / tirage 46%"
+      ],
+      "strategy_mix": "FOLD 100% (cote calculee)",
+      "effective_stack_bb": 99.5,
+      "spr": 33.166666666666664,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22956227-623-1790104685",
+    "table_name": "Aalen 13",
+    "played_at": "2026/09/22 19:18:05 UTC",
+    "hero_cards": "4h Qd",
+    "board": "Td Kc 3d",
+    "total_pot": 0.06,
+    "outcome": "unknown",
+    "actions_by_street": {
+      "ante_blinds": [
+        "RougeLion posts small blind 0.01€",
+        "svengali68 posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "M00L00D folds",
+        "kaafm7407 folds",
+        "RougeLion calls 0.01€",
+        "svengali68 checks"
+      ],
+      "flop": [
+        "RougeLion checks",
+        "svengali68 bets 0.02€",
+        "RougeLion folds",
+        "svengali68 collected 0.06€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

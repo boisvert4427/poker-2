@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import replace
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .decision_support import (
     BluffAssessment,
@@ -14,6 +14,7 @@ from .decision_support import (
     format_bluff_assessments,
     format_villain_profiles,
     format_villain_ranges,
+    decision_data_issues,
     recommend_action,
 )
 from .detection import WinamaxWindow
@@ -23,10 +24,11 @@ from .local_snapshot_analysis import (
     extract_live_table_facts,
     hero_cards_visible_on_table,
 )
-from .ocr import OcrSnapshot, run_action_ocr_on_image, run_local_ocr_on_image
+from .ocr import OcrSnapshot, read_call_amount_retry, run_action_ocr_on_image, run_local_ocr_on_image
 from .parser import ParsedHand, parse_winamax_hand
 from .villain_db import sync_completed_history_file
 from .visual import analyze_action_buttons
+from .config import calibration_profile, detect_calibration_profile
 
 
 AMOUNT_RE = re.compile(r"\b\d+(?:[.,]\d+)?\b")
@@ -84,6 +86,7 @@ class LiveHandSnapshot:
     bluff_assessments: list[BluffAssessment]
     bluff_summary: str
     recommendation: DecisionRecommendation | None
+    local_action_events: list[dict[str, object]] = field(default_factory=list)
 
 
 def build_live_snapshot(
@@ -95,6 +98,10 @@ def build_live_snapshot(
     visible_board_hint: str = "",
     cached_names: dict[str, str] | None = None,
     local_recent_actions: list[str] | None = None,
+    dealer_button_hint: str = "",
+    board_prefix_hint: str = "",
+    excluded_seats: set[str] | None = None,
+    local_action_events: list[dict[str, object]] | None = None,
 ) -> LiveHandSnapshot | None:
     if window is None and ocr_snapshot is None:
         return None
@@ -106,7 +113,17 @@ def build_live_snapshot(
         hero_cards_hint,
         visible_board_hint,
         cached_names,
+        dealer_button_hint,
+        board_prefix_hint,
+        excluded_seats,
     )
+    # Winamax replaces a player's numeric stack with ALL-IN. Preserve that
+    # status separately instead of losing it in the numeric stack parser.
+    for seat in ("top_left", "top_right", "left", "right"):
+        stack_zone = (ocr_snapshot.zones or {}).get(f"{seat}_stack") if ocr_snapshot else None
+        raw_stack = str(getattr(stack_zone, "text", "") or "")
+        if re.search(r"ALL\s*[- ]?\s*IN", raw_stack, re.IGNORECASE):
+            detected_values[f"{seat}_status"] = "all-in"
     for field, value in (cached_names or {}).items():
         if value:
             detected_values[field] = value
@@ -136,7 +153,11 @@ def build_live_snapshot(
     )
     merged_text = "\n".join(filter(None, [actions_text, pot_zone_text, hero_zone_text, ocr_snapshot.text if ocr_snapshot else ""]))
     visible_board = _format_visible_board(detected_values)
-    current_street = _infer_street_from_board(visible_board)
+    try:
+        visible_board_count = int(detected_values.get("board_visible_count", "") or 0)
+    except (TypeError, ValueError):
+        visible_board_count = 0
+    current_street = _infer_street_from_board(visible_board, visible_board_count)
     hero_name = _sanitize_hero_name(detected_values.get("hero_name", ""), hero_name_hint or "RougeLion")
     hero_cards = _first_non_empty(detected_values.get("hero_cards", ""), _extract_current_hero_cards(hero_cards_text))
     table_name = _extract_table_name(window.title if window else "")
@@ -154,7 +175,8 @@ def build_live_snapshot(
         detected_values["hero_cards"] = hero_cards
     recent_actions = _merge_recent_actions(
         _history_actions_for_street(history_hand, current_street),
-        local_recent_actions or [],
+        _actions_for_street(local_action_events, current_street)
+        if local_action_events is not None else (local_recent_actions or []),
     )
     is_complete = bool(history_hand and history_hand.is_complete)
     history_path = str(getattr(history_file, "path", "") or "")
@@ -162,6 +184,13 @@ def build_live_snapshot(
         sync_completed_history_file(history_path)
     villain_profiles = build_villain_profiles(detected_values)
     players_in_hand = _players_in_hand(detected_values)
+    for seat in players_in_hand:
+        if seat == "hero" or detected_values.get(f"{seat}_status") != "all-in":
+            continue
+        name = str(detected_values.get(f"{seat}_name", "") or seat)
+        amount = _bb_value(detected_values.get(f"{seat}_bet", ""))
+        line = f"{name} bets {amount:g} and is all-in" if amount is not None else f"{name} is all-in"
+        recent_actions = _merge_recent_actions(recent_actions, [line])
     active_villain_profiles = _active_villain_profiles(villain_profiles, players_in_hand)
     bluff_assessments = assess_bluff_risk(
         villain_profiles,
@@ -185,6 +214,9 @@ def build_live_snapshot(
         if any(name != "left" for name in active_button_names) and "CALL" not in available_actions:
             available_actions.append("CALL")
     turn_confidence = _hero_turn_confidence(actions_text, hero_zone_text, merged_text, visual_states)
+    if not available_actions:
+        # QUITTER/REVENIR and other coloured controls are not poker actions.
+        turn_confidence = 0.0
     is_hero_turn = turn_confidence >= 0.6
     pot_size, call_amount = _decision_amounts(
         detected_values,
@@ -193,14 +225,40 @@ def build_live_snapshot(
         raw_action_text,
         recent_actions,
     )
-    aggressive_seats = _aggressive_villain_seats(detected_values, players_in_hand)
-    hero_position = _position_for_seat("hero", detected_values.get("dealer_button", ""))
+    if call_amount is None:
+        call_amount = _call_amount_from_center_button(zone_text.get("action_center", ""))
+    if (is_hero_turn and "CALL" in available_actions and "CHECK" not in available_actions
+            and call_amount is None and ocr_snapshot and ocr_snapshot.image_path):
+        try:
+            retry_text = read_call_amount_retry(ocr_snapshot.image_path)
+        except OSError:
+            retry_text = ""
+        detected_values["call_retry_text"] = retry_text
+        call_amount = _call_amount_from_center_button(retry_text)
+    amount_issue = _repair_or_flag_preflop_amounts(
+        detected_values,
+        current_street=current_street,
+        pot_size=pot_size,
+        available_actions=available_actions,
+    )
+    if amount_issue == "repaired":
+        pot_size, call_amount = _decision_amounts(
+            detected_values,
+            players_in_hand,
+            pot_text,
+            raw_action_text,
+            recent_actions,
+        )
+    aggressive_seats = _aggressive_villain_seats(detected_values, players_in_hand, street=current_street)
+    table_layout = detected_values.get("table_layout", "5max")
+    hero_position = _position_for_layout("hero", detected_values.get("dealer_button", ""), table_layout)
     preflop_context = _preflop_decision_context(
         history_hand,
         detected_values,
         detected_values.get("dealer_button", ""),
         hero_name,
         is_preflop=current_street == "preflop",
+        table_layout=table_layout,
     )
     effective_stack_bb = _effective_stack_bb(detected_values, players_in_hand, aggressive_seats)
     spr = effective_stack_bb / pot_size if effective_stack_bb is not None and pot_size and pot_size > 0 else None
@@ -209,6 +267,26 @@ def build_live_snapshot(
     detected_values["preflop_aggressor"] = str(preflop_context["aggressor"])
     detected_values["effective_stack_bb"] = "" if effective_stack_bb is None else f"{effective_stack_bb:g}"
     detected_values["spr"] = "" if spr is None else f"{spr:.2f}"
+    call_amount_reliable = (
+        pot_size is not None
+        and call_amount is not None
+        and (current_street != "preflop" or str(preflop_context["pot_type"]) != "unknown")
+    )
+    quality_issues = decision_data_issues(
+        hero_cards=hero_cards,
+        board=visible_board,
+        street=current_street,
+        available_actions=available_actions,
+        players_in_hand=players_in_hand,
+        hero_position=hero_position,
+        # Missing pot/call is a hard blocker. An unknown preflop pot type is
+        # less precise strategically, but must not suppress an otherwise
+        # readable decision; call math remains disabled below in that case.
+        call_amount_reliable=pot_size is not None and call_amount is not None,
+    )
+    if amount_issue and amount_issue != "repaired":
+        quality_issues.append(amount_issue)
+    detected_values["decision_data_issues"] = " | ".join(quality_issues)
     recommendation = recommend_action(
         hero_cards=hero_cards,
         board=visible_board,
@@ -216,6 +294,7 @@ def build_live_snapshot(
         available_actions=available_actions,
         recent_actions=recent_actions,
         villain_profiles=villain_profiles,
+        action_events=local_action_events,
         players_in_hand=players_in_hand,
         is_hero_turn=is_hero_turn,
         pot_size=pot_size,
@@ -223,7 +302,7 @@ def build_live_snapshot(
         aggressive_seats=aggressive_seats,
         free_big_blind_names=_free_big_blind_names(history_hand),
         hero_position=hero_position,
-        hero_in_position=_hero_is_in_position(players_in_hand, detected_values.get("dealer_button", "")),
+        hero_in_position=_hero_is_in_position(players_in_hand, detected_values.get("dealer_button", ""), table_layout),
         effective_stack_bb=effective_stack_bb,
         spr=spr,
         pot_type=str(preflop_context["pot_type"]),
@@ -232,6 +311,9 @@ def build_live_snapshot(
         hero_was_preflop_aggressor=bool(preflop_context["hero_is_aggressor"]),
         limper_count=int(preflop_context["limper_count"]),
         raise_size_bb=preflop_context["raise_size_bb"],
+        call_amount_reliable=call_amount_reliable,
+        data_quality_issues=quality_issues,
+        table_size=3 if table_layout == "3max" else 5,
     )
 
     return LiveHandSnapshot(
@@ -262,7 +344,76 @@ def build_live_snapshot(
         bluff_assessments=bluff_assessments,
         bluff_summary=format_bluff_assessments(bluff_assessments),
         recommendation=recommendation,
+        local_action_events=list(local_action_events or []),
     )
+
+
+def _actions_for_street(events: list[dict[str, object]], street: str) -> list[str]:
+    """Current betting pressure only; retain all events separately for auditing."""
+    return [str(event["raw"]) for event in events
+            if event.get("street") == street and event.get("raw")]
+
+
+def recompute_snapshot_recommendation(snapshot: LiveHandSnapshot) -> LiveHandSnapshot:
+    """Recompute strategy after the app stabilizes cards or the street.
+
+    OCR builds an initial recommendation before the cross-frame board guard is
+    applied.  If that guard restores a card, keeping the old recommendation
+    would mix one board in the display with another board in the strategy.
+    """
+    fields = dict(snapshot.detected_fields or {})
+    pot_size = _bb_value(snapshot.pot_text)
+    previous = snapshot.recommendation
+    call_amount = previous.call_amount if previous is not None else None
+    pot_type = str(fields.get("pot_type", "unknown") or "unknown")
+    aggressor = str(fields.get("preflop_aggressor", "") or "")
+    effective_stack = _float_value(str(fields.get("effective_stack_bb", "") or ""))
+    spr = _float_value(str(fields.get("spr", "") or ""))
+    aggressive_seats = _aggressive_villain_seats(fields, snapshot.players_in_hand, street=snapshot.current_street)
+    table_layout = fields.get("table_layout", "5max")
+    hero_position = _position_for_layout("hero", snapshot.dealer_owner, table_layout)
+    call_amount_reliable = (
+        pot_size is not None
+        and call_amount is not None
+        and (snapshot.current_street != "preflop" or pot_type != "unknown")
+    )
+    quality_issues = decision_data_issues(
+        hero_cards=snapshot.hero_cards,
+        board=snapshot.visible_board,
+        street=snapshot.current_street,
+        available_actions=snapshot.available_actions,
+        players_in_hand=snapshot.players_in_hand,
+        hero_position=hero_position,
+        call_amount_reliable=pot_size is not None and call_amount is not None,
+    )
+    if fields.get("action_state_issue"):
+        quality_issues.append(str(fields["action_state_issue"]))
+    fields["decision_data_issues"] = " | ".join(quality_issues)
+    recommendation = recommend_action(
+        hero_cards=snapshot.hero_cards,
+        board=snapshot.visible_board,
+        street=snapshot.current_street,
+        available_actions=snapshot.available_actions,
+        recent_actions=snapshot.recent_actions,
+        villain_profiles=snapshot.villain_profiles,
+        action_events=snapshot.local_action_events,
+        players_in_hand=snapshot.players_in_hand,
+        is_hero_turn=snapshot.is_hero_turn,
+        pot_size=pot_size,
+        call_amount=call_amount,
+        aggressive_seats=aggressive_seats,
+        hero_position=hero_position,
+        hero_in_position=_hero_is_in_position(snapshot.players_in_hand, snapshot.dealer_owner, table_layout),
+        effective_stack_bb=effective_stack,
+        spr=spr,
+        pot_type=pot_type,
+        preflop_aggressor=aggressor,
+        hero_was_preflop_aggressor=_same_player(aggressor, snapshot.hero_name),
+        call_amount_reliable=call_amount_reliable,
+        data_quality_issues=quality_issues,
+        table_size=3 if table_layout == "3max" else 5,
+    )
+    return replace(snapshot, detected_fields=fields, recommendation=recommendation)
 
 
 def build_fast_live_snapshot(
@@ -297,6 +448,17 @@ def build_fast_live_snapshot(
         f"{hero_hint_text} {merged_action_text}".strip(),
         visual_states,
     )
+    if not available_actions:
+        # Button text OCR can fail on short all-in/call states even though the
+        # native action bar is unmistakably active. Two independently red
+        # button zones are sufficient to launch the detailed OCR; they are
+        # not used to choose an action themselves.
+        colored_buttons = sum(
+            1 for state in visual_states
+            if getattr(state, "red_ratio", 0.0) >= 0.04
+        )
+        if colored_buttons < 2:
+            confidence = 0.0
     visual_buttons = [state.name for state in visual_states if state.active]
     visible_opponents = detect_visible_opponent_seats(image_path or "")
     fast_players_in_hand = list(visible_opponents)
@@ -585,7 +747,10 @@ def _read_current_history_hand(history_file: object | None) -> ParsedHand | None
     if not path:
         return None
     try:
-        hand = parse_winamax_hand(read_history_text(path))
+        frozen_text = getattr(history_file, "snapshot_text", None)
+        hand = parse_winamax_hand(
+            frozen_text if frozen_text is not None else read_history_text(path)
+        )
     except (OSError, UnicodeError, ValueError):
         return None
     return hand if hand.hand_id else None
@@ -663,17 +828,26 @@ def _extract_live_fields(
     hero_cards_hint: str = "",
     visible_board_hint: str = "",
     cached_names: dict[str, str] | None = None,
+    dealer_button_hint: str = "",
+    board_prefix_hint: str = "",
+    excluded_seats: set[str] | None = None,
 ) -> dict[str, str]:
     if ocr_snapshot is None:
         return {}
     try:
-        extracted = extract_live_table_facts(
-            ocr_snapshot,
-            hero_name,
-            hero_cards_hint,
-            visible_board_hint,
-            cached_names,
-        )
+        profile = getattr(ocr_snapshot, "calibration_profile", "5max")
+        with calibration_profile(profile):
+            extracted = extract_live_table_facts(
+                ocr_snapshot,
+                hero_name,
+                hero_cards_hint,
+                visible_board_hint,
+                cached_names,
+                dealer_button_hint,
+                board_prefix_hint,
+                excluded_seats,
+            )
+        extracted["table_layout"] = profile
     except Exception:
         return {}
     return extracted
@@ -686,7 +860,9 @@ def _players_in_hand(fields: dict[str, str]) -> list[str]:
         "left_cards_visible": "left",
         "right_cards_visible": "right",
     }
-    active = [seat for field, seat in labels.items() if fields.get(field, "") == "visible"]
+    allowed = {"top_left", "top_right"} if fields.get("table_layout") == "3max" else set(labels.values())
+    active = [seat for field, seat in labels.items()
+              if seat in allowed and fields.get(field, "") == "visible"]
     hero_cards = fields.get("hero_cards", "")
     if hero_cards and hero_cards not in {"-", "present", "active"}:
         active.append("hero")
@@ -694,16 +870,22 @@ def _players_in_hand(fields: dict[str, str]) -> list[str]:
 
 
 def _position_for_seat(seat: str, dealer_owner: str) -> str:
-    """Map a calibrated screen seat to its 5-max poker position."""
-    clockwise = ("top_left", "top_right", "right", "hero", "left")
+    """Map a calibrated screen seat to its position for supported layouts."""
+    return _position_for_layout(seat, dealer_owner, "5max")
+
+
+def _position_for_layout(seat: str, dealer_owner: str, layout: str) -> str:
+    clockwise = (("top_left", "top_right", "hero") if layout == "3max"
+                 else ("top_left", "top_right", "right", "hero", "left"))
     if seat not in clockwise or dealer_owner not in clockwise:
         return ""
     offset = (clockwise.index(seat) - clockwise.index(dealer_owner)) % len(clockwise)
-    return {0: "BTN", 1: "SB", 2: "BB", 3: "UTG", 4: "CO"}[offset]
+    positions = {3: ("BTN", "SB", "BB"), 5: ("BTN", "SB", "BB", "UTG", "CO")}
+    return positions[len(clockwise)][offset]
 
 
 def _history_names_for_screen(hand: ParsedHand) -> dict[str, str]:
-    """Map exact Winamax seat names to the fixed five-max screen positions."""
+    """Map exact Winamax seat names to the supported fixed screen layouts."""
     try:
         hero_seat = next(
             int(item["seat"])
@@ -718,23 +900,30 @@ def _history_names_for_screen(hand: ParsedHand) -> dict[str, str]:
         if item.get("seat")
     }
 
+    table_size = len(seats_by_number)
+    if table_size not in {3, 5}:
+        return {"hero_name": hand.hero_name}
+
     def relative(offset: int) -> int:
-        return ((hero_seat - 1 - offset) % TABLE_MAX_PLAYERS) + 1
+        return ((hero_seat - 1 - offset) % table_size) + 1
 
     result = {"hero_name": hand.hero_name}
-    for screen_seat, offset in (("right", 1), ("top_right", 2), ("top_left", 3), ("left", 4)):
+    mapping = (("top_right", 1), ("top_left", 2)) if table_size == 3 else (
+        ("right", 1), ("top_right", 2), ("top_left", 3), ("left", 4)
+    )
+    for screen_seat, offset in mapping:
         name = seats_by_number.get(relative(offset), "")
         if name:
             result[f"{screen_seat}_name"] = name
     return result
 
 
-def _hero_is_in_position(players_in_hand: list[str], dealer_owner: str) -> bool:
+def _hero_is_in_position(players_in_hand: list[str], dealer_owner: str, layout: str = "5max") -> bool:
     """True when hero acts last postflop among all detected active players."""
     action_rank = {"SB": 0, "BB": 1, "UTG": 2, "CO": 3, "BTN": 4}
-    hero_position = _position_for_seat("hero", dealer_owner)
+    hero_position = _position_for_layout("hero", dealer_owner, layout)
     villain_positions = [
-        _position_for_seat(seat, dealer_owner)
+        _position_for_layout(seat, dealer_owner, layout)
         for seat in players_in_hand
         if seat != "hero"
     ]
@@ -750,6 +939,7 @@ def _preflop_decision_context(
     hero_name: str,
     *,
     is_preflop: bool = False,
+    table_layout: str = "5max",
 ) -> dict[str, object]:
     context: dict[str, object] = {
         "pot_type": "unknown",
@@ -776,7 +966,7 @@ def _preflop_decision_context(
             context.update(
                 pot_type="single_raised",
                 aggressor=aggressor,
-                aggressor_position=_position_for_seat(aggressor_seat, dealer_owner),
+                aggressor_position=_position_for_layout(aggressor_seat, dealer_owner, table_layout),
                 hero_is_aggressor=False,
                 raise_size_bb=amount,
             )
@@ -807,7 +997,7 @@ def _preflop_decision_context(
         context["aggressor"] = aggressor
         context["hero_is_aggressor"] = _same_player(aggressor, hero_name)
         aggressor_seat = _seat_for_player(aggressor, fields, hero_name)
-        context["aggressor_position"] = _position_for_seat(aggressor_seat, dealer_owner)
+        context["aggressor_position"] = _position_for_layout(aggressor_seat, dealer_owner, table_layout)
         if amount is not None and hand.big_blind > 0:
             context["raise_size_bb"] = amount / hand.big_blind
     elif limpers:
@@ -903,6 +1093,84 @@ def _decision_amounts(
     return pot_size, amount if amount > 0 else None
 
 
+def _repair_or_flag_preflop_amounts(
+    fields: dict[str, str],
+    *,
+    current_street: str,
+    pot_size: float | None,
+    available_actions: list[str],
+) -> str:
+    """Repair a dropped leading ``1`` only when the pot proves the repair.
+
+    A tight Winamax bet crop can turn ``12,5 BB`` into ``2,5 BB``.  Guessing
+    from the glyph alone is unsafe, so this uses the preflop accounting
+    identity.  Exactly one candidate must make the sum of visible
+    contributions match the displayed pot.  Ambiguous large discrepancies are
+    blocked instead of being sent to the strategy engine.
+    """
+    if current_street != "preflop" or pot_size is None or pot_size < 10.0:
+        return ""
+    actions = {str(action).upper() for action in available_actions}
+    if "CALL" not in actions or "CHECK" in actions:
+        return ""
+
+    seats = ("top_left", "top_right", "right", "hero", "left")
+    amounts = {
+        seat: amount
+        for seat in seats
+        for amount in [_bb_value(fields.get(f"{seat}_bet", ""))]
+        if amount is not None
+    }
+    if not amounts:
+        return ""
+    visible_total = sum(amounts.values())
+    gap = pot_size - visible_total
+    if gap < 4.0:
+        return ""
+
+    candidates: list[tuple[float, str, float]] = []
+    for seat, amount in amounts.items():
+        if seat == "hero" or amount >= 10.0:
+            continue
+        other_villain_max = max(
+            (value for other, value in amounts.items() if other not in {seat, "hero"}),
+            default=0.0,
+        )
+        # The characteristic dropped-digit case is an apparent contribution
+        # below an already visible raise (2.5 after 3). A normal open amount
+        # such as 3 BB must not be changed merely because adding ten also
+        # balances the arithmetic.
+        if amount >= other_villain_max - 0.01:
+            continue
+        repaired = amount + 10.0
+        residual = abs(pot_size - (visible_total - amount + repaired))
+        if residual <= 1.0:
+            candidates.append((residual, seat, repaired))
+    candidates.sort()
+    if len(candidates) == 1 or (
+        len(candidates) > 1 and candidates[0][0] + 0.25 < candidates[1][0]
+    ):
+        _residual, seat, repaired = candidates[0]
+        fields[f"{seat}_bet"] = f"{repaired:g} BB"
+        fields["amount_repair"] = f"{seat}: chiffre initial 1 restaure par coherence avec le pot"
+        return "repaired"
+
+    maximum = max(amounts.values())
+    if pot_size > TABLE_MAX_PLAYERS * max(1.0, maximum) + 0.75:
+        return "pot incompatible avec les mises visibles"
+    return ""
+
+
+def _call_amount_from_center_button(text: str) -> float | None:
+    """Accept the C shortcut only inside the isolated CALL button."""
+    normalized = " ".join((text or "").upper().replace(",", ".").split())
+    match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*BB\s*[C=]?\s*CALL", normalized)
+    if match:
+        value = float(match.group(1))
+        return value if value > 0 else None
+    return _call_amount_from_actions(text)
+
+
 def _call_amount_from_actions(text: str) -> float | None:
     normalized = " ".join((text or "").upper().replace(",", ".").split())
     patterns = (
@@ -963,7 +1231,7 @@ def _free_big_blind_names(history_hand: ParsedHand | None) -> list[str]:
     return [big_blind] if checked and not voluntarily_entered else []
 
 
-def _aggressive_villain_seats(fields: dict[str, str], players_in_hand: list[str]) -> list[str]:
+def _aggressive_villain_seats(fields: dict[str, str], players_in_hand: list[str], *, street: str = "") -> list[str]:
     hero_bet = _bb_value(fields.get("hero_bet", "")) or 0.0
     bets = {
         seat: value
@@ -975,9 +1243,16 @@ def _aggressive_villain_seats(fields: dict[str, str], players_in_hand: list[str]
     if not bets:
         return []
     maximum = max(bets.values())
+    # Posting the big blind (or completing it) is not a voluntary raise.
+    # Postflop a one-BB bet remains aggression.
+    if street == "preflop" and maximum <= 1.0:
+        return []
     if maximum <= hero_bet:
         return []
-    return [seat for seat, value in bets.items() if abs(value - maximum) < 0.001]
+    leaders = [seat for seat, value in bets.items() if abs(value - maximum) < 0.001]
+    # Equal contributions establish a price, not who raised it. Recorded
+    # actions distinguish the opener from callers when several players match.
+    return leaders if len(leaders) == 1 else []
 
 
 def _bb_value(text: str) -> float | None:
@@ -1044,8 +1319,11 @@ def _format_visible_board(fields: dict[str, str]) -> str:
     return " ".join(cards)
 
 
-def _infer_street_from_board(board: str) -> str:
-    count = len([part for part in (board or "").split() if part.strip()])
+def _infer_street_from_board(board: str, visible_count: int = 0) -> str:
+    count = max(
+        len([part for part in (board or "").split() if part.strip()]),
+        int(visible_count or 0),
+    )
     if count >= 5:
         return "river"
     if count == 4:
@@ -1060,11 +1338,8 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
     upper_hero = hero_text.upper()
     upper_all = fallback_text.upper()
     score = 0.0
-
-    # Grey preselection controls can contain FOLD/CHECK text, but are not an
-    # actionable hero turn. A real Winamax action bar has red buttons.
-    if visual_states and not any(getattr(state, "red_ratio", 0.0) >= 0.04 for state in visual_states):
-        return 0.0
+    has_clean_action = any(token in upper_actions for token in ("FOLD", "CALL", "CHECK", "BET", "RAISE", "ALL-IN"))
+    has_free_action_pair = "CHECK" in upper_actions and "BET" in upper_actions
 
     if (
         "PRESELECTION" in upper_hero
@@ -1076,6 +1351,8 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
         or "SELECTION DE LA PROCHAINE ACTION" in upper_all
     ):
         return 0.0
+    if "ABSENT" in upper_hero or "TU ES ABSENT" in upper_all:
+        return 0.0
     if (
         "TU AS PASS" in upper_hero
         or "TU AS PASSE" in upper_hero
@@ -1086,7 +1363,10 @@ def _hero_turn_confidence(actions_text: str, hero_text: str, fallback_text: str,
     if "VOIR TES CARTES" in upper_hero or "POSER LA BIG BLIND" in upper_hero or "POSER LA SMALL BLIND" in upper_hero:
         return 0.0
 
-    has_clean_action = any(token in upper_actions for token in ("FOLD", "CALL", "CHECK", "BET", "RAISE", "ALL-IN"))
+    # Fold can be greyed out in a free-check spot.  CHECK + BET are the
+    # authoritative pair there, even if their tint is not the historic red.
+    if visual_states and not any(getattr(state, "red_ratio", 0.0) >= 0.04 for state in visual_states) and not has_free_action_pair:
+        return 0.0
 
     if has_clean_action:
         score += 0.65

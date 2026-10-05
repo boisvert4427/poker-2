@@ -82,6 +82,11 @@ def recommend_postflop_baseline(
         return PostflopBaseline("BET", sizing, "BET 70% / CHECK 30%", "value et protection")
     if strength_score == 2:
         if multiway:
+            if in_position:
+                return PostflopBaseline(
+                    "BET", "40-55% du pot", "BET 60% / CHECK 40%",
+                    "value et protection après plusieurs checks",
+                )
             return PostflopBaseline("CHECK", "", "CHECK 55% / BET 45%", "frequence de mise reduite en multiway")
         return PostflopBaseline("BET", "50-65% du pot", "BET 60% / CHECK 40%", "value moyenne")
     if strength_score == 1:

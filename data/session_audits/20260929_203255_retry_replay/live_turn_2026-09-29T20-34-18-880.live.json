@@ -1,0 +1,446 @@
+{
+  "file": "live_turn_2026-09-29T20-34-18-880.live.json",
+  "seconds": 5.37572089999594,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260929_Nice 33_real_holdem_no-limit.txt",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "8h 6d",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE total: 15 BB 8 6 Soa",
+    "inferred_amounts": [
+      "15",
+      "8",
+      "6"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 1,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "Mae",
+      "top_left_stack": "13,5 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "",
+      "top_right_stack": "",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "116,5 BB",
+      "right_cards_visible": "visible",
+      "right_name": "kooros83",
+      "right_stack": "66 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "98,5 BB",
+      "top_left_bet": "",
+      "top_left_action": "ABSENT",
+      "top_right_bet": "",
+      "top_right_action": ">»",
+      "left_bet": "0,5 BB",
+      "left_action": "—_,",
+      "right_bet": "1 BB",
+      "right_action": "ww bh",
+      "hero_bet": "",
+      "hero_cards": "8h 6d",
+      "hero_status": "",
+      "pot_value": "Pot total : 1,5 BB",
+      "dealer_button": "hero",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "hero_position": "BTN",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "66",
+      "spr": "44.00",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "left",
+      "right",
+      "hero"
+    ],
+    "dealer_owner": "hero",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "Mae",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 2,
+        "vpip": 0.5,
+        "pfr": 0.5,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 2,
+        "vpip": 0.5,
+        "pfr": 0.0,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      }
+    ],
+    "villain_profile_summary": "left bingomanking | insufficient_data | VPIP 0.500 PFR 0.500 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | connu\nright kooros83 | insufficient_data | VPIP 0.500 PFR 0.000 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | connu",
+    "villain_range_summary": "left bingomanking : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | tendance echantillon faible, eviter les gros ajustements | BDD\nright kooros83 : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | tendance echantillon faible, eviter les gros ajustements | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "Mae",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left Mae : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.52,
+      "hand_strength": "main marginale",
+      "villain_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+      "summary": "FOLD — main marginale.",
+      "reasons": [
+        "cote non appliquee : pot, call ou contexte preflop incertain",
+        "hors range d'ouverture BTN",
+        "main offsuit",
+        "bingomanking: 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)"
+      ],
+      "equity": 0.2166666666666667,
+      "pot_odds": 0.4,
+      "call_amount": 1.0,
+      "opponent_count": 2,
+      "villain_ranges": [
+        "bingomanking (left) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) [range de participation]",
+        "kooros83 (right) : 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%) [raise/3-bet estime]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "FOLD 100%",
+      "effective_stack_bb": 66.0,
+      "spr": 44.0,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "FOLD : ton equite est de 21.7%; il faut environ 42.0% avec la marge de securite, il manque 20.3%."
+    },
+    "local_action_events": []
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "8h 6d",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE total: 15 BB 8 6 Soa",
+    "inferred_amounts": [
+      "15",
+      "8",
+      "6"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 1,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "Mae",
+      "top_left_stack": "13,5 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "",
+      "top_right_stack": "",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "116,5 BB",
+      "right_cards_visible": "visible",
+      "right_name": "kooros83",
+      "right_stack": "66 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "98,5 BB",
+      "top_left_bet": "",
+      "top_left_action": "ABSENT»",
+      "top_right_bet": "",
+      "top_right_action": "Be",
+      "left_bet": "0,5 BB",
+      "left_action": "ee se rs",
+      "right_bet": "1 BB",
+      "right_action": "a a a rs",
+      "hero_bet": "",
+      "hero_cards": "8h 6d",
+      "hero_status": "",
+      "pot_value": "Pot total : 1,5 BB",
+      "dealer_button": "hero",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "hero_position": "BTN",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "98.5",
+      "spr": "65.67",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "left",
+      "right",
+      "hero"
+    ],
+    "dealer_owner": "hero",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "Mae",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.48,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "left bingomanking | lag | VPIP 0.480 PFR 0.480 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu\nright kooros83 | loose_passive | VPIP 0.480 PFR 0.000 | 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) | connu",
+    "villain_range_summary": "left bingomanking : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD\nright kooros83 : 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) | tendance calling station / loose-passive : entre beaucoup, call souvent, relance peu | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "Mae",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.62,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left Mae : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.62) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "FOLD",
+      "sizing": "",
+      "confidence": 0.72,
+      "hand_strength": "main marginale",
+      "villain_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+      "summary": "FOLD — main marginale.",
+      "reasons": [
+        "cote non appliquee : pot, call ou contexte preflop incertain",
+        "hors range d'ouverture BTN",
+        "main offsuit",
+        "bingomanking: 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)"
+      ],
+      "equity": 0.22619047619047616,
+      "pot_odds": 0.4,
+      "call_amount": 1.0,
+      "opponent_count": 2,
+      "villain_ranges": [
+        "bingomanking (left) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]",
+        "kooros83 (right) : 22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "FOLD 100%",
+      "effective_stack_bb": 98.5,
+      "spr": 65.66666666666667,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "FOLD : ton equite est de 22.6%; il faut environ 42.0% avec la marge de securite, il manque 19.4%."
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22985261-167-1790706845",
+    "table_name": "Nice 33",
+    "played_at": "2026/09/29 18:34:05 UTC",
+    "hero_cards": "8h 6d",
+    "board": "7h Ad Th 5d",
+    "total_pot": 0.44,
+    "outcome": "unknown",
+    "actions_by_street": {
+      "ante_blinds": [
+        "bingomanking posts small blind 0.01€",
+        "kooros83 posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "RougeLion folds",
+        "bingomanking raises 0.04€ to 0.06€",
+        "kooros83 calls 0.04€"
+      ],
+      "flop": [
+        "bingomanking bets 0.08€",
+        "kooros83 calls 0.08€"
+      ],
+      "turn": [
+        "bingomanking bets 0.18€",
+        "kooros83 folds",
+        "bingomanking collected 0.44€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

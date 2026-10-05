@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 from itertools import combinations
+from functools import lru_cache
 import random
 import re
 
@@ -59,31 +60,69 @@ def range_hand_distribution(range_text: str, board: str, hero_cards: str = "") -
     paired_board = len(set(board_values)) != len(board_values)
     counts: Counter[str] = Counter()
     for combo in combos:
-        score = _score(list(combo) + board_cards)
-        kind = score[0]
-        if kind >= 5:
-            label = "couleur+"
-        elif kind == 4:
-            label = "quinte"
-        elif kind == 3:
-            label = "brelan"
-        elif kind == 2:
-            label = "deux paires"
-        elif kind == 1:
-            pair_rank = score[1]
-            if paired_board:
-                label = "paire"
-            elif pair_rank == board_values[0]:
-                label = "top paire"
-            elif len(board_values) > 1 and pair_rank == board_values[1]:
-                label = "middle paire"
-            else:
-                label = "petite paire"
-        else:
-            label = "air / tirage"
-        counts[label] += 1
+        counts[_hand_category(combo, board_cards, board_values, paired_board)] += 1
     total = sum(counts.values())
     return {label: count / total for label, count in counts.items()} if total else {}
+
+
+def multiway_hand_distributions(
+    ranges: list[str], board: str, hero_cards: str = "", simulations: int = 2500,
+) -> tuple[list[dict[str, float]], dict[str, float]]:
+    """Sample all villain hands jointly, including card removal."""
+    board_cards = _cards(board)
+    hero = _cards(hero_cards)
+    dead = set(board_cards + hero)
+    if len(board_cards) < 3 or len(dead) != len(board_cards) + len(hero) or not ranges:
+        return [], {}
+    if len(ranges) == 1:
+        one = range_hand_distribution(ranges[0], board, hero_cards)
+        top = one.get("top paire", 0.0)
+        return [one], {"at_least_one_top_pair": top, "all_top_pair": top}
+    pools = [_combos(text, dead) for text in ranges]
+    if any(not pool for pool in pools):
+        return [], {}
+    board_values = sorted((RANK_VALUE[card[0]] for card in board_cards), reverse=True)
+    paired_board = len(set(board_values)) != len(board_values)
+    counts = [Counter() for _ in ranges]
+    at_least_one = all_top = completed = attempts = 0
+    rng = random.Random("joint|" + "|".join(sorted(dead) + ranges))
+    while completed < simulations and attempts < simulations * 8:
+        attempts += 1
+        hands = [rng.choice(pool) for pool in pools]
+        flat = [card for hand in hands for card in hand]
+        if len(set(flat)) != len(flat):
+            continue
+        labels = [_hand_category(hand, board_cards, board_values, paired_board) for hand in hands]
+        for counter, label in zip(counts, labels):
+            counter[label] += 1
+        top_count = labels.count("top paire")
+        at_least_one += int(top_count >= 1)
+        all_top += int(top_count == len(labels))
+        completed += 1
+    if not completed:
+        return [], {}
+    return (
+        [{label: count / completed for label, count in counter.items()} for counter in counts],
+        {"at_least_one_top_pair": at_least_one / completed, "all_top_pair": all_top / completed},
+    )
+
+
+def _hand_category(
+    combo: tuple[str, str], board_cards: list[str], board_values: list[int], paired_board: bool,
+) -> str:
+    score = _score(list(combo) + board_cards)
+    kind = score[0]
+    if kind >= 5: return "couleur+"
+    if kind == 4: return "quinte"
+    if kind == 3: return "brelan"
+    if kind == 2: return "deux paires"
+    if kind == 1:
+        pair_rank = score[1]
+        if paired_board: return "paire"
+        if pair_rank == board_values[0]: return "top paire"
+        if len(board_values) > 1 and pair_rank == board_values[1]: return "middle paire"
+        return "petite paire"
+    return "air / tirage"
 
 
 def _cards(text: str) -> list[str]:
@@ -105,6 +144,77 @@ def _combos(text: str, dead: set[str]) -> list[tuple[str, str]]:
             if not set(hand) & dead:
                 result.append(hand)
     return result
+
+
+@lru_cache(maxsize=256)
+def filter_range_on_board(prior: str, candidate: str, board: str, hero_cards: str = "") -> str | None:
+    """Keep prior classes supported by made hands/draws, not only profile ranks.
+
+    Class-level approximation: retaining one suited combo retains its class.
+    Never adds classes outside prior and never treats a river draw as live.
+    """
+    cards, hero = _cards(board), _cards(hero_cards)
+    if len(cards) not in {3, 4, 5} or len(set(cards + hero)) != len(cards + hero):
+        return intersect_range_texts(prior, candidate)
+    dead = set(cards + hero)
+    accepted = set(_combos(candidate, dead))
+    classes = set()
+    board_ranks = {c[0] for c in cards}
+    board_values = {RANK_VALUE[c[0]] for c in cards}
+    straight_windows = tuple(frozenset(range(low, low + 5)) for low in range(1, 11))
+    for hand in _combos(prior, dead):
+        a, b = sorted((hand[0][0], hand[1][0]), key=RANK_VALUE.get, reverse=True)
+        kind = "" if a == b else "s" if hand[0][1] == hand[1][1] else "o"
+        hand_class = a + b + kind
+        # Output is class-level: once one compatible combo retains a class,
+        # evaluating its other suit combinations cannot change the result.
+        if hand_class in classes:
+            continue
+        if hand in accepted or a == b or a in board_ranks or b in board_ranks:
+            classes.add(hand_class)
+            continue
+        all_cards = list(hand) + cards
+        # Made straights and flushes, including non-pair holdings.
+        if _score(all_cards)[0] >= 4:
+            classes.add(hand_class)
+            continue
+        draw = False
+        if len(cards) < 5:
+            suits = Counter(c[1] for c in all_cards)
+            draw = any(count == 4 and any(c[1] == suit for c in hand)
+                       for suit, count in suits.items())
+            values = {RANK_VALUE[c[0]] for c in all_cards}
+            hole_values = {RANK_VALUE[c[0]] for c in hand}
+            if 14 in values:
+                values.add(1)
+            if 14 in hole_values:
+                hole_values.add(1)
+            draw = draw or any(len(values & window) == 4
+                               and bool((hole_values - board_values) & window)
+                               for window in straight_windows)
+        if draw:
+            classes.add(hand_class)
+    return ", ".join(sorted(classes)) if classes else None
+
+
+def intersect_range_texts(left: str, right: str) -> str | None:
+    """Intersect supported hand classes, without percentages or dead cards.
+
+    None means empty/unparseable: callers must retain their last hypothesis
+    rather than silently replace it with a random or unrestricted range.
+    """
+    def classes(text: str) -> set[tuple[str, str, str]]:
+        result = set()
+        for token in RANGE_RE.findall(text.split("(", 1)[0].replace(" ", "")):
+            for high, low, kind in _expand(token):
+                kinds = (kind,) if kind or high == low else ("s", "o")
+                result.update((high, low, k) for k in kinds)
+        return result
+    common = classes(left) & classes(right)
+    if not common:
+        return None
+    ordered = sorted(common, key=lambda c: (RANK_VALUE[c[0]], RANK_VALUE[c[1]], c[2]), reverse=True)
+    return ", ".join("".join(item) for item in ordered)
 
 
 def _expand(token: str) -> set[tuple[str, str, str]]:

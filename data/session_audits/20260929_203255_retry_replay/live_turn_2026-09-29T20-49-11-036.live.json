@@ -1,0 +1,501 @@
+{
+  "file": "live_turn_2026-09-29T20-49-11-036.live.json",
+  "seconds": 2.9074197000009008,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260929_Nice 33_real_holdem_no-limit.txt",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "ad 3h",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "2c kh 8s",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot : 2 BB eon",
+    "inferred_amounts": [
+      "2"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot : 2 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "SERGIOTRON",
+      "top_left_stack": "100 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "Oceju2635",
+      "top_right_stack": "107,5 BB",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "157 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "50 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "67 BB",
+      "top_left_bet": "",
+      "top_left_action": "- Oe eee eee",
+      "top_right_bet": "",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "CHEC",
+      "right_bet": "",
+      "right_action": "twa bh",
+      "hero_bet": "",
+      "hero_cards": "ad 3h",
+      "hero_status": "",
+      "pot_value": "Pot : 2 BB",
+      "dealer_button": "right",
+      "board_card_1": "2c",
+      "board_card_2": "kh",
+      "board_card_3": "8s",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "SB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "67",
+      "spr": "33.50",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "left",
+      "hero"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "SERGIOTRON",
+        "known": true,
+        "hands_played": 15,
+        "vpip": 0.2,
+        "pfr": 0.2,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "known": true,
+        "hands_played": 20,
+        "vpip": 0.2,
+        "pfr": 0.2,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.333,
+        "call_vs_bet": 0.667
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 23,
+        "vpip": 0.478,
+        "pfr": 0.478,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.667,
+        "call_vs_bet": 0.333
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 23,
+        "vpip": 0.522,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "left bingomanking | lag | VPIP 0.478 PFR 0.478 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu",
+    "villain_range_summary": "left bingomanking : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "SERGIOTRON",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.52,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left SERGIOTRON : bluff faible (0.00) | profil tag, line plutot value par defaut; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\ntop_right Oceju2635 : bluff faible (0.00) | profil tag, line plutot value par defaut; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.52) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; flop : c-bet ou stab possibles; ligne plus passive a cet instant\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "CHECK",
+      "sizing": "",
+      "confidence": 0.72,
+      "hand_strength": "hauteur",
+      "villain_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+      "summary": "CHECK — hauteur.",
+      "reasons": [
+        "base postflop 5-max : board sec; air ou spot multiway : abandon frequent",
+        "pot unknown, SPR 33.50",
+        "aucune main faite",
+        "bingomanking: 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "bingomanking (left) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [
+        "bingomanking (left) [individuel] : brelan 2% · deux paires 2% · top paire 18% · middle paire 6% · petite paire 17% · air / tirage 54%"
+      ],
+      "strategy_mix": "CHECK 90% / BET 10%",
+      "effective_stack_bb": 67.0,
+      "spr": 33.5,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": 0.3514260869565218,
+      "bluff_break_even_probability": 0.28571428571428575,
+      "bluff_ev_bb": 0.18399304347826095,
+      "bluff_summary": "fold equity estimee 35% contre bingomanking; seuil 29%; bingomanking: 3 spots",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "CHECK : hauteur, selon la range et le nombre de joueurs. Vilain a environ top paire 18%, apres retrait de tes cartes."
+    },
+    "local_action_events": []
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "ad 3h",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "2c kh 8s",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot : 2 BB eon",
+    "inferred_amounts": [
+      "2"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot : 2 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "SERGIOTRON",
+      "top_left_stack": "100 BB",
+      "top_right_cards_visible": "not_visible",
+      "top_right_name": "Oceju2635",
+      "top_right_stack": "107,5 BB",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "157 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "50 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "67 BB",
+      "top_left_bet": "",
+      "top_left_action": "CR S|_ es",
+      "top_right_bet": "",
+      "top_right_action": "BR EEE",
+      "left_bet": "",
+      "left_action": "CHECK",
+      "right_bet": "",
+      "right_action": "— a a rs",
+      "hero_bet": "",
+      "hero_cards": "ad 3h",
+      "hero_status": "",
+      "pot_value": "Pot : 2 BB",
+      "dealer_button": "right",
+      "board_card_1": "2c",
+      "board_card_2": "kh",
+      "board_card_3": "8s",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "SB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "67",
+      "spr": "33.50",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "left",
+      "hero"
+    ],
+    "dealer_owner": "right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "SERGIOTRON",
+        "known": true,
+        "hands_played": 17,
+        "vpip": 0.176,
+        "pfr": 0.176,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "known": true,
+        "hands_played": 22,
+        "vpip": 0.182,
+        "pfr": 0.182,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.333,
+        "call_vs_bet": 0.667
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.48,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "left bingomanking | lag | VPIP 0.480 PFR 0.480 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu",
+    "villain_range_summary": "left bingomanking : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "SERGIOTRON",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.52,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left SERGIOTRON : bluff faible (0.00) | profil tag, line plutot value par defaut; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\ntop_right Oceju2635 : bluff faible (0.00) | profil tag, line plutot value par defaut; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.52) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; flop : c-bet ou stab possibles; ligne plus passive a cet instant\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "CHECK",
+      "sizing": "",
+      "confidence": 0.72,
+      "hand_strength": "hauteur",
+      "villain_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+      "summary": "CHECK — hauteur.",
+      "reasons": [
+        "base postflop 5-max : board sec; air ou spot multiway : abandon frequent",
+        "pot unknown, SPR 33.50",
+        "aucune main faite",
+        "bingomanking: 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 1,
+      "villain_ranges": [
+        "bingomanking (left) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [
+        "bingomanking (left) [individuel] : brelan 2% · deux paires 2% · top paire 18% · middle paire 6% · petite paire 17% · air / tirage 54%"
+      ],
+      "strategy_mix": "CHECK 90% / BET 10%",
+      "effective_stack_bb": 67.0,
+      "spr": 33.5,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": 0.39599999999999996,
+      "bluff_break_even_probability": 0.28571428571428575,
+      "bluff_ev_bb": 0.30879999999999985,
+      "bluff_summary": "fold equity estimee 40% contre bingomanking; seuil 29%; bingomanking: 5 spots",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "CHECK : hauteur, selon la range et le nombre de joueurs. bingomanking (left) [individuel] : environ top paire 18%, apres retrait de tes cartes."
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22985261-188-1790707729",
+    "table_name": "Nice 33",
+    "played_at": "2026/09/29 18:48:49 UTC",
+    "hero_cards": "Ad 3h",
+    "board": "2c Kh 8s Ac",
+    "total_pot": 0.06,
+    "outcome": "won",
+    "actions_by_street": {
+      "ante_blinds": [
+        "RougeLion posts small blind 0.01€",
+        "bingomanking posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "SERGIOTRON folds",
+        "Oceju2635 folds",
+        "kooros83 folds",
+        "RougeLion calls 0.01€",
+        "bingomanking checks"
+      ],
+      "flop": [
+        "RougeLion checks",
+        "bingomanking checks"
+      ],
+      "turn": [
+        "RougeLion bets 0.02€",
+        "bingomanking folds",
+        "RougeLion collected 0.06€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

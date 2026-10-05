@@ -1,0 +1,29 @@
+{
+  "mode": "independent frames, no live memory; timings are full OCR",
+  "count": 73,
+  "before": {
+    "FOLD": 20,
+    "CHECK": 19,
+    "ATTENDRE": 20,
+    "RAISE": 8,
+    "CALL": 5,
+    "BET": 1
+  },
+  "after": {
+    "FOLD": 30,
+    "CALL": 10,
+    "CHECK": 19,
+    "ATTENDRE": 5,
+    "RAISE": 8,
+    "BET": 1
+  },
+  "wait_resolved": 15,
+  "new_waits": 0,
+  "issues": {
+    "board incoherent avec la street (3/4)": 2,
+    "board incoherent avec la street (4/5)": 2,
+    "cartes hero incompletes ou invalides": 1,
+    "joueurs encore en jeu incertains": 1
+  },
+  "average_seconds": 4.211255552054802
+}

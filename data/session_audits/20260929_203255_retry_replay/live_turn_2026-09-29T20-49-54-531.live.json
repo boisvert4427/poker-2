@@ -1,0 +1,508 @@
+{
+  "file": "live_turn_2026-09-29T20-49-54-531.live.json",
+  "seconds": 7.327845399995567,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260929_Nice 33_real_holdem_no-limit.txt",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "qc tc",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [
+      "kooros83 folds"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE total: 15 BB",
+    "inferred_amounts": [
+      "15"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 1,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "eee",
+      "top_left_stack": "",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "Oceju2635",
+      "top_right_stack": "106,5 BB",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "156,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "50 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "69 BB",
+      "top_left_bet": "",
+      "top_left_action": "—_",
+      "top_right_bet": "1 BB",
+      "top_right_action": "BIGBLIND",
+      "left_bet": "0,5 BB",
+      "left_action": "SAL) Ris",
+      "right_bet": "",
+      "right_action": "Fon",
+      "hero_bet": "",
+      "hero_cards": "qc tc",
+      "hero_status": "",
+      "pot_value": "Pot total : 1,5 BB",
+      "dealer_button": "hero",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "hero_position": "BTN",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "69",
+      "spr": "46.00",
+      "decision_data_issues": "",
+      "action_state_issue": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "left",
+      "hero"
+    ],
+    "dealer_owner": "hero",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "eee",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "known": true,
+        "hands_played": 21,
+        "vpip": 0.19,
+        "pfr": 0.19,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.333,
+        "call_vs_bet": 0.667
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 24,
+        "vpip": 0.458,
+        "pfr": 0.458,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 4,
+        "fold_to_bet": 0.75,
+        "call_vs_bet": 0.25
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 24,
+        "vpip": 0.5,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "top_right Oceju2635 | tag | VPIP 0.190 PFR 0.190 | 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%) | connu\nleft bingomanking | lag | VPIP 0.458 PFR 0.458 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu",
+    "villain_range_summary": "top_right Oceju2635 : 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%) | tendance joue proprement, aggression plutot legitime | BDD\nleft bingomanking : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "eee",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.62,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left eee : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\ntop_right Oceju2635 : bluff faible (0.07) | profil tag, line plutot value par defaut; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.62) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "RAISE",
+      "sizing": "2,5 BB",
+      "confidence": 0.72,
+      "hand_strength": "connecteurs hauts assortis",
+      "villain_range": "66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)",
+      "summary": "RAISE 2,5 BB — connecteurs hauts assortis.",
+      "reasons": [
+        "cote non appliquee : pot, call ou contexte preflop incertain",
+        "base 5-max 100 BB : ouverture BTN",
+        "main suited",
+        "Oceju2635: 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%)"
+      ],
+      "equity": 0.2642857142857143,
+      "pot_odds": 0.4,
+      "call_amount": 1.0,
+      "opponent_count": 2,
+      "villain_ranges": [
+        "Oceju2635 (top_right) : 66+, A7s+, KTs+, QTs+, JTs, ATo+, KQo (~14-20%) [raise/3-bet estime]",
+        "bingomanking (left) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "RAISE 100%",
+      "effective_stack_bb": 69.0,
+      "spr": 46.0,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "RAISE (2,5 BB) : connecteurs hauts assortis, selon la range et le nombre de joueurs."
+    },
+    "local_action_events": [
+      {
+        "street": "preflop",
+        "seat": "right",
+        "player": "kooros83",
+        "action": "fold",
+        "amount_bb": null,
+        "source": "seat_action",
+        "confidence": 0.94,
+        "raw": "kooros83 folds"
+      }
+    ]
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "qc tc",
+    "current_street": "preflop",
+    "is_complete": false,
+    "visible_board": "",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "FOLD CALL RAISE total: 15 BB",
+    "inferred_amounts": [
+      "15"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "FOLD",
+      "CALL",
+      "RAISE"
+    ],
+    "pot_text": "Pot total : 1,5 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "eee",
+      "top_left_stack": "",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "Oceju2635",
+      "top_right_stack": "106,5 BB",
+      "left_cards_visible": "visible",
+      "left_name": "bingomanking",
+      "left_stack": "156,5 BB",
+      "right_cards_visible": "not_visible",
+      "right_name": "kooros83",
+      "right_stack": "50 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "69 BB",
+      "top_left_bet": "",
+      "top_left_action": "Oe",
+      "top_right_bet": "1 BB",
+      "top_right_action": "BIG BLIND",
+      "left_bet": "0,5 BB",
+      "left_action": "SMALL BLIND",
+      "right_bet": "",
+      "right_action": "FOLD",
+      "hero_bet": "",
+      "hero_cards": "qc tc",
+      "hero_status": "",
+      "pot_value": "Pot total : 1,5 BB",
+      "dealer_button": "hero",
+      "board_card_1": "",
+      "board_card_2": "",
+      "board_card_3": "",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "0",
+      "hero_position": "BTN",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "69",
+      "spr": "46.00",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "left",
+      "hero"
+    ],
+    "dealer_owner": "hero",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "eee",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "known": true,
+        "hands_played": 22,
+        "vpip": 0.182,
+        "pfr": 0.182,
+        "profile": "tag",
+        "estimated_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+        "preflop_tendency": "joue proprement, aggression plutot legitime",
+        "note": "profil reg standard, peu d'exces evidents",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.333,
+        "call_vs_bet": 0.667
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.48,
+        "profile": "lag",
+        "estimated_range": "22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%)",
+        "preflop_tendency": "ouvre beaucoup, 3-bet/iso plus souvent",
+        "note": "peut mettre de la pression avec des mains moyennes",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "known": true,
+        "hands_played": 25,
+        "vpip": 0.48,
+        "pfr": 0.0,
+        "profile": "loose_passive",
+        "estimated_range": "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 87s-54s, A2o+, K7o+, Q8o+, J8o+, T9o (~35-50%)",
+        "preflop_tendency": "calling station / loose-passive : entre beaucoup, call souvent, relance peu",
+        "note": "range large : value bet plus, bluffe moins",
+        "postflop_faced_bets": 5,
+        "fold_to_bet": 0.8,
+        "call_vs_bet": 0.2
+      }
+    ],
+    "villain_profile_summary": "top_right Oceju2635 | tag | VPIP 0.182 PFR 0.182 | 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%) | connu\nleft bingomanking | lag | VPIP 0.480 PFR 0.480 | 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | connu",
+    "villain_range_summary": "top_right Oceju2635 : 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%) | tendance joue proprement, aggression plutot legitime | BDD\nleft bingomanking : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) | tendance ouvre beaucoup, 3-bet/iso plus souvent | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "eee",
+        "score": 0.17,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "Oceju2635",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil tag, line plutot value par defaut",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "bingomanking",
+        "score": 0.62,
+        "level": "moyen",
+        "reasons": [
+          "profil lag, aggression preflop elevee",
+          "stats larges et agressives confirmees",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kooros83",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil loose passive, moins de bluffs agressifs naturels",
+          "ligne agressive detectee",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left eee : bluff faible (0.17) | profil standard ou inconnu; ligne agressive detectee; pot visible, spot actionnable\ntop_right Oceju2635 : bluff faible (0.07) | profil tag, line plutot value par defaut; ligne agressive detectee; pot visible, spot actionnable\nleft bingomanking : bluff moyen (0.62) | profil lag, aggression preflop elevee; stats larges et agressives confirmees; ligne agressive detectee; pot visible, spot actionnable\nright kooros83 : bluff faible (0.00) | profil loose passive, moins de bluffs agressifs naturels; ligne agressive detectee; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "RAISE",
+      "sizing": "2,5 BB",
+      "confidence": 0.72,
+      "hand_strength": "connecteurs hauts assortis",
+      "villain_range": "33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)",
+      "summary": "RAISE 2,5 BB — connecteurs hauts assortis.",
+      "reasons": [
+        "cote non appliquee : pot, call ou contexte preflop incertain",
+        "base 5-max 100 BB : ouverture BTN",
+        "main suited",
+        "Oceju2635: 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%)"
+      ],
+      "equity": 0.32666666666666666,
+      "pot_odds": 0.4,
+      "call_amount": 1.0,
+      "opponent_count": 2,
+      "villain_ranges": [
+        "Oceju2635 (top_right) : 33+, A4s+, K9s+, QTs+, JTs, T9s, A9o+, KTo+, QJo (~18-24%) [range de participation]",
+        "bingomanking (left) : 22+, A2s+, K5s+, Q7s+, J8s+, T8s+, 98s-65s, A2o+, K8o+, Q9o+, J9o+ (~28-40%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [],
+      "strategy_mix": "RAISE 100%",
+      "effective_stack_bb": 69.0,
+      "spr": 46.0,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": null,
+      "value_equity_when_called": null,
+      "value_ev_bb": null,
+      "value_summary": "",
+      "decision_ready": true,
+      "data_quality_issues": [],
+      "explanation": "RAISE (2,5 BB) : connecteurs hauts assortis, selon la range et le nombre de joueurs."
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22985261-189-1790707786",
+    "table_name": "Nice 33",
+    "played_at": "2026/09/29 18:49:46 UTC",
+    "hero_cards": "Qc Tc",
+    "board": "Th 2d 4d",
+    "total_pot": 1.76,
+    "outcome": "won",
+    "actions_by_street": {
+      "ante_blinds": [
+        "bingomanking posts small blind 0.01€",
+        "Oceju2635 posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "kooros83 folds",
+        "RougeLion raises 0.03€ to 0.05€",
+        "bingomanking raises 0.15€ to 0.20€",
+        "Oceju2635 folds",
+        "RougeLion calls 0.15€"
+      ],
+      "flop": [
+        "bingomanking bets 0.21€",
+        "RougeLion raises 0.97€ to 1.18€ and is all-in",
+        "bingomanking folds",
+        "RougeLion collected 1.76€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

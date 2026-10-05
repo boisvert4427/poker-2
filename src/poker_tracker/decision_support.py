@@ -6,7 +6,7 @@ import re
 from typing import Iterable
 
 from .villain_db import DEFAULT_DB_PATH, get_player_profile, open_db
-from .equity import estimate_multiway_equity, range_hand_distribution
+from .equity import estimate_multiway_equity, multiway_hand_distributions, intersect_range_texts, filter_range_on_board
 from .gto_preflop import recommend_preflop_baseline
 from .gto_postflop import classify_board_texture, recommend_postflop_baseline
 
@@ -86,6 +86,9 @@ class DecisionRecommendation:
     value_equity_when_called: float | None = None
     value_ev_bb: float | None = None
     value_summary: str = ""
+    decision_ready: bool = True
+    data_quality_issues: list[str] = field(default_factory=list)
+    explanation: str = ""
 
 
 DEFAULT_UNKNOWN_PROFILE = {
@@ -327,6 +330,47 @@ RANK_VALUE = {"2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9,
               "T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
 
 
+def decision_data_issues(
+    *,
+    hero_cards: str,
+    board: str,
+    street: str,
+    available_actions: list[str],
+    players_in_hand: list[str],
+    hero_position: str = "",
+    call_amount_reliable: bool = True,
+) -> list[str]:
+    """Return critical input problems that make a live decision unsafe."""
+    issues: list[str] = []
+    hero = [f"{rank.upper()}{suit.lower()}" for rank, suit in CARD_TOKEN_RE.findall(hero_cards or "")]
+    board_cards = [f"{rank.upper()}{suit.lower()}" for rank, suit in CARD_TOKEN_RE.findall(board or "")]
+    street_key = (street or "").lower()
+    expected_board_count = {"preflop": 0, "flop": 3, "turn": 4, "river": 5}.get(street_key)
+    actions = {str(action).upper() for action in available_actions}
+
+    if len(hero) != 2:
+        issues.append("cartes hero incompletes ou invalides")
+    if len(set(hero)) != len(hero):
+        issues.append("cartes hero dupliquees")
+    if expected_board_count is None:
+        issues.append("street inconnue")
+    elif len(board_cards) != expected_board_count:
+        issues.append(f"board incoherent avec la street ({len(board_cards)}/{expected_board_count})")
+    if len(set(board_cards)) != len(board_cards):
+        issues.append("cartes du board dupliquees")
+    if set(hero) & set(board_cards):
+        issues.append("une carte est presente chez hero et sur le board")
+    if street_key == "preflop" and hero_position not in {"UTG", "CO", "BTN", "SB", "BB"}:
+        issues.append("position hero inconnue")
+    if "hero" not in players_in_hand or not any(seat != "hero" for seat in players_in_hand):
+        issues.append("joueurs encore en jeu incertains")
+    if not actions:
+        issues.append("aucune action hero lisible")
+    if "CALL" in actions and "CHECK" not in actions and not call_amount_reliable:
+        issues.append("montant du call ou pot non fiable")
+    return issues
+
+
 def recommend_action(
     *,
     hero_cards: str,
@@ -351,18 +395,24 @@ def recommend_action(
     hero_was_preflop_aggressor: bool = False,
     limper_count: int = 0,
     raise_size_bb: float | None = None,
+    call_amount_reliable: bool = True,
+    data_quality_issues: list[str] | None = None,
+    action_events: list[dict[str, object]] | None = None,
+    table_size: int = 5,
 ) -> DecisionRecommendation:
     """Return a conservative, explainable rule-based poker recommendation."""
     active_seats = set(players_in_hand)
     profiles = [p for p in villain_profiles if p.seat in active_seats]
     primary = profiles[0] if profiles else None
     effective_ranges = [
-        _effective_villain_range(
+        _cumulative_villain_range(
             item,
             street=street,
             recent_actions=recent_actions,
             aggressive=item.seat in set(aggressive_seats or []),
             free_big_blind=_name_key(item.name) in {_name_key(name) for name in (free_big_blind_names or [])},
+            action_events=action_events or [],
+            board=board, hero_cards=hero_cards,
         )
         for item in profiles
     ]
@@ -439,6 +489,22 @@ def recommend_action(
             villain_ranges=range_lines,
         )
 
+    if data_quality_issues:
+        issues = list(dict.fromkeys(data_quality_issues))
+        return DecisionRecommendation(
+            action="ATTENDRE",
+            sizing="",
+            confidence=0.0,
+            hand_strength="donnees live incoherentes",
+            villain_range=range_text,
+            summary="ATTENDRE - donnees critiques a confirmer.",
+            reasons=issues,
+            opponent_count=len(profiles),
+            villain_ranges=range_lines,
+            decision_ready=False,
+            data_quality_issues=issues,
+        )
+
     if not profiles:
         return DecisionRecommendation(
             action="ATTENDRE",
@@ -470,6 +536,7 @@ def recommend_action(
             limper_count=limper_count,
             raise_size_bb=raise_size_bb,
             caller_count=preflop_caller_count,
+            table_size=table_size,
         )
         if baseline is not None:
             action, sizing = baseline.action, baseline.sizing
@@ -504,7 +571,12 @@ def recommend_action(
         result.strategy_mix = f"{action} 100%"
         _set_decision_context(result, effective_stack_bb, spr, pot_type, preflop_aggressor)
         result.villain_hand_probabilities = hand_probability_lines
-        return _apply_call_math(result, actions, equity, pot_odds, call_amount, len(profiles), range_lines)
+        result = _apply_call_math(
+            result, actions, equity, pot_odds, call_amount, len(profiles), range_lines,
+            amounts_reliable=call_amount_reliable,
+        )
+        result.explanation = _decision_explanation(result)
+        return result
 
     strength_score, strength, draws, postflop_reasons = _postflop_strength(hero_cards, board)
     reasons.extend(postflop_reasons)
@@ -542,7 +614,14 @@ def recommend_action(
         sizing = "70-85% du pot" if strength_score >= 3 else "60-75% du pot"
         strategy_mix = "BET 80% / CHECK 20% exploit : value contre calling station"
         reasons.insert(0, "calling station confirmée : value bet plus cher avec main faite")
-    elif not facing_aggression and action == "BET" and strength_score == 1 and not draws and confirmed_tight:
+    elif (
+        not facing_aggression
+        and action == "BET"
+        and strength_score <= 2
+        and strength in {"top paire", "middle paire", "petite paire", "une paire"}
+        and not draws
+        and confirmed_tight
+    ):
         action, sizing = "CHECK", ""
         strategy_mix = "CHECK 70% / BET 30% exploit : range tight"
         reasons.insert(0, "nit confirmé : contrôler une paire moyenne plutôt que value thin")
@@ -616,7 +695,12 @@ def recommend_action(
         result.value_ev_bb = value_plan.ev_bb
         result.value_summary = value_plan.summary
     result.villain_hand_probabilities = hand_probability_lines
-    return _apply_call_math(result, actions, equity, pot_odds, call_amount, len(profiles), range_lines)
+    result = _apply_call_math(
+        result, actions, equity, pot_odds, call_amount, len(profiles), range_lines,
+        amounts_reliable=call_amount_reliable,
+    )
+    result.explanation = _decision_explanation(result)
+    return result
 
 
 def _postflop_probability_lines(
@@ -630,14 +714,69 @@ def _postflop_probability_lines(
         return []
     order = ("couleur+", "quinte", "brelan", "deux paires", "top paire", "middle paire", "petite paire", "air / tirage")
     lines: list[str] = []
-    for profile, (range_text, _reason) in zip(profiles, effective_ranges):
-        distribution = range_hand_distribution(range_text, board, hero_cards)
+    distributions, joint = multiway_hand_distributions(
+        [range_text for range_text, _reason in effective_ranges], board, hero_cards
+    )
+    for profile, distribution in zip(profiles, distributions):
         if not distribution:
             continue
         parts = [f"{label} {distribution[label]:.0%}" for label in order if distribution.get(label, 0.0) >= 0.01]
         if parts:
-            lines.append(f"{profile.name} ({profile.seat}) : " + " · ".join(parts))
+            lines.append(f"{profile.name} ({profile.seat}) [individuel] : " + " · ".join(parts))
+    if len(profiles) >= 2 and joint:
+        lines.append(
+            "Multiway [conjoint] : au moins un top paire "
+            f"{joint.get('at_least_one_top_pair', 0.0):.0%} · "
+            f"tous top paire {joint.get('all_top_pair', 0.0):.0%}"
+        )
     return lines
+
+
+def _decision_explanation(result: DecisionRecommendation) -> str:
+    """One short live sentence connecting inputs to the selected action."""
+    action = result.action.upper()
+    if action == "ATTENDRE":
+        reason = result.data_quality_issues[0] if result.data_quality_issues else "informations encore incertaines"
+        return f"ATTENDRE : {reason}."
+
+    probability = ""
+    if result.villain_hand_probabilities:
+        first = result.villain_hand_probabilities[0]
+        payload = first.split(":", 1)[-1].strip()
+        probability_part = ""
+        for label in ("top paire", "deux paires", "brelan", "quinte", "couleur+"):
+            match = re.search(rf"\b{re.escape(label)}\s+(\d+%)", payload, re.IGNORECASE)
+            if match:
+                probability_part = f"{label} {match.group(1)}"
+                break
+        if probability_part:
+            subject = first.split(":", 1)[0].strip()
+            probability = f" {subject} : environ {probability_part}, apres retrait de tes cartes."
+        joint_line = next((line for line in result.villain_hand_probabilities
+                           if line.startswith("Multiway [conjoint]")), "")
+        if joint_line:
+            probability += f" {joint_line}."
+
+    if result.equity is not None and result.pot_odds is not None and action in {"CALL", "FOLD"}:
+        edge = result.equity - result.pot_odds
+        if action == "CALL":
+            core = (
+                f"CALL : ton equite est de {result.equity:.1%}; il faut {result.pot_odds:.1%} "
+                f"pour payer, soit {edge:+.1%} de marge."
+            )
+        else:
+            # CALL requires two points of safety in _apply_call_math.
+            required = result.pot_odds + 0.02
+            deficit = required - result.equity
+            core = (
+                f"FOLD : ton equite est de {result.equity:.1%}; il faut environ {required:.1%} "
+                f"avec la marge de securite, il manque {max(0.0, deficit):.1%}."
+            )
+        return core + probability
+
+    strength = result.hand_strength or "ta main"
+    sizing = f" ({result.sizing})" if result.sizing else ""
+    return f"{action}{sizing} : {strength}, selon la range et le nombre de joueurs." + probability
 
 
 def _set_decision_context(
@@ -813,6 +952,8 @@ def _apply_call_math(
     call_amount: float | None,
     opponent_count: int,
     villain_ranges: list[str],
+    *,
+    amounts_reliable: bool = True,
 ) -> DecisionRecommendation:
     result.equity = equity
     result.pot_odds = pot_odds
@@ -820,6 +961,14 @@ def _apply_call_math(
     result.opponent_count = opponent_count
     result.villain_ranges = villain_ranges
     if "CALL" not in available_actions:
+        return result
+    if not amounts_reliable:
+        result.reasons.insert(0, "cote non appliquee : pot, call ou contexte preflop incertain")
+        result.reasons = result.reasons[:5]
+        if result.action not in available_actions:
+            result.action = "FOLD" if "FOLD" in available_actions else "ATTENDRE"
+            result.sizing = ""
+            result.summary = f"{result.action} - contexte insuffisant pour calculer un call fiable."
         return result
     # Pot odds decide between calling and folding. They must never erase a
     # value raise/isolation already selected by the strategic baseline.
@@ -845,6 +994,74 @@ def _apply_call_math(
     return result
 
 
+def _cumulative_villain_range(
+    profile: VillainRangeProfile, *, street: str, recent_actions: list[str],
+    aggressive: bool, free_big_blind: bool = False,
+    action_events: list[dict[str, object]],
+    board: str = "", hero_cards: str = "",
+) -> tuple[str, str]:
+    """Carry explicit action constraints; check alone never resets a range.
+
+    This is a deterministic intersection of existing heuristic ranges, not
+    Bayesian weighting or a board-aware solver. Incompatible filters are
+    reported and leave the previous hypothesis intact.
+    """
+    streets = {"preflop": 0, "flop": 1, "turn": 2, "river": 3}
+    current = streets.get(street, -1)
+    state = None
+    reasons = []
+    context: dict[str, list[str]] = {}
+    for event in action_events:
+        phase = str(event.get("street", ""))
+        if phase not in streets or streets[phase] > current:
+            continue
+        if float(event.get("confidence", 1.0) or 0.0) < 0.8:
+            continue
+        context.setdefault(phase, []).append(str(event.get("raw", "")))
+        if event.get("seat") != profile.seat:
+            continue
+        verb = str(event.get("action", ""))
+        if verb not in {"raise", "bet", "call"}:
+            continue
+        # Seat identity survives OCR spelling changes of a player's name.
+        line = f"{profile.name} {verb}s"
+        candidate, _ = _effective_villain_range(
+            profile, street=phase, recent_actions=context[phase] + [line], aggressive=False,
+        )
+        if state is None and phase != "preflop":
+            state = profile.estimated_range
+        if state is None:
+            state = candidate
+        else:
+            phase_board = " ".join(board.split()[:{"flop": 3, "turn": 4, "river": 5}.get(phase, 0)])
+            narrowed = (filter_range_on_board(state, candidate, phase_board, hero_cards)
+                        if phase_board else intersect_range_texts(state, candidate))
+            if narrowed is None:
+                reasons.append(f"{phase}: filtre incompatible ignore")
+                continue
+            state = narrowed
+        reasons.append(f"{phase}:{verb}")
+    fallback = _effective_villain_range(
+        profile, street=street, recent_actions=recent_actions,
+        aggressive=aggressive, free_big_blind=free_big_blind,
+    )
+    if state is None:
+        if street != "preflop" and board and fallback[1] != "range de participation" and not free_big_blind:
+            supported = filter_range_on_board(profile.estimated_range, fallback[0], board, hero_cards)
+            if supported:
+                return supported, fallback[1] + " | filtre board (classes)"
+        return fallback
+    # Current-frame actions may not yet have reached the structured journal.
+    if fallback[1] != "range de participation" and not free_big_blind:
+        narrowed = (filter_range_on_board(state, fallback[0], board, hero_cards)
+                    if street != "preflop" and board else intersect_range_texts(state, fallback[0]))
+        if narrowed is not None:
+            state = narrowed
+        else:
+            reasons.append("filtre courant incompatible ignore")
+    return state, "cumul heuristique | " + "; ".join(dict.fromkeys(reasons))
+
+
 def _effective_villain_range(
     profile: VillainRangeProfile,
     *,
@@ -859,17 +1076,16 @@ def _effective_villain_range(
             "grosse blind : check gratuit, range non filtrée",
         )
     player_key = _name_key(profile.name)
-    player_actions = [
-        action.lower()
-        for action in recent_actions
-        if player_key and player_key in _name_key(action)
-    ]
-    raised = aggressive or any(
-        token in action
-        for action in player_actions
-        for token in (" raises ", " bets ", " all-in", " all in")
-    )
-    called = any(" calls " in action for action in player_actions)
+    player_actions = []
+    for line in recent_actions:
+        match = re.match(r"^(.+?)\s+(folds|checks|calls|bets|raises)\b", line, re.IGNORECASE)
+        if match and player_key and _name_key(match.group(1)) == player_key:
+            player_actions.append(match.group(2).lower())
+    # A visible contribution cannot override a recorded call/check. In
+    # particular, calling a shove is not itself an aggressive all-in.
+    last_action = player_actions[-1] if player_actions else ""
+    raised = last_action in {"raises", "bets"} or (not last_action and aggressive)
+    called = last_action == "calls"
     preflop = (street or "preflop").lower() == "preflop"
     any_preflop_raise = any(
         token in action.lower()
@@ -1003,7 +1219,18 @@ def _postflop_strength(hero_cards: str, board: str) -> tuple[int, str, list[str]
     if _has_straight_draw(set(rank_counts)):
         draws.append("tirage quinte")
     if pairs == 1:
-        return 1, "une paire", draws, ["paire détectée"] + draws
+        hero_values = {RANK_VALUE[rank] for rank, _ in hero}
+        board_values = [RANK_VALUE[rank] for rank, _ in board_cards]
+        paired_by_hero = sorted(hero_values.intersection(board_values), reverse=True)
+        if paired_by_hero:
+            board_ranks = sorted(set(board_values), reverse=True)
+            pair_rank = paired_by_hero[0]
+            if pair_rank == board_ranks[0]:
+                return 2, "top paire", draws, ["top paire détectée"] + draws
+            if len(board_ranks) >= 2 and pair_rank == board_ranks[1]:
+                return 1, "middle paire", draws, ["middle paire détectée"] + draws
+            return 1, "petite paire", draws, ["petite paire détectée"] + draws
+        return 0, "paire du board", draws, ["paire uniquement sur le board"] + draws
     return 0, "hauteur", draws, (["; ".join(draws)] if draws else ["aucune main faite"])
 
 
@@ -1053,7 +1280,11 @@ def _legal_action(preferred: str, available: set[str], facing_aggression: bool) 
     # A visible CHECK is definitive: no chip is required to stay in the hand.
     # Never advise folding in that situation, even if stale history/OCR made
     # the strategic layer believe that a bet had occurred.
-    if preferred == "FOLD" and "CHECK" in available:
+    if "CHECK" in available:
+        # CHECK visible means that no chip is required.  A stale bet/action
+        # must never turn this action bar into ATTENDRE or FOLD.
+        if preferred == "BET" and "BET" in available:
+            return "BET"
         return "CHECK"
     if not available or preferred in available:
         return preferred

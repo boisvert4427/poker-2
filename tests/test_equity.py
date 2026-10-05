@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from poker_tracker.equity import _combos, range_hand_distribution
+from poker_tracker.equity import _combos, multiway_hand_distributions, range_hand_distribution
 from poker_tracker.villain_db import get_player_profile, open_db
 
 
@@ -33,6 +33,24 @@ class EquityRangeTests(unittest.TestCase):
         self.assertGreater(distribution.get("top paire", 0.0), 0.0)
         self.assertGreater(distribution.get("middle paire", 0.0), 0.0)
         self.assertGreater(distribution.get("petite paire", 0.0), 0.0)
+
+    def test_multiway_distribution_reports_joint_top_pair_probability(self):
+        distributions, joint = multiway_hand_distributions(
+            ["22+, A2s+, A8o+", "22+, A2s+, A8o+"],
+            "Ah 9c 2d",
+            "Qd 8h",
+            simulations=1200,
+        )
+        self.assertEqual(len(distributions), 2)
+        self.assertAlmostEqual(sum(distributions[0].values()), 1.0, places=6)
+        self.assertLessEqual(joint["all_top_pair"], joint["at_least_one_top_pair"])
+        self.assertLess(joint["all_top_pair"], distributions[0].get("top paire", 0.0))
+
+    def test_hero_top_rank_blocker_reduces_villain_top_pair_probability(self):
+        range_text = "22+, A2s+, A8o+"
+        without_ace = range_hand_distribution(range_text, "Ah 7d 2c", "Qc Jc")
+        with_ace = range_hand_distribution(range_text, "Ah 7d 2c", "Ad Jc")
+        self.assertLess(with_ace.get("top paire", 0.0), without_ace.get("top paire", 0.0))
 
     def test_database_name_ignores_dot_and_space(self):
         with tempfile.TemporaryDirectory() as folder:

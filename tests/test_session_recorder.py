@@ -9,7 +9,7 @@ import unittest
 
 from poker_tracker.detection import WinamaxWindow
 from poker_tracker.ocr import OcrSnapshot, OcrZoneResult
-from poker_tracker.session_recorder import SessionRecorder
+from poker_tracker.session_recorder import SessionRecorder, compare_live_actions_to_history
 
 
 @dataclass
@@ -20,6 +20,42 @@ class MiniLiveSnapshot:
 
 
 class SessionRecorderTests(unittest.TestCase):
+    def test_live_action_audit_matches_raise_and_fold(self):
+        hand = SimpleNamespace(
+            big_blind=0.02,
+            streets={
+                "pre_flop": [
+                    "GreenL raises 0.57 to 0.59",
+                    "rude 9078748 folds",
+                ]
+            },
+        )
+        audit = compare_live_actions_to_history(
+            [
+                {"street": "preflop", "player": "GreenL", "action": "raise", "amount_bb": 29.5},
+                {"street": "preflop", "player": "ude 9078748", "action": "fold", "amount_bb": None},
+            ],
+            hand,
+        )
+        self.assertEqual(audit["summary"]["match"], 2)
+        self.assertEqual(audit["summary"]["accuracy"], 1.0)
+
+    def test_live_action_audit_reports_wrong_raise_amount(self):
+        hand = SimpleNamespace(big_blind=0.02, streets={"pre_flop": ["GreenL raises 0.04 to 0.06"]})
+        audit = compare_live_actions_to_history(
+            [{"street": "preflop", "player": "GreenL", "action": "raise", "amount_bb": 8.0}],
+            hand,
+        )
+        self.assertEqual(audit["summary"]["amount_mismatch"], 1)
+
+    def test_live_action_audit_treats_letter_o_and_zero_as_same_player(self):
+        hand = SimpleNamespace(big_blind=0.02, streets={"pre_flop": ["M00L00D raises 0.05 to 0.07"]})
+        audit = compare_live_actions_to_history(
+            [{"street": "preflop", "player": "MOOLOOD", "action": "raise", "amount_bb": 3.5}],
+            hand,
+        )
+        self.assertEqual(audit["summary"]["match"], 1)
+
     def test_live_analysis_archives_matching_png_json_and_history(self):
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -67,6 +103,8 @@ class SessionRecorderTests(unittest.TestCase):
             self.assertEqual(payload["hand_link"]["hand_id"], "123")
             self.assertEqual(payload["hand_link"]["outcome"], "won")
             self.assertIn("summary", payload["hand_link"]["actions_by_street"])
+            self.assertEqual(payload["hand_link"]["big_blind"], 0.02)
+            self.assertEqual(payload["action_audit"]["summary"]["total"], 0)
 
 
 if __name__ == "__main__":

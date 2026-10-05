@@ -3,7 +3,15 @@ from __future__ import annotations
 from dataclasses import replace
 import unittest
 
-from poker_tracker.decision_support import VillainRangeProfile, _preflop_raise_range, recommend_action
+from poker_tracker.decision_support import (
+    DecisionRecommendation,
+    VillainRangeProfile,
+    _decision_explanation,
+    _postflop_strength,
+    _preflop_raise_range,
+    decision_data_issues,
+    recommend_action,
+)
 from poker_tracker.gto_preflop import recommend_preflop_baseline
 from poker_tracker.live_state import (
     _decision_amounts,
@@ -11,11 +19,14 @@ from poker_tracker.live_state import (
     _hero_turn_confidence,
     _hero_is_in_position,
     _history_names_for_screen,
+    _infer_street_from_board,
     _merge_recent_actions,
     _position_for_seat,
     _preflop_decision_context,
 )
 from poker_tracker.parser import ParsedHand
+from poker_tracker.local_snapshot_analysis import _rank_crop_has_uniform_tint
+from PIL import Image
 
 
 PROFILE = VillainRangeProfile(
@@ -33,6 +44,10 @@ PROFILE = VillainRangeProfile(
 
 
 class DecisionSupportTests(unittest.TestCase):
+    def test_physical_board_count_advances_street_when_one_rank_is_unreadable(self):
+        self.assertEqual(_infer_street_from_board("7s 5s", visible_count=3), "flop")
+        self.assertEqual(_infer_street_from_board("7s 5s 8d", visible_count=4), "turn")
+
     def recommend(self, **overrides):
         values = {
             "hero_cards": "Ah As",
@@ -51,6 +66,48 @@ class DecisionSupportTests(unittest.TestCase):
         result = self.recommend()
         self.assertEqual(result.action, "RAISE")
         self.assertEqual(result.sizing, "3 BB preflop")
+
+    def test_live_quality_gate_rejects_incoherent_cards_and_position(self):
+        issues = decision_data_issues(
+            hero_cards="Ah Ah",
+            board="Ah Kd",
+            street="flop",
+            available_actions=["CHECK", "BET"],
+            players_in_hand=["hero", "right"],
+            hero_position="",
+        )
+        result = self.recommend(data_quality_issues=issues)
+        self.assertEqual(result.action, "ATTENDRE")
+        self.assertFalse(result.decision_ready)
+        self.assertIn("cartes hero dupliquees", result.data_quality_issues)
+        self.assertTrue(any("board incoherent" in issue for issue in result.data_quality_issues))
+
+    def test_live_quality_gate_accepts_consistent_flop(self):
+        issues = decision_data_issues(
+            hero_cards="Ah Qh",
+            board="As 9d 4c",
+            street="flop",
+            available_actions=["CHECK", "BET"],
+            players_in_hand=["hero", "right"],
+            hero_position="",
+        )
+        self.assertEqual(issues, [])
+
+    def test_live_quality_gate_rejects_call_without_reliable_amounts(self):
+        issues = decision_data_issues(
+            hero_cards="Ah Qh",
+            board="",
+            street="preflop",
+            available_actions=["FOLD", "CALL", "RAISE"],
+            players_in_hand=["hero", "right"],
+            hero_position="BTN",
+            call_amount_reliable=False,
+        )
+        self.assertIn("montant du call ou pot non fiable", issues)
+
+    def test_uniform_card_tint_is_not_interpreted_as_a_suit(self):
+        crop = Image.new("RGB", (20, 20), (20, 110, 45))
+        self.assertTrue(_rank_crop_has_uniform_tint(crop))
 
     def test_aggressive_opening_profile_widens_from_utg_to_button(self):
         self.assertEqual(
@@ -181,6 +238,61 @@ class DecisionSupportTests(unittest.TestCase):
             type("Button", (), {"name": "right", "active": True, "red_ratio": 0.79})(),
         ]
         self.assertGreaterEqual(_hero_turn_confidence("", "", "", states), 0.6)
+
+    def test_grey_fold_with_readable_check_and_bet_is_a_hero_turn(self):
+        states = [
+            type("Button", (), {"name": "left", "active": True, "red_ratio": 0.0})(),
+            type("Button", (), {"name": "center", "active": True, "red_ratio": 0.0})(),
+        ]
+        self.assertGreaterEqual(_hero_turn_confidence("CHECK BET", "", "", states), 0.6)
+
+    def test_visible_check_never_returns_wait_even_with_stale_aggression(self):
+        result = self.recommend(
+            hero_cards="Ah 6h",
+            board="As Kd 9h",
+            street="flop",
+            available_actions=["CHECK", "BET"],
+            recent_actions=["OldVillain bets 20 BB"],
+        )
+        self.assertIn(result.action, {"CHECK", "BET"})
+
+    def test_unreliable_preflop_odds_do_not_override_a_fold(self):
+        result = self.recommend(
+            hero_cards="Kh 3d",
+            hero_position="SB",
+            pot_type="unknown",
+            pot_size=10.0,
+            call_amount=1.0,
+            call_amount_reliable=False,
+        )
+        self.assertEqual(result.action, "FOLD")
+        self.assertIn("cote non appliquee", " ".join(result.reasons))
+
+    def test_k8_on_kj4_is_top_pair(self):
+        score, label, _draws, _reasons = _postflop_strength("8d Kh", "Ks Jc 4d")
+        self.assertEqual(score, 2)
+        self.assertEqual(label, "top paire")
+
+    def test_board_pair_without_hole_card_match_is_not_hero_pair(self):
+        score, label, _draws, _reasons = _postflop_strength("Qc 8c", "4h 4s 9h")
+        self.assertEqual(score, 0)
+        self.assertEqual(label, "paire du board")
+
+    def test_top_pair_bets_after_multiway_checks_in_position(self):
+        result = self.recommend(
+            hero_cards="8d Kh",
+            board="Ks Jc 4d",
+            street="flop",
+            available_actions=["CHECK", "BET"],
+            recent_actions=[],
+            players_in_hand=["top_right", "right", "hero"],
+            hero_in_position=True,
+        )
+        self.assertEqual(result.action, "BET")
+
+    def test_absent_status_cannot_be_a_hero_turn(self):
+        states = [type("Button", (), {"name": "left", "active": True, "red_ratio": 0.9})()]
+        self.assertEqual(_hero_turn_confidence("CHECK BET", "ABSENT", "", states), 0.0)
 
     def test_all_in_with_a_readable_call_uses_call_fold_math(self):
         result = self.recommend(
@@ -387,6 +499,19 @@ class DecisionSupportTests(unittest.TestCase):
             pot_size=8.0,
         )
         self.assertEqual(result.action, "CHECK")
+
+    def test_explanation_connects_equity_odds_and_blocked_top_pair_probability(self):
+        result = DecisionRecommendation(
+            "FOLD", "", 0.8, "top paire", "A8s+", "", [],
+            equity=0.24,
+            pot_odds=0.31,
+            villain_hand_probabilities=["Vilain (right) [individuel] : top paire 18% · deux paires 4%"],
+        )
+        explanation = _decision_explanation(result)
+        self.assertIn("24.0%", explanation)
+        self.assertIn("33.0%", explanation)
+        self.assertIn("top paire 18%", explanation)
+        self.assertIn("retrait de tes cartes", explanation)
 
 
 if __name__ == "__main__":

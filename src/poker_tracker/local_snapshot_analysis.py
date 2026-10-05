@@ -11,7 +11,7 @@ from PIL import Image, ImageFilter, ImageOps
 import cv2
 import numpy as np
 
-from .config import load_calibration
+from .config import detect_calibration_profile, load_calibration
 from .ocr import OcrSnapshot, _find_tesseract, _preprocess_text_zone, _run_tesseract, _scaled_rect, run_local_ocr_on_image
 
 
@@ -47,7 +47,7 @@ POT_CURRENT_TEXT_RE = re.compile(r"(Pot\s*:\s*[\d.,]+\s*BB)", re.IGNORECASE)
 POT_TOTAL_TEXT_RE = re.compile(r"(Pot\s+total\s*:\s*[\d.,]+\s*BB)", re.IGNORECASE)
 POT_TOTAL_FRAGMENT_RE = re.compile(r"(?:Pot\s+)?total\s*:\s*([\d.,]+)\s*BB", re.IGNORECASE)
 BOARD_RANK_RE = re.compile(r"\b([2-9]|10|[AJQKT])\b", re.IGNORECASE)
-BB_LIKE_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:BB|B8|68|BES|BE|BBS)\b", re.IGNORECASE)
+BB_LIKE_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:BB|B8|68|BES|BEB|BE|BBS)\b", re.IGNORECASE)
 POT_LOOSE_RE = re.compile(r"pot[^0-9]{0,10}(\d+(?:[.,]\d+)?)", re.IGNORECASE)
 NAME_BLACKLIST = {
     "winamax", "wichita", "holdem", "limit", "playground", "free", "move", "straight",
@@ -86,6 +86,9 @@ def extract_live_table_facts(
     hero_cards_hint: str = "",
     visible_board_hint: str = "",
     cached_names: dict[str, str] | None = None,
+    dealer_button_hint: str = "",
+    board_prefix_hint: str = "",
+    excluded_seats: set[str] | None = None,
 ) -> dict[str, str]:
     if ocr_snapshot.status == "ok_minimal":
         return _extract_minimal_live_table_facts(ocr_snapshot, hero_name)
@@ -97,6 +100,9 @@ def extract_live_table_facts(
                 "hero_cards_hint": hero_cards_hint,
                 "visible_board_hint": visible_board_hint,
                 "cached_names": cached_names or {},
+                "dealer_button_hint": dealer_button_hint,
+                "board_prefix_hint": board_prefix_hint,
+                "excluded_seats": sorted(excluded_seats or ()),
             }
         },
     )
@@ -108,7 +114,32 @@ def extract_live_table_facts(
         or values.get("hero_cards", "")
         or _extract_hero_cards_from_image(ocr_snapshot.image_path)
     )
+    values["board_visible_count"] = str(
+        _detect_visible_board_card_count(ocr_snapshot.image_path)
+    )
     return values
+
+
+def _detect_visible_board_card_count(image_path: str) -> int:
+    """Count contiguous physical board cards without reading their values."""
+    image_file = Path(image_path)
+    if not image_file.exists():
+        return 0
+    try:
+        image = Image.open(image_file).convert("RGB")
+    except OSError:
+        return 0
+    zones = load_calibration(detect_calibration_profile(image_path)).get("zones", {})
+    count = 0
+    for index in range(1, 6):
+        ratios = zones.get(f"board_card_{index}")
+        if not ratios:
+            break
+        crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
+        if _card_white_ratio(crop) < 0.15:
+            break
+        count += 1
+    return count
 
 
 def _extract_minimal_live_table_facts(ocr_snapshot: OcrSnapshot, hero_name: str) -> dict[str, str]:
@@ -149,7 +180,8 @@ def _extract_minimal_live_table_facts(ocr_snapshot: OcrSnapshot, hero_name: str)
         values[f"board_card_{index}"] = board_cards[index - 1]
 
     image = Path(ocr_snapshot.image_path)
-    calibration = load_calibration().get("zones", {})
+    calibration_data = load_calibration(detect_calibration_profile(image_path))
+    calibration = calibration_data.get("zones", {})
     for seat in ("top_left", "top_right", "left", "right"):
         zone_name = f"{seat}_cards"
         ratios = calibration.get(zone_name)
@@ -166,12 +198,16 @@ def _extract_minimal_live_table_facts(ocr_snapshot: OcrSnapshot, hero_name: str)
             values[f"{zone_name}_visible"] = "-"
 
     values["hero_cards"] = _extract_hero_cards_from_image(ocr_snapshot.image_path)
+    values["board_visible_count"] = str(
+        _detect_visible_board_card_count(ocr_snapshot.image_path)
+    )
     return values
 
 
 def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -> dict[str, dict[str, Any]]:
     live = metadata.get("live_snapshot") or {}
     cached_names = live.get("cached_names") or {}
+    excluded_seats = set(live.get("excluded_seats") or ())
     previous_fields = metadata.get("previous_fields") or {}
     zones = ocr_snapshot.zones or {}
     full_text = _clean_ocr_text(ocr_snapshot.text)
@@ -187,6 +223,7 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
 
     board_text = zone_text("board")
     board_hint = str(live.get("visible_board_hint", "") or "")
+    board_prefix = str(live.get("board_prefix_hint", "") or "")
     if board_hint:
         board_cards = board_hint.split()[:5]
         board_cards.extend([""] * (5 - len(board_cards)))
@@ -197,6 +234,7 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
             ocr_snapshot.image_path,
             board_text,
             [zone_text(f"board_card_{index}") for index in range(1, 6)],
+            known_cards=board_prefix.split()[:5],
         )
         if not any(board_cards):
             board_cards = _extract_board_cards_from_image(ocr_snapshot.image_path)
@@ -227,19 +265,21 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
     top_left_stack_direct = _extract_stack(zone_text("top_left_stack"))
     top_right_stack_direct = _extract_stack(zone_text("top_right_stack"))
     right_stack_direct = _extract_stack(zone_text("right_stack"))
-    left_stack_expanded = "" if left_stack_direct else _extract_stack(
+    left_stack_expanded = "" if left_stack_direct or "left" in excluded_seats else _extract_stack(
         _extract_expanded_stack_text(ocr_snapshot.image_path, "left_stack", 0.60, 0.20)
     )
-    top_left_stack_expanded = "" if top_left_stack_direct else _extract_stack(
+    top_left_stack_expanded = "" if top_left_stack_direct or "top_left" in excluded_seats else _extract_stack(
         _extract_expanded_stack_text(ocr_snapshot.image_path, "top_left_stack", 0.35, 0.55)
     )
-    top_right_stack_expanded = "" if top_right_stack_direct else _extract_stack(
+    top_right_stack_expanded = "" if top_right_stack_direct or "top_right" in excluded_seats else _extract_stack(
         _extract_expanded_stack_text(ocr_snapshot.image_path, "top_right_stack", 0.25, 1.00)
     )
-    right_stack_expanded = "" if right_stack_direct else _extract_stack(
+    right_stack_expanded = "" if right_stack_direct or "right" in excluded_seats else _extract_stack(
         _extract_expanded_stack_text(ocr_snapshot.image_path, "right_stack", 0.35, 0.10)
     )
     def bet(seat: str) -> str:
+        if seat in excluded_seats:
+            return ""
         return _extract_bet_from_zone(ocr_snapshot.image_path, seat, zone_text(f"{seat}_bet"))
     top_left_name_direct = str(cached_names.get("top_left_name", "") or "") or _name_from_crop_if_needed(
         ocr_snapshot.image_path, "top_left_name", zone_text("top_left_name")
@@ -262,6 +302,13 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
             if value and value != "-":
                 return value
         return ""
+
+    dealer_button = str(live.get("dealer_button_hint", "") or "")
+    if not dealer_button:
+        dealer_button = first_non_empty(
+            _detect_dealer_owner(ocr_snapshot.image_path),
+            _clean_ocr_text(zone_text("dealer_button")),
+        )
 
     values = {
         "top_left_cards_visible": _detect_cards_visible(zone_image_path("top_left_cards")),
@@ -329,9 +376,13 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
             hero_stack_from_block,
         ),
         "top_left_bet": bet("top_left"),
+        "top_left_action": _clean_ocr_text(zone_text("top_left_action")),
         "top_right_bet": bet("top_right"),
+        "top_right_action": _clean_ocr_text(zone_text("top_right_action")),
         "left_bet": bet("left"),
+        "left_action": _clean_ocr_text(zone_text("left_action")),
         "right_bet": bet("right"),
+        "right_action": _clean_ocr_text(zone_text("right_action")),
         "hero_bet": bet("hero"),
         "hero_cards": hero_cards,
         "hero_status": _clean_hero_status(zone_text("hero_status"), hero_block, action_text, full_text, hero_cards_visible, hero_footer_status),
@@ -341,10 +392,7 @@ def extract_review_values(ocr_snapshot: OcrSnapshot, metadata: dict[str, Any]) -
             pot_from_block,
             live.get("pot_text", ""),
         ),
-        "dealer_button": first_non_empty(
-            _detect_dealer_owner(ocr_snapshot.image_path),
-            _clean_ocr_text(zone_text("dealer_button")),
-        ),
+        "dealer_button": dealer_button,
         "board_card_1": board_cards[0] if len(board_cards) > 0 else "",
         "board_card_2": board_cards[1] if len(board_cards) > 1 else "",
         "board_card_3": board_cards[2] if len(board_cards) > 2 else "",
@@ -504,9 +552,15 @@ def _extract_bet_from_image(image_path: str, seat: str) -> str:
     rgb = np.asarray(crop)
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     orange = (r > 130) & (g > 45) & (g < 190) & (b < 120) & (r > g * 1.25)
-    if float(orange.mean()) < 0.025:
+    yellow = (r > 150) & (g > 110) & (b < 120) & (r > b * 1.45) & (g > b * 1.25)
+    muted_yellow = (r > 70) & (g > 90) & (b < 65) & (r > b * 2.0) & (g > b * 2.4)
+    if (
+        float(orange.mean()) < 0.025
+        and float(yellow.mean()) < 0.015
+        and float(muted_yellow.mean()) < 0.015
+    ):
         return ""
-    return _extract_stack(_extract_expanded_stack_text(image_path, f"{seat}_bet", 0, 0))
+    return _extract_stack(_extract_expanded_stack_text(image_path, f"{seat}_bet", 0.15, 0.15))
 
 
 def _extract_bet_from_zone(image_path: str, seat: str, zone_text: str) -> str:
@@ -523,9 +577,21 @@ def _extract_bet_from_zone(image_path: str, seat: str, zone_text: str) -> str:
     rgb = np.asarray(crop)
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     orange = (r > 130) & (g > 45) & (g < 190) & (b < 120) & (r > g * 1.25)
-    if float(orange.mean()) < 0.025:
+    yellow = (r > 150) & (g > 110) & (b < 120) & (r > b * 1.45) & (g > b * 1.25)
+    muted_yellow = (r > 70) & (g > 90) & (b < 65) & (r > b * 2.0) & (g > b * 2.4)
+    if (
+        float(orange.mean()) < 0.025
+        and float(yellow.mean()) < 0.015
+        and float(muted_yellow.mean()) < 0.015
+    ):
         return ""
-    return _extract_stack(zone_text) or _extract_bet_from_image(image_path, seat)
+    # Keep the already-parallel calibrated OCR when it is readable. Retry on
+    # a narrowly expanded crop only when that first pass failed; expansion can
+    # recover a clipped digit but can also soften a decimal digit.
+    expanded = _extract_stack(
+        _extract_expanded_stack_text(image_path, f"{seat}_bet", 0.15, 0.15)
+    )
+    return _extract_stack(zone_text) or expanded
 
 
 def _extract_expanded_stack_text(image_path: str, zone_name: str, expand_left: float, expand_right: float) -> str:
@@ -557,7 +623,10 @@ def _extract_expanded_stack_text(image_path: str, zone_name: str, expand_left: f
     # conserver le premier chiffre quand il est posÃ© sur une zone claire.
     rgb = np.asarray(crop)
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    yellow = (r > 120) & (g > 70) & (r > b * 1.25) & (g > b * 1.12)
+    yellow = (
+        ((r > 120) & (g > 70) & (r > b * 1.25) & (g > b * 1.12))
+        | ((r > 70) & (g > 90) & (b < 65) & (r > b * 2.0) & (g > b * 2.4))
+    )
     yellow_mask = Image.fromarray(np.where(yellow, 0, 255).astype("uint8"))
     variants.insert(0, yellow_mask.resize((yellow_mask.width * 4, yellow_mask.height * 4), Image.Resampling.NEAREST))
 
@@ -627,9 +696,11 @@ def detect_visible_opponent_seats(image_path: str) -> list[str]:
         image = Image.open(image_path).convert("RGB")
     except OSError:
         return []
-    zones = load_calibration().get("zones", {})
+    layout = detect_calibration_profile(image_path)
+    zones = load_calibration(layout).get("zones", {})
     active: list[str] = []
-    for seat in ("top_left", "top_right", "left", "right"):
+    seats = ("top_left", "top_right") if layout == "3max" else ("top_left", "top_right", "left", "right")
+    for seat in seats:
         ratios = zones.get(f"{seat}_cards")
         if not ratios:
             continue
@@ -655,6 +726,13 @@ def _extract_single_card_rank(card_text: str) -> str:
         return "t"
     if token in {"A", "K", "Q", "J", "T", "2", "3", "4", "5", "6", "7", "8", "9"}:
         return token.lower()
+    # A suit fragment or antialiasing artefact is sometimes appended to an
+    # otherwise unambiguous rank (for example ``9g`` on a red nine). Prefer
+    # that slot-specific glyph over the global board OCR, whose tokens may be
+    # shifted by one card.
+    trailing_noise = re.fullmatch(r"(10|[2-9AJQKT])([A-Z])", token)
+    if trailing_noise and trailing_noise.group(2) not in {"A", "K", "Q", "J", "T"}:
+        return trailing_noise.group(1).lower()
     # Stable Tesseract confusions observed on the calibrated value crops.
     if token in {"OQ", "QO", "0Q", "Q0"}:
         return "q"
@@ -667,6 +745,7 @@ def _extract_board_cards_fast(
     image_path: str,
     board_text: str,
     card_rank_texts: list[str] | None = None,
+    known_cards: list[str] | None = None,
 ) -> list[str]:
     """Combine one board OCR pass with cheap per-card colour detection."""
     ranks = _extract_board_cards(board_text)
@@ -679,21 +758,21 @@ def _extract_board_cards_fast(
         return ranks
 
     calibration = load_calibration().get("zones", {})
-    cards: list[str] = []
+    cards: list[str] = list(known_cards or [])
     engine_path = ""
-    for index in range(1, 6):
+    for index in range(len(cards) + 1, 6):
         zone_name = f"board_card_{index}"
         ratios = calibration.get(zone_name)
         if not ratios:
             break
         crop = image.crop(_scaled_rect(image.width, image.height, *ratios))
-        # L'OCR global peut renvoyer un chiffre parasite provenant d'une
-        # autre zone. Ne jamais attribuer ce chiffre Ã  un emplacement vide.
-        if not _looks_like_card_crop(crop) and _card_white_ratio(crop) < 0.18:
-            break
         rank = ""
         if card_rank_texts and index <= len(card_rank_texts):
             rank = _extract_single_card_rank(card_rank_texts[index - 1])
+        # L'OCR global peut renvoyer un chiffre parasite provenant d'une
+        # autre zone. Ne jamais attribuer ce chiffre Ã  un emplacement vide.
+        if not rank and not _looks_like_card_crop(crop) and _card_white_ratio(crop) < 0.18:
+            break
         if not rank:
             rank = ranks[index - 1] if index <= len(ranks) else ""
         value_ratios = calibration.get(f"{zone_name}_value")
@@ -702,11 +781,19 @@ def _extract_board_cards_fast(
             if value_ratios
             else crop.crop(_scaled_rect(crop.width, crop.height, 0.02, 0.05, 0.40, 0.27))
         )
-        # If the broad board OCR missed a rank, read only that card instead of
-        # relaunching OCR on all five cards.
+        # Tesseract remains the baseline.  The template matcher runs in
+        # parallel and overrides it only with a clearly strong match.
+        template_rank, template_score = _match_board_rank_reference_with_score(rank_crop)
         local_rank = rank
-        if not local_rank:
-            local_rank = _match_board_rank_reference(rank_crop)
+        if template_rank and (not local_rank or (template_rank != local_rank and template_score >= 0.72)):
+            # A template score alone confused the very similar Winamax 9 and
+            # 8 glyphs on clean, stable boards. Keep a direct OCR 9 unless the
+            # crop actually contains the two enclosed loops of an 8.
+            ambiguous_eight_nine = {template_rank, local_rank} == {"8", "9"}
+            if not ambiguous_eight_nine or (
+                template_rank == "8" and _value_crop_has_two_holes(rank_crop)
+            ):
+                local_rank = template_rank
         if not local_rank:
             engine_path = engine_path or _find_tesseract() or ""
             if engine_path:
@@ -717,7 +804,15 @@ def _extract_board_cards_fast(
         # per-card OCR has incorrectly returned A (seen on blue diamond 8s).
         if local_rank in {"", "a", "3"} and _rank_from_glyph_shape(rank_crop) == "8":
             local_rank = "8"
-        suit = _extract_card_suit(crop)
+        # Winamax colours the rank itself by suit.  The calibrated value crop
+        # is therefore the primary source: it is isolated and cannot confuse
+        # a neighbouring pip with the suit.  The larger card glyph is only a
+        # fallback when the rank colour is genuinely inconclusive.
+        suit = (
+            ""
+            if _rank_crop_has_uniform_tint(rank_crop)
+            else (_extract_suit_from_rank_crop(rank_crop) or _extract_card_suit(crop))
+        )
         cards.append(f"{local_rank}{suit}" if suit else local_rank)
     return cards
 
@@ -802,6 +897,32 @@ def _match_board_rank_reference(rank_crop: Image.Image) -> str:
             if score > best_score:
                 best_rank, best_score = folder.name.lower(), score
     return best_rank if best_score >= 0.52 else ""
+
+
+def _match_board_rank_reference_with_score(rank_crop: Image.Image) -> tuple[str, float]:
+    """Parallel template score; callers decide whether it can beat OCR."""
+    root = Path(__file__).resolve().parents[2] / "data" / "ocr_dataset" / "templates" / "board_values"
+    if not root.exists():
+        return "", 0.0
+
+    def mask(image: Image.Image) -> np.ndarray:
+        gray = cv2.cvtColor(np.asarray(image.convert("RGB")), cv2.COLOR_RGB2GRAY)
+        gray = cv2.resize(gray, (40, 42), interpolation=cv2.INTER_AREA)
+        return (gray < 170).astype(np.float32)
+
+    source = mask(rank_crop)
+    best_rank, best_score = "", -1.0
+    for folder in root.iterdir():
+        if not folder.is_dir():
+            continue
+        for path in folder.glob("*.png"):
+            try:
+                score = float(cv2.matchTemplate(source, mask(Image.open(path)), cv2.TM_CCOEFF_NORMED)[0, 0])
+            except (OSError, cv2.error):
+                continue
+            if score > best_score:
+                best_rank, best_score = folder.name.lower(), score
+    return best_rank, max(0.0, best_score)
 
 
 def _value_crop_has_two_holes(value_crop: Image.Image) -> bool:
@@ -1095,6 +1216,44 @@ def _rank_from_glyph_shape(value_crop: Image.Image) -> str:
     return ""
 
 
+def capture_has_card_animation(image_path: str) -> bool:
+    """Resample tinted card backgrounds; never infer a value from the tint."""
+    if not image_path:
+        return False
+    try:
+        zones = load_calibration().get("zones", {})
+        with Image.open(image_path) as image:
+            names = ["hero_card_1_value", "hero_card_2_value"] + [
+                f"board_card_{index}_value" for index in range(1, 6)
+            ]
+            for name in names:
+                ratios = zones.get(name)
+                if not ratios:
+                    continue
+                crop = image.crop(_scaled_rect(image.width, image.height, *ratios)).convert("RGB")
+                pixels = list(crop.getdata())
+                # Empty green board slots are darker than a tinted card.
+                if (pixels and _rank_crop_has_uniform_tint(crop)
+                        and sum(max(pixel) >= 125 for pixel in pixels) > len(pixels) * 0.5):
+                    return True
+    except (OSError, ValueError):
+        pass
+    return False
+
+
+def _rank_crop_has_uniform_tint(rank_crop: Image.Image) -> bool:
+    """Detect an animation/overlay tint that destroys the rank's suit colour."""
+    pixels = list(rank_crop.convert("RGB").getdata())
+    if not pixels:
+        return False
+    coloured = sum(
+        1
+        for r, g, b in pixels
+        if max(r, g, b) - min(r, g, b) >= 24 and max(r, g, b) >= 70
+    )
+    return coloured / len(pixels) >= 0.75
+
+
 def _extract_card_rank(card_image: Image.Image, engine_path: str, suit: str = "", tight: bool = False) -> str:
     rank_crop = card_image if tight else card_image.crop((0, 0, max(1, int(card_image.width * 0.48)), max(1, int(card_image.height * 0.42))))
     variants: list[Image.Image] = []
@@ -1366,10 +1525,14 @@ def _detect_dealer_owner(image_path: str) -> str:
     except OSError:
         return ""
 
-    calibration = load_calibration().get("zones", {})
+    calibration_data = load_calibration(detect_calibration_profile(image_path))
+    calibration = calibration_data.get("zones", {})
     # On teste les sièges un par un. Le premier composant valide gagne :
     # inutile d'analyser les autres zones ensuite.
-    for seat_name in ("top_left", "top_right", "left", "right", "hero"):
+    seats = (("top_left", "top_right", "hero")
+             if calibration_data.get("profile") == "3max"
+             else ("top_left", "top_right", "left", "right", "hero"))
+    for seat_name in seats:
         ratios = calibration.get(f"dealer_{seat_name}")
         if not ratios:
             continue
@@ -1754,7 +1917,7 @@ def _extract_stack(text: str) -> str:
     cleaned = _clean_ocr_text(text)
     if re.search(r"\bALL\s*[- ]?\s*IN\b", cleaned, re.IGNORECASE):
         return "0 BB"
-    split_leading_one = re.search(r"\b1\s+(\d{2}(?:[.,]\d+)?)\s*(?:BB|B8|68|BES|BE|BBS)\b", cleaned, re.IGNORECASE)
+    split_leading_one = re.search(r"\b1\s+(\d{2}(?:[.,]\d+)?)\s*(?:BB|B8|68|BES|BEB|BE|BBS)\b", cleaned, re.IGNORECASE)
     if split_leading_one:
         return _format_stack_match(f"1{split_leading_one.group(1)} BB")
     match = STACK_RE.search(cleaned)

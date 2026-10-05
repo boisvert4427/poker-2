@@ -1,0 +1,531 @@
+{
+  "file": "live_turn_2026-09-22T20-55-53-069.live.json",
+  "seconds": 5.262180300000182,
+  "old": {
+    "source_file": "C:\\Users\\leona\\AppData\\Roaming\\winamax\\documents\\accounts\\RougeLion\\history\\20260922_Aalen 13_real_holdem_no-limit.txt",
+    "hand_id": "",
+    "table_name": "Playground",
+    "hero_name": "RougeLion",
+    "hero_cards": "8h 8s",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "qc 7s 8d",
+    "recent_actions": [
+      "MOOLOOD raises 3.5 BB",
+      "kaafm7407 calls 3.5 BB"
+    ],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot: 14 BB 8 8 oe",
+    "inferred_amounts": [
+      "14",
+      "8"
+    ],
+    "window_title": "Playground",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot: 14 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "-",
+      "top_left_name": "CROKOX",
+      "top_left_stack": "189 BB",
+      "top_right_cards_visible": "-",
+      "top_right_name": "MOOLOOD",
+      "top_right_stack": "101,5 BB",
+      "left_cards_visible": "-",
+      "left_name": "affable 4343",
+      "left_stack": "15,5 BB",
+      "right_cards_visible": "-",
+      "right_name": "kaafm7407",
+      "right_stack": "09 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "95,5 BB",
+      "top_left_bet": "",
+      "top_left_action": "- eer aes",
+      "top_right_bet": "",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "’ =",
+      "right_bet": "",
+      "right_action": "euch",
+      "hero_bet": "",
+      "hero_cards": "8h 8s",
+      "hero_status": "",
+      "pot_value": "Pot: 14 BB",
+      "dealer_button": "top_right",
+      "board_card_1": "qc",
+      "board_card_2": "7s",
+      "board_card_3": "8d",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "BB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "",
+      "spr": "",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "hero",
+      "left",
+      "right",
+      "top_right"
+    ],
+    "dealer_owner": "top_right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "CROKOX",
+        "known": true,
+        "hands_played": 2,
+        "vpip": 0.5,
+        "pfr": 0.5,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "known": true,
+        "hands_played": 2,
+        "vpip": 0.0,
+        "pfr": 0.0,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "known": true,
+        "hands_played": 2,
+        "vpip": 0.0,
+        "pfr": 0.0,
+        "profile": "insufficient_data",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "echantillon faible, eviter les gros ajustements",
+        "note": "peu de mains, partir sur un profil normal",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      }
+    ],
+    "villain_profile_summary": "-",
+    "villain_range_summary": "-",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "CROKOX",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left CROKOX : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\ntop_right MOOLOOD : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nleft affable 4343 : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nright kaafm7407 : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable",
+    "recommendation": {
+      "action": "BET",
+      "sizing": "50-65% du pot",
+      "confidence": 0.52,
+      "hand_strength": "brelan",
+      "villain_range": "44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%)",
+      "summary": "BET 50-65% du pot — brelan.",
+      "reasons": [
+        "base postflop 5-max : board semi-connecte; value et protection",
+        "pot unknown",
+        "value : call estime 82% contre MOOLOOD + affable 4343 + kaafm7407, equite vs range de call 76%",
+        "trois cartes du même rang",
+        "MOOLOOD: 44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%)"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 3,
+      "villain_ranges": [
+        "MOOLOOD (top_right) : 44+, A7s+, KTs+, QTs+, JTs, T9s, A9o+, KQo (~18-28%) [mise/relance postflop : range resserrée]",
+        "affable 4343 (left) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) [range de participation]",
+        "kaafm7407 (right) : 22+, A2s+, K6s+, Q8s+, J9s+, T9s, 98s-65s, A7o+, KTo+, QTo+, JTo (~28-40%) [call postflop : paires et draws conservés]"
+      ],
+      "villain_hand_probabilities": [
+        "MOOLOOD (top_right) [individuel] : brelan 4% · top paire 17% · petite paire 33% · air / tirage 45%",
+        "affable 4343 (left) [individuel] : brelan 3% · top paire 19% · middle paire 2% · petite paire 26% · air / tirage 50%",
+        "kaafm7407 (right) [individuel] : brelan 3% · top paire 17% · middle paire 2% · petite paire 28% · air / tirage 49%",
+        "Multiway [conjoint] : au moins un top paire 46% · tous top paire 0%"
+      ],
+      "strategy_mix": "BET 70% / CHECK 30%",
+      "effective_stack_bb": null,
+      "spr": null,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": 0.819204105375,
+      "value_equity_when_called": 0.7611111111111111,
+      "value_ev_bb": 14.704060417230622,
+      "value_summary": "value : call estime 82% contre MOOLOOD + affable 4343 + kaafm7407, equite vs range de call 76%",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": []
+  },
+  "new": {
+    "source_file": "",
+    "hand_id": "",
+    "table_name": "",
+    "hero_name": "RougeLion",
+    "hero_cards": "8h 8s",
+    "current_street": "flop",
+    "is_complete": false,
+    "visible_board": "qc 7s 8d",
+    "recent_actions": [],
+    "ocr_status": "ok",
+    "ocr_preview": "CHECK Pot: 14 BB 8 8 oe",
+    "inferred_amounts": [
+      "14",
+      "8"
+    ],
+    "window_title": "",
+    "available_actions": [
+      "CHECK",
+      "BET"
+    ],
+    "pot_text": "Pot: 14 BB",
+    "hero_turn_confidence": 1.0,
+    "is_hero_turn": true,
+    "visual_buttons": [
+      "left",
+      "center",
+      "right"
+    ],
+    "detected_fields": {
+      "top_left_cards_visible": "not_visible",
+      "top_left_name": "CROKOX",
+      "top_left_stack": "189 BB",
+      "top_right_cards_visible": "visible",
+      "top_right_name": "MOOLOOD",
+      "top_right_stack": "101,5 BB",
+      "left_cards_visible": "visible",
+      "left_name": "affable 4343",
+      "left_stack": "15,5 BB",
+      "right_cards_visible": "visible",
+      "right_name": "kaafm7407",
+      "right_stack": "09 BB",
+      "hero_name": "RougeLion",
+      "hero_stack": "95,5 BB",
+      "top_left_bet": "",
+      "top_left_action": "- eer aes",
+      "top_right_bet": "",
+      "top_right_action": "",
+      "left_bet": "",
+      "left_action": "’ =",
+      "right_bet": "",
+      "right_action": "euch",
+      "hero_bet": "",
+      "hero_cards": "8h 8s",
+      "hero_status": "",
+      "pot_value": "Pot: 14 BB",
+      "dealer_button": "top_right",
+      "board_card_1": "qc",
+      "board_card_2": "7s",
+      "board_card_3": "8d",
+      "board_card_4": "",
+      "board_card_5": "",
+      "board_visible_count": "3",
+      "hero_position": "BB",
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "effective_stack_bb": "95.5",
+      "spr": "6.82",
+      "decision_data_issues": ""
+    },
+    "players_in_hand": [
+      "top_right",
+      "left",
+      "right",
+      "hero"
+    ],
+    "dealer_owner": "top_right",
+    "villain_profiles": [
+      {
+        "seat": "top_left",
+        "name": "CROKOX",
+        "known": true,
+        "hands_played": 21,
+        "vpip": 0.286,
+        "pfr": 0.286,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "known": false,
+        "hands_played": 0,
+        "vpip": 0.24,
+        "pfr": 0.18,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+        "preflop_tendency": "joueur inconnu : hypothese neutre, pas une calling station",
+        "note": "pas assez de mains pour attribuer un profil ; rester proche d'une range standard",
+        "postflop_faced_bets": 0,
+        "fold_to_bet": null,
+        "call_vs_bet": null
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "known": true,
+        "hands_played": 43,
+        "vpip": 0.209,
+        "pfr": 0.0,
+        "profile": "standard",
+        "estimated_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%)",
+        "preflop_tendency": "profil neutre sans lecture forte",
+        "note": "joueur standard par defaut",
+        "postflop_faced_bets": 7,
+        "fold_to_bet": 0.714,
+        "call_vs_bet": 0.286
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "known": true,
+        "hands_played": 41,
+        "vpip": 0.146,
+        "pfr": 0.122,
+        "profile": "nit",
+        "estimated_range": "55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%)",
+        "preflop_tendency": "ouvre et continue plutot fort, peu de calls marginaux",
+        "note": "respecter davantage les relances et 3-bets",
+        "postflop_faced_bets": 3,
+        "fold_to_bet": 0.667,
+        "call_vs_bet": 0.333
+      }
+    ],
+    "villain_profile_summary": "top_right MOOLOOD | standard | VPIP 0.240 PFR 0.180 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | defaut\nleft affable 4343 | standard | VPIP 0.209 PFR 0.000 | 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | connu\nright kaafm7407 | nit | VPIP 0.146 PFR 0.122 | 55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%) | connu",
+    "villain_range_summary": "top_right MOOLOOD : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) | tendance joueur inconnu : hypothese neutre, pas une calling station | defaut\nleft affable 4343 : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) | tendance profil neutre sans lecture forte | BDD\nright kaafm7407 : 55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%) | tendance ouvre et continue plutot fort, peu de calls marginaux | BDD",
+    "bluff_assessments": [
+      {
+        "seat": "top_left",
+        "name": "CROKOX",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "top_right",
+        "name": "MOOLOOD",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "left",
+        "name": "affable 4343",
+        "score": 0.07,
+        "level": "faible",
+        "reasons": [
+          "profil standard ou inconnu",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant",
+          "pot visible, spot actionnable"
+        ]
+      },
+      {
+        "seat": "right",
+        "name": "kaafm7407",
+        "score": 0.0,
+        "level": "faible",
+        "reasons": [
+          "profil nit, bluffs moins frequents",
+          "stats serrees, range plus value heavy",
+          "flop : c-bet ou stab possibles",
+          "ligne plus passive a cet instant"
+        ]
+      }
+    ],
+    "bluff_summary": "top_left CROKOX : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\ntop_right MOOLOOD : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nleft affable 4343 : bluff faible (0.07) | profil standard ou inconnu; flop : c-bet ou stab possibles; ligne plus passive a cet instant; pot visible, spot actionnable\nright kaafm7407 : bluff faible (0.00) | profil nit, bluffs moins frequents; stats serrees, range plus value heavy; flop : c-bet ou stab possibles; ligne plus passive a cet instant",
+    "recommendation": {
+      "action": "BET",
+      "sizing": "50-65% du pot",
+      "confidence": 0.52,
+      "hand_strength": "brelan",
+      "villain_range": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)",
+      "summary": "BET 50-65% du pot — brelan.",
+      "reasons": [
+        "base postflop 5-max : board semi-connecte; value et protection",
+        "pot unknown, SPR 6.82",
+        "value : call estime 80% contre MOOLOOD + affable 4343 + kaafm7407, equite vs range de call 82%",
+        "trois cartes du même rang",
+        "MOOLOOD: 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%)"
+      ],
+      "equity": null,
+      "pot_odds": null,
+      "call_amount": null,
+      "opponent_count": 3,
+      "villain_ranges": [
+        "MOOLOOD (top_right) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~24-28%) [range de participation]",
+        "affable 4343 (left) : 22+, A2s+, K8s+, Q9s+, J9s+, T9s, A8o+, KTo+, QTo+, JTo (~22-28%) [range de participation]",
+        "kaafm7407 (right) : 55+, A8s+, KTs+, QTs+, JTs, ATo+, KQo (~12-18%) [range de participation]"
+      ],
+      "villain_hand_probabilities": [
+        "MOOLOOD (top_right) [individuel] : brelan 2% · top paire 19% · middle paire 2% · petite paire 27% · air / tirage 50%",
+        "affable 4343 (left) [individuel] : brelan 3% · top paire 20% · middle paire 2% · petite paire 25% · air / tirage 51%",
+        "kaafm7407 (right) [individuel] : brelan 5% · top paire 21% · petite paire 30% · air / tirage 43%",
+        "Multiway [conjoint] : au moins un top paire 50% · tous top paire 0%"
+      ],
+      "strategy_mix": "BET 70% / CHECK 30%",
+      "effective_stack_bb": 95.5,
+      "spr": 6.821428571428571,
+      "pot_type": "unknown",
+      "preflop_aggressor": "",
+      "bluff_success_probability": null,
+      "bluff_break_even_probability": null,
+      "bluff_ev_bb": null,
+      "bluff_summary": "",
+      "value_call_probability": 0.797801168800467,
+      "value_equity_when_called": 0.8222222222222222,
+      "value_ev_bb": 16.153176710018148,
+      "value_summary": "value : call estime 80% contre MOOLOOD + affable 4343 + kaafm7407, equite vs range de call 82%",
+      "decision_ready": true,
+      "data_quality_issues": []
+    },
+    "local_action_events": []
+  },
+  "truth": {
+    "status": "linked",
+    "hand_id": "22956227-587-1790103324",
+    "table_name": "Aalen 13",
+    "played_at": "2026/09/22 18:55:24 UTC",
+    "hero_cards": "8h 8s",
+    "board": "Qc 7s 8d Ks 4d",
+    "total_pot": 3.86,
+    "outcome": "won",
+    "actions_by_street": {
+      "ante_blinds": [
+        "kaafm7407 posts small blind 0.01€",
+        "RougeLion posts big blind 0.02€"
+      ],
+      "pre_flop": [
+        "affable.4343 calls 0.02€",
+        "CROKOX folds",
+        "M00L00D raises 0.05€ to 0.07€",
+        "kaafm7407 calls 0.06€",
+        "RougeLion calls 0.05€",
+        "affable.4343 calls 0.05€"
+      ],
+      "flop": [
+        "kaafm7407 checks",
+        "RougeLion bets 0.14€",
+        "affable.4343 folds",
+        "M00L00D calls 0.14€",
+        "kaafm7407 folds"
+      ],
+      "turn": [
+        "RougeLion bets 0.36€",
+        "M00L00D raises 1.28€ to 1.64€",
+        "RougeLion raises 0.13€ to 1.77€ and is all-in",
+        "M00L00D calls 0.13€"
+      ],
+      "river": [],
+      "show down": [
+        "M00L00D shows [Kc 8c] (Two pairs : Kings and 8)",
+        "RougeLion shows [8h 8s] (Trips of 8)",
+        "RougeLion collected 3.86€ from pot"
+      ],
+      "summary": []
+    },
+    "big_blind": 0.02,
+    "source": "post_hand_history_reconciliation"
+  }
+}

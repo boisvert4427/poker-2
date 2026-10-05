@@ -21,6 +21,10 @@ RFI_RANGES = {
     "BTN": "22+, A2s+, K2s+, Q3s+, J5s+, T6s+, 96s+, 86s+, 75s+, 65s, A2o+, K5o+, Q7o+, J7o+, T8o+, 98o",
     "SB": "22+, A2s+, K2s+, Q4s+, J6s+, T6s+, 96s+, 86s+, 75s+, 65s, A2o+, K6o+, Q8o+, J8o+, T8o+, 98o",
 }
+RFI_RANGES_3MAX = {
+    "BTN": "22+, A2s+, K2s+, Q2s+, J4s+, T5s+, 95s+, 85s+, 75s+, 64s+, 54s, A2o+, K4o+, Q6o+, J7o+, T7o+, 97o+, 87o",
+    "SB": "22+, A2s+, K2s+, Q3s+, J5s+, T5s+, 95s+, 85s+, 75s+, 64s+, 54s, A2o+, K5o+, Q7o+, J7o+, T8o+, 98o",
+}
 
 ISO_RAISE_RANGE = "22+, A2s+, K7s+, Q8s+, J8s+, T8s+, 98s-65s, A8o+, KTo+, QTo+, JTo"
 OVER_LIMP_RANGE = "22+, A2s+, K2s+, Q5s+, J7s+, T7s+, 97s+, 86s+, 75s+, 65s, A2o+, K7o+, Q8o+, J8o+, T9o"
@@ -41,6 +45,7 @@ def recommend_preflop_baseline(
     limper_count: int = 1,
     raise_size_bb: float | None = None,
     caller_count: int = 0,
+    table_size: int = 5,
 ) -> PreflopBaseline | None:
     position = (position or "").upper()
     if position not in {"UTG", "CO", "BTN", "SB", "BB"}:
@@ -49,8 +54,10 @@ def recommend_preflop_baseline(
     if spot == "unopened":
         if position == "BB":
             return PreflopBaseline("CHECK", "", "BB : aucun supplément à payer")
-        if _in_range(hero_cards, RFI_RANGES[position]):
-            return PreflopBaseline("RAISE", "2,5 BB", f"base 5-max 100 BB : ouverture {position}")
+        opening_ranges = RFI_RANGES_3MAX if table_size == 3 else RFI_RANGES
+        opening_range = opening_ranges.get(position, RFI_RANGES.get(position, ""))
+        if _in_range(hero_cards, opening_range):
+            return PreflopBaseline("RAISE", "2,5 BB", f"base {table_size}-max 100 BB : ouverture {position}")
         return PreflopBaseline("FOLD", "", f"hors range d'ouverture {position}")
 
     if spot == "limped":
@@ -66,11 +73,10 @@ def recommend_preflop_baseline(
             return PreflopBaseline("RAISE", "ALL-IN", "stack effectif court : 3-bet all-in de value")
         if _in_range(hero_cards, VS_RAISE_RERAISE_RANGE):
             return PreflopBaseline("RAISE", "3x la relance", "range de 3-bet value 100 BB")
-        defense_range = (
+        defense_range = (VS_LATE_RAISE_CALL_RANGE if table_size == 3 else
             VS_EARLY_RAISE_CALL_RANGE if raiser_position in {"UTG", "CO"}
             else VS_LATE_RAISE_CALL_RANGE if raiser_position in {"BTN", "SB"}
-            else VS_RAISE_CALL_RANGE
-        )
+            else VS_RAISE_CALL_RANGE)
         oversized = raise_size_bb is not None and raise_size_bb >= 4.0
         small_open = raise_size_bb is None or raise_size_bb <= 2.5
         # A small pair on the button can profitably enter a *single-raised*

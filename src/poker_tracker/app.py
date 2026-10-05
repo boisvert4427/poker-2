@@ -15,7 +15,13 @@ from tkinter import messagebox, ttk
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageOps, ImageTk
 
-from .config import DEFAULT_CALIBRATION, load_calibration, save_calibration
+from .config import (
+    DEFAULT_CALIBRATION,
+    load_calibration,
+    lock_calibration_profile,
+    locked_calibration_profile,
+    save_calibration,
+)
 from .detection import (
     HistoryLocation,
     WinamaxProcess,
@@ -24,13 +30,28 @@ from .detection import (
     select_preferred_table_window,
     summarize_detection,
 )
-from .history import latest_hand_block_key, read_history_text
-from .live_state import build_fast_live_snapshot, build_live_snapshot, format_live_commentary, format_live_snapshot
+from .history import (
+    HistoryFile,
+    freeze_history_file,
+    latest_hand_block_key,
+    read_history_text,
+    table_layout_from_history,
+)
+from .live_state import (
+    _position_for_layout,
+    _position_for_seat,
+    build_fast_live_snapshot,
+    build_live_snapshot,
+    format_live_commentary,
+    format_live_snapshot,
+    recompute_snapshot_recommendation,
+)
 from .ocr import OcrSnapshot, capture_window, run_action_ocr_on_image, run_local_ocr, run_local_ocr_on_image, run_local_ocr_on_image_with_profile, run_local_ocr_with_profile
 from .parser import ParsedHand, parse_winamax_hand
 from .session_recorder import SessionRecorder
 from .villain_db import sync_completed_history_file
 from .visual import has_active_action_bar
+from .local_snapshot_analysis import capture_has_card_animation
 
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -160,6 +181,7 @@ class PokerTrackerApp:
         self.live_debug_var = tk.BooleanVar(value=False)
         self.refresh_ms = 5000
         self.fast_refresh_ms = 200
+        self.card_animation_started_at: float | None = None
         self.background_refresh_every = 20
         self._after_id: str | None = None
         self._record_after_id: str | None = None
@@ -212,8 +234,14 @@ class PokerTrackerApp:
         self.decision_overlay_label: tk.Label | None = None
         self.player_range_overlays: dict[str, tuple[tk.Toplevel, tk.Label]] = {}
         self.live_action_memory: list[str] = []
+        self.live_action_events: list[dict[str, object]] = []
         self.live_action_memory_hand = ""
         self.live_action_memory_seen: set[str] = set()
+        self.live_contributions_by_street: dict[str, dict[str, float]] = {}
+        self.live_observed_streets: set[str] = set()
+        self.live_pot_by_street: dict[str, float] = {}
+        self.live_seen_active_seats: set[str] = set()
+        self.live_folded_seats: set[str] = set()
         self.cached_live_context: dict[str, object] = {}
         self.cached_history_block_key = ""
         self.cached_board_signature = ""
@@ -232,6 +260,8 @@ class PokerTrackerApp:
         self.hero_turn_release_streak = 0
         self.pending_hand_change = False
         self.last_history_import_summary = ""
+        self.live_history_baseline: dict[str, tuple[int, int]] = {}
+        self.live_bound_history_file: HistoryFile | None = None
 
         self._build_layout()
 
@@ -809,6 +839,25 @@ class PokerTrackerApp:
     def _toggle_live_debug(self) -> None:
         self.live_debug_var.set(not self.live_debug_var.get())
         if self.live_debug_var.get():
+            lock_calibration_profile(None)
+            detection = summarize_detection()
+            self._apply_detection(detection)
+            self.live_history_baseline = self._snapshot_history_files(detection)
+            self.live_bound_history_file = None
+            self.cached_history_block_key = ""
+            self.pending_hand_change = False
+            self.current_live_snapshot = None
+            self.cached_live_context = {}
+            self.live_action_memory = []
+            self.live_action_events = []
+            self.live_action_memory_seen = set()
+            self.live_contributions_by_street = {}
+            self.live_observed_streets = set()
+            self.live_pot_by_street = {}
+            self.live_seen_active_seats = set()
+            self.live_folded_seats = set()
+            self._hide_table_decision_overlay()
+            self._hide_player_range_overlays()
             session_dir = self.session_recorder.ensure_session()
             self.auto_refresh_var.set(True)
             self.live_debug_button.configure(text="Arreter live debug")
@@ -816,7 +865,12 @@ class PokerTrackerApp:
             self.status_var.set("Live debug actif : chaque tour hero complet sera archive.")
             self._schedule_refresh()
         else:
+            lock_calibration_profile(None)
             self.auto_refresh_var.set(False)
+            self.live_history_baseline = {}
+            self.live_bound_history_file = None
+            self._hide_table_decision_overlay()
+            self._hide_player_range_overlays()
             self.live_debug_button.configure(text="Lancer live debug")
             self.status_var.set("Live debug arrete.")
 
@@ -827,6 +881,8 @@ class PokerTrackerApp:
         if window is None:
             self.status_var.set("Snapshot live impossible : aucune table Winamax detectee.")
             return
+        # Overlay windows are marked WDA_EXCLUDEFROMCAPTURE on Windows: they
+        # stay continuously visible to the player without contaminating OCR.
         image_path = capture_window(window)
         if not image_path:
             self.status_var.set("Snapshot live impossible : capture de fenetre echouee.")
@@ -837,6 +893,15 @@ class PokerTrackerApp:
         self._set_ocr_text(self._format_ocr(window, ocr_snapshot))
         self._fill_live_state(detection.get("latest_history_file"), window, ocr_snapshot)
         self.status_var.set(f"Snapshot live termine : {image_path}")
+    def _defer_card_animation(self, animated: bool, now: float) -> bool:
+        """Bound resampling to one second per continuous animation signal."""
+        if not animated:
+            self.card_animation_started_at = None
+            return False
+        if self.card_animation_started_at is None:
+            self.card_animation_started_at = now
+        return now - self.card_animation_started_at < 1.0
+
     def _schedule_refresh(self) -> None:
         if self._after_id is not None:
             self.root.after_cancel(self._after_id)
@@ -871,7 +936,13 @@ class PokerTrackerApp:
         else:
             detection = self.current_detection or summarize_detection()
 
-        history_file = detection.get("latest_history_file")
+        history_file = self._history_file_for_live_session(detection)
+        history_layout = table_layout_from_history(history_file)
+        if history_layout and locked_calibration_profile() != history_layout:
+            lock_calibration_profile(history_layout)
+            self.status_var.set(
+                f"Format {history_layout} confirme et verrouille par l'historique Winamax."
+            )
         window = detection.get("active_table_window")
         if isinstance(window, WinamaxWindow):
             self.last_live_window = window
@@ -897,6 +968,10 @@ class PokerTrackerApp:
             return
 
         image_path = capture_window(window)
+        # Freeze the hand history next to the image. Full OCR runs in a worker
+        # and may finish after the player has already acted and Winamax has
+        # appended later actions to the same hand.
+        captured_history_file = freeze_history_file(history_file)
         self.last_live_scan_at = datetime.now().strftime("%H:%M:%S.%f")[:-3]
         self.last_live_capture_path = image_path or ""
         action_texts = run_action_ocr_on_image(image_path) if image_path and has_active_action_bar(image_path) else {}
@@ -907,6 +982,15 @@ class PokerTrackerApp:
             action_texts,
             self.cached_live_context,
         )
+        if self._defer_card_animation(
+            bool(getattr(fast_snapshot, "is_hero_turn", False))
+            and capture_has_card_animation(image_path or ""),
+            time.monotonic(),
+        ):
+            self._hide_table_decision_overlay()
+            self.status_var.set("Animation des cartes : nouvelle capture avant analyse.")
+            self._schedule_refresh()
+            return
         # The action buttons can stay identical (FOLD/CHECK/RAISE) when a
         # street changes. Include the card glyphs so a hero who acts first on
         # the flop/turn/river still receives a fresh decision.
@@ -919,6 +1003,7 @@ class PokerTrackerApp:
         if (
             self.current_live_snapshot is not None
             and getattr(self.current_live_snapshot, "is_hero_turn", False)
+            and not self._snapshot_needs_retry(self.current_live_snapshot)
             and fast_snapshot is not None
             and getattr(fast_snapshot, "is_hero_turn", False)
             and fast_signature == self.last_fast_live_signature
@@ -931,7 +1016,11 @@ class PokerTrackerApp:
 
         self.last_fast_live_signature = fast_signature
 
-        if self.current_live_snapshot is not None and getattr(self.current_live_snapshot, "is_hero_turn", False):
+        if (
+            self.current_live_snapshot is not None
+            and getattr(self.current_live_snapshot, "is_hero_turn", False)
+            and (fast_snapshot is None or not getattr(fast_snapshot, "is_hero_turn", False))
+        ):
             if fast_snapshot is None or not getattr(fast_snapshot, "is_hero_turn", False):
                 self.hero_turn_release_streak += 1
             else:
@@ -950,7 +1039,7 @@ class PokerTrackerApp:
         should_run_full_ocr = self._should_run_full_ocr(fast_snapshot)
         if should_run_full_ocr:
             self.hero_turn_release_streak = 0
-            self._queue_full_ocr_request(history_file, window, image_path or "")
+            self._queue_full_ocr_request(captured_history_file, window, image_path or "")
             self.pending_turn_snapshot = fast_snapshot
             self._render_live_decision(fast_snapshot, full_ocr=False, analysis_pending=True)
             self.status_var.set("Tour detecte: analyse complete en cours...")
@@ -968,6 +1057,58 @@ class PokerTrackerApp:
                 )
 
         self._schedule_refresh()
+
+    @staticmethod
+    def _snapshot_history_files(detection: dict[str, object]) -> dict[str, tuple[int, int]]:
+        """Record file state at live-session start without selecting a file."""
+        snapshot: dict[str, tuple[int, int]] = {}
+        for location in detection.get("history_locations", []) or []:
+            path = Path(str(getattr(location, "path", "") or ""))
+            if path.name.lower() != "history" or not path.is_dir():
+                continue
+            try:
+                files = path.glob("*.txt")
+                for history_path in files:
+                    stat = history_path.stat()
+                    snapshot[str(history_path)] = (stat.st_mtime_ns, stat.st_size)
+            except OSError:
+                continue
+        return snapshot
+
+    def _history_file_for_live_session(self, detection: dict[str, object]) -> HistoryFile | None:
+        """Bind once to the first history changed after live debug starts."""
+        if not self.live_debug_var.get():
+            return detection.get("latest_history_file")  # type: ignore[return-value]
+
+        bound = self.live_bound_history_file
+        if bound is not None:
+            try:
+                stat = Path(bound.path).stat()
+            except OSError:
+                return bound
+            self.live_bound_history_file = HistoryFile(
+                path=bound.path,
+                last_modified=stat.st_mtime,
+                size=stat.st_size,
+            )
+            return self.live_bound_history_file
+
+        current = self._snapshot_history_files(detection)
+        changed: list[tuple[int, str, int]] = []
+        for path, (mtime_ns, size) in current.items():
+            previous = self.live_history_baseline.get(path)
+            if previous is None or previous != (mtime_ns, size):
+                changed.append((mtime_ns, path, size))
+        if not changed:
+            return None
+
+        mtime_ns, path, size = max(changed)
+        self.live_bound_history_file = HistoryFile(
+            path=path,
+            last_modified=mtime_ns / 1_000_000_000,
+            size=size,
+        )
+        return self.live_bound_history_file
 
     def _sync_completed_history(self, history_file: object | None) -> None:
         """Persist newly completed hands before their ranges are reused live.
@@ -998,6 +1139,17 @@ class PokerTrackerApp:
         if getattr(snapshot, "is_hero_turn", False):
             return True
         return False
+
+    @staticmethod
+    def _snapshot_needs_retry(snapshot: object) -> bool:
+        """Retry detailed OCR while no reliable recommendation is available."""
+        recommendation = getattr(snapshot, "recommendation", None)
+        if recommendation is None:
+            return True
+        return (
+            str(getattr(recommendation, "action", "") or "").upper() == "ATTENDRE"
+            or not bool(getattr(recommendation, "decision_ready", True))
+        )
 
     @staticmethod
     def _merge_fast_turn_state(detailed_snapshot: object, fast_snapshot: object | None) -> object:
@@ -1052,24 +1204,49 @@ class PokerTrackerApp:
 
         def worker() -> None:
             try:
-                local_actions = list(self.live_action_memory)
                 analysis_started = time.perf_counter()
                 block_key = latest_hand_block_key(history_file)
                 board_signature = self._board_signature(image_path)
                 hero_signature = self._hero_signature(image_path)
                 same_hand = self._same_live_hand(block_key, hero_signature)
+                # Never inject actions from the previous hand into a fresh
+                # decision.  This check must happen before build_live_snapshot.
+                local_actions = list(self.live_action_memory) if same_hand else []
                 reuse_hero = (
                     same_hand
-                    and bool(self.cached_live_context.get("hero_cards"))
+                    and bool(re.fullmatch(r"(?:10|[2-9TJQKA])[shdc]\s+(?:10|[2-9TJQKA])[shdc]", str(self.cached_live_context.get("hero_cards", "")), re.IGNORECASE))
                     and bool(self.cached_hero_signature)
                     and hero_signature == self.cached_hero_signature
                 )
                 reuse_board = same_hand and bool(self.cached_board_signature) and board_signature == self.cached_board_signature
                 have_names = same_hand and any(self.cached_live_context.get(field) for field in ("top_left_name", "top_right_name", "left_name", "right_name"))
-                profile = ("live_without_hero_board_and_names" if reuse_hero and reuse_board and have_names else
-                           "live_without_hero_and_board" if reuse_hero and reuse_board else
-                           "live_without_hero_cards" if reuse_hero else "live")
-                snapshot = run_local_ocr_on_image_with_profile(image_path, profile=profile) if image_path else None
+                raw_cached_board = str(self.cached_live_context.get("visible_board", "") or "")
+                cached_board = self._valid_board_sequence(raw_cached_board)
+                if raw_cached_board and cached_board != raw_cached_board:
+                    reuse_board = False
+                cached_board_count = len(cached_board.split())
+                incremental_profile = {
+                    0: "live_dynamic_flop",
+                    3: "live_dynamic_turn",
+                    4: "live_dynamic_river",
+                }.get(cached_board_count, "live_dynamic_with_board")
+                if raw_cached_board and not cached_board:
+                    # A corrupt prefix such as ``4c c 4h`` must never be used
+                    # to construct the turn or river. Re-read all board cards.
+                    incremental_profile = "live_dynamic_with_board"
+                profile = (
+                    "live_dynamic" if reuse_hero and reuse_board and have_names else
+                    incremental_profile if reuse_hero and have_names else
+                    "live_without_hero_and_board" if reuse_hero and reuse_board else
+                    "live_without_hero_cards" if reuse_hero else
+                    "live"
+                )
+                excluded_seats = set(self.live_folded_seats) if same_hand else set()
+                snapshot = run_local_ocr_on_image_with_profile(
+                    image_path,
+                    profile=profile,
+                    excluded_seats=excluded_seats,
+                ) if image_path else None
                 cached_names = {
                     field: str(self.cached_live_context.get(field, "") or "")
                     for field in ("top_left_name", "top_right_name", "left_name", "right_name", "hero_name")
@@ -1083,6 +1260,13 @@ class PokerTrackerApp:
                     visible_board_hint=(str(self.cached_live_context.get("visible_board", "") or "") if reuse_board else ""),
                     cached_names=cached_names if same_hand else None,
                     local_recent_actions=local_actions,
+                    local_action_events=list(self.live_action_events) if same_hand else [],
+                    dealer_button_hint=(
+                        str(self.cached_live_context.get("dealer_button", "") or "")
+                        if same_hand else ""
+                    ),
+                    board_prefix_hint=(cached_board if same_hand and not reuse_board else ""),
+                    excluded_seats=excluded_seats,
                 ) if snapshot is not None else None
                 elapsed_seconds = time.perf_counter() - analysis_started
                 self.pending_full_ocr_result = (
@@ -1116,13 +1300,68 @@ class PokerTrackerApp:
                     latest_hand_block_key(history_file),
                     self._hero_signature(ocr_snapshot.image_path),
                 )
+                raw_board = str(getattr(live_snapshot, "visible_board", "") or "")
+                raw_street = str(getattr(live_snapshot, "current_street", "") or "")
                 live_snapshot = self._stabilize_board_cards(live_snapshot, board_fingerprints, same_hand)
                 self.current_live_snapshot = self._preserve_live_details(
                     self.current_live_snapshot,
                     live_snapshot,
                     same_hand=same_hand,
                 )
-                self._remember_live_actions(self.current_live_snapshot)
+                if (
+                    str(getattr(self.current_live_snapshot, "visible_board", "") or "") != raw_board
+                    or str(getattr(self.current_live_snapshot, "current_street", "") or "") != raw_street
+                ):
+                    self.current_live_snapshot = recompute_snapshot_recommendation(self.current_live_snapshot)
+                if not same_hand:
+                    self.live_action_memory = []
+                    self.live_action_events = []
+                    self.live_action_memory_seen = set()
+                    self.live_contributions_by_street = {}
+                    self.live_observed_streets = set()
+                    self.live_pot_by_street = {}
+                    self.live_action_memory_hand = str(
+                        getattr(self.current_live_snapshot, "hero_cards", "") or ""
+                    )
+                self.current_live_snapshot = self._stabilize_players_in_hand(
+                    self.current_live_snapshot,
+                    same_hand=same_hand,
+                )
+                new_live_actions = self._remember_live_actions(self.current_live_snapshot)
+                if new_live_actions:
+                    existing_actions = list(
+                        getattr(self.current_live_snapshot, "recent_actions", []) or []
+                    )
+                    seen_actions = {
+                        " ".join(str(action).casefold().split())
+                        for action in existing_actions
+                    }
+                    for action in new_live_actions:
+                        normalized = " ".join(action.casefold().split())
+                        if normalized not in seen_actions:
+                            existing_actions.append(action)
+                            seen_actions.add(normalized)
+                    fields = dict(
+                        getattr(self.current_live_snapshot, "detected_fields", {}) or {}
+                    )
+                    uncertain = next(
+                        (action for action in new_live_actions if action.startswith("ACTION INCERTAINE:")),
+                        "",
+                    )
+                    fields["action_state_issue"] = uncertain
+                    self.current_live_snapshot = replace(
+                        self.current_live_snapshot,
+                        recent_actions=existing_actions[-12:],
+                        detected_fields=fields,
+                        local_action_events=list(self.live_action_events),
+                    )
+                    self.current_live_snapshot = self._stabilize_players_in_hand(
+                        self.current_live_snapshot,
+                        same_hand=True,
+                    )
+                    self.current_live_snapshot = recompute_snapshot_recommendation(
+                        self.current_live_snapshot
+                    )
                 self._update_cached_live_context(self.current_live_snapshot)
                 self._render_live_decision(self.current_live_snapshot, full_ocr=True)
                 audit_record = self.session_recorder.record_live_analysis(
@@ -1142,7 +1381,17 @@ class PokerTrackerApp:
             else:
                 self._fill_live_state(history_file, window, ocr_snapshot)
             self.cached_history_block_key = latest_hand_block_key(history_file)
-            self.cached_board_signature = self._board_signature(ocr_snapshot.image_path)
+            required_board_count = {
+                "live_dynamic_flop": 3,
+                "live_dynamic_turn": 4,
+                "live_dynamic_river": 5,
+            }.get(ocr_profile, 0)
+            detected_board = self._valid_board_sequence(
+                str(getattr(self.current_live_snapshot, "visible_board", "") or "")
+            ) if self.current_live_snapshot is not None else ""
+            detected_board_count = len(detected_board.split())
+            if not required_board_count or detected_board_count >= required_board_count:
+                self.cached_board_signature = self._board_signature(ocr_snapshot.image_path)
             self.cached_board_card_fingerprints = board_fingerprints
             self.cached_hero_signature = self._hero_signature(ocr_snapshot.image_path)
             self.last_full_ocr_at = time.monotonic()
@@ -1155,32 +1404,212 @@ class PokerTrackerApp:
             self.hero_turn_release_streak = 0
         self._start_next_full_ocr_job()
 
-    def _remember_live_actions(self, snapshot: object) -> None:
-        """Record visible villain bets by street before Winamax writes history."""
+    def _remember_live_actions(self, snapshot: object) -> list[str]:
+        """Reconstruct visible actions by street before history is flushed."""
         if snapshot is None:
-            return
+            return []
         hero_cards = str(getattr(snapshot, "hero_cards", "") or "")
         if hero_cards and hero_cards != self.live_action_memory_hand:
             self.live_action_memory_hand = hero_cards
             self.live_action_memory = []
+            self.live_action_events = []
             self.live_action_memory_seen = set()
+            self.live_contributions_by_street = {}
+            self.live_observed_streets = set()
+            self.live_pot_by_street = {}
         street = str(getattr(snapshot, "current_street", "preflop") or "preflop")
         fields = getattr(snapshot, "detected_fields", {}) or {}
-        for seat in ("top_left", "top_right", "left", "right"):
-            raw = str(fields.get(f"{seat}_bet", "") or "")
-            match = re.search(r"(\d+(?:[.,]\d+)?)", raw)
-            if not match:
-                continue
-            amount = float(match.group(1).replace(",", "."))
-            # Blinds are not aggressive preflop actions.
-            if street == "preflop" and amount <= 1.0:
-                continue
-            name = str(fields.get(f"{seat}_name", "") or seat)
-            key = f"{street}|{seat}|{amount:.2f}"
+        previous = self.live_contributions_by_street.setdefault(street, {})
+        first_observation = street not in self.live_observed_streets
+        actions, updated = self._reconstruct_visible_bet_actions(
+            fields,
+            street=street,
+            dealer_owner=str(getattr(snapshot, "dealer_owner", "") or ""),
+            previous=previous,
+            # Absence of a visible chip is not sufficient proof of CHECK: old
+            # sessions contain missed bet crops. Keep this disabled until a
+            # second signal (pot delta or exact history action) confirms it.
+            infer_checks=False,
+            first_observation=first_observation,
+            table_layout=str(fields.get("table_layout", "5max") or "5max"),
+        )
+        self.live_observed_streets.add(street)
+        self.live_contributions_by_street[street] = updated
+        remembered: list[str] = []
+        for seat, amount, line in actions:
+            key = f"{street}|{seat}|{amount:.2f}|{line.casefold()}"
             if key in self.live_action_memory_seen:
                 continue
             self.live_action_memory_seen.add(key)
-            self.live_action_memory.append(f"{name} bets {amount:g} BB")
+            self.live_action_memory.append(line)
+            action_match = re.search(r"\b(folds|checks|calls|bets|raises)\b", line, re.IGNORECASE)
+            action_type = action_match.group(1).lower().rstrip("s") if action_match else "unknown"
+            seat_action = str(fields.get(f"{seat}_action", "") or "")
+            bet_text = str(fields.get(f"{seat}_bet", "") or "")
+            source = "bet_crop" if bet_text else "seat_action" if seat_action else "inference"
+            confidence = 0.98 if source == "bet_crop" else 0.94 if action_type in {"fold", "check"} else 0.88
+            self.live_action_events.append(
+                {
+                    "street": street,
+                    "seat": seat,
+                    "player": str(fields.get(f"{seat}_name", "") or seat),
+                    "action": action_type,
+                    "amount_bb": amount if action_type in {"bet", "raise", "call"} else None,
+                    "source": source,
+                    "confidence": confidence,
+                    "raw": line,
+                }
+            )
+            remembered.append(line)
+        pot_match = re.search(
+            r"(\d+(?:[.,]\d+)?)",
+            str(getattr(snapshot, "pot_text", "") or ""),
+        )
+        current_pot = float(pot_match.group(1).replace(",", ".")) if pot_match else None
+        previous_pot = self.live_pot_by_street.get(street)
+        if current_pot is not None:
+            self.live_pot_by_street[street] = current_pot
+        if (
+            previous_pot is not None
+            and current_pot is not None
+            and current_pot > previous_pot + 0.25
+            and not remembered
+        ):
+            issue = (
+                f"ACTION INCERTAINE: pot passe de {previous_pot:g} a "
+                f"{current_pot:g} BB sans mise lisible"
+            )
+            issue_key = f"{street}|pot-gap|{previous_pot:.2f}|{current_pot:.2f}"
+            if issue_key not in self.live_action_memory_seen:
+                self.live_action_memory_seen.add(issue_key)
+                self.live_action_memory.append(issue)
+                remembered.append(issue)
+        return remembered
+
+    @staticmethod
+    def _reconstruct_visible_bet_actions(
+        fields: dict[str, str],
+        *,
+        street: str,
+        dealer_owner: str,
+        previous: dict[str, float],
+        infer_checks: bool = False,
+        first_observation: bool = False,
+        table_layout: str = "5max",
+    ) -> tuple[list[tuple[str, float, str]], dict[str, float]]:
+        """Classify newly observed contributions as bet, call or raise.
+
+        One hero-turn frame may contain several actions.  They are replayed in
+        the selected table's action order so the current target grows exactly as
+        it would at the table.
+        """
+        observed: dict[str, float] = {}
+        for seat in ("top_left", "top_right", "right", "hero", "left"):
+            raw = str(fields.get(f"{seat}_bet", "") or "")
+            match = re.search(r"(\d+(?:[.,]\d+)?)", raw)
+            if not match and seat != "hero":
+                action_text = str(fields.get(f"{seat}_action", "") or "")
+                match = re.search(
+                    r"(?:RAISES?\s+TO|BETS?|CALLS?)\s*(\d+(?:[.,]\d+)?)",
+                    action_text,
+                    re.IGNORECASE,
+                )
+            if match:
+                observed[seat] = float(match.group(1).replace(",", "."))
+
+        updated = dict(previous)
+        # Preserve prior contributions when Winamax removes a chip label.
+        for seat, amount in observed.items():
+            updated[seat] = max(amount, updated.get(seat, 0.0))
+
+        position_order = (
+            ("UTG", "CO", "BTN", "SB", "BB")
+            if street == "preflop"
+            else ("SB", "BB", "UTG", "CO", "BTN")
+        )
+        order_index = {position: index for index, position in enumerate(position_order)}
+        changed = [
+            seat for seat, amount in observed.items()
+            if seat != "hero" and amount > previous.get(seat, 0.0) + 0.01
+        ]
+        changed.sort(key=lambda seat: order_index.get(_position_for_layout(seat, dealer_owner, table_layout), 99))
+
+        working = dict(previous)
+        # Hero's visible contribution (typically a blind or an earlier bet)
+        # establishes the amount opponents must match, but is not emitted as a
+        # newly observed villain action.
+        if "hero" in observed:
+            working["hero"] = max(observed["hero"], working.get("hero", 0.0))
+        blind_floor = 1.0 if street == "preflop" else 0.0
+        events: list[tuple[str, float, str]] = []
+        for seat in changed:
+            amount = observed[seat]
+            target = max([blind_floor, *working.values()])
+            working[seat] = amount
+            # Chips remain after folding: preserve their contribution without
+            # inventing a new call/raise. Emit the fold in the label pass below.
+            if (re.search(r"\bFOLDS?\b", str(fields.get(f"{seat}_action", "")), re.IGNORECASE)
+                    and fields.get(f"{seat}_cards_visible") != "visible"):
+                continue
+            if street == "preflop" and amount <= blind_floor + 0.01:
+                continue
+            if target <= blind_floor + 0.01:
+                verb = "raises" if street == "preflop" else "bets"
+            elif amount > target + 0.01:
+                verb = "raises"
+            elif abs(amount - target) <= 0.01:
+                verb = "calls"
+            else:
+                # A partial contribution below the target is only legitimate
+                # when the player is all-in.
+                verb = "calls"
+            name = str(fields.get(f"{seat}_name", "") or seat)
+            explicit_all_in = fields.get(f"{seat}_status") == "all-in"
+            # During a shove Winamax replaces the stack by ALL-IN. OCR may
+            # return an empty stack instead of that word; a very large visible
+            # contribution with no remaining stack is still strong evidence.
+            inferred_all_in = (
+                not str(fields.get(f"{seat}_stack", "") or "").strip()
+                and amount >= 20.0
+            )
+            suffix = " and is all-in" if explicit_all_in or inferred_all_in else ""
+            events.append((seat, amount, f"{name} {verb} {amount:g} BB{suffix}"))
+
+        if infer_checks and street != "preflop":
+            acted_seats = {seat for seat, _amount, _line in events}
+            hero_order = order_index.get(_position_for_layout("hero", dealer_owner, table_layout), 99)
+            for seat in ("top_left", "top_right", "right", "left"):
+                if fields.get(f"{seat}_cards_visible") != "visible" or seat in acted_seats:
+                    continue
+                seat_order = order_index.get(_position_for_layout(seat, dealer_owner, table_layout), 99)
+                if first_observation and seat_order >= hero_order:
+                    continue
+                amount = observed.get(seat, previous.get(seat, 0.0))
+                if amount > previous.get(seat, 0.0) + 0.01:
+                    continue
+                name = str(fields.get(f"{seat}_name", "") or seat)
+                events.append((seat, amount, f"{name} checks"))
+            events.sort(key=lambda event: order_index.get(_position_for_layout(event[0], dealer_owner, table_layout), 99))
+        acted_seats = {seat for seat, _amount, _line in events}
+        for seat in ("top_left", "top_right", "right", "left"):
+            if seat in acted_seats:
+                continue
+            action_text = " ".join(
+                str(fields.get(f"{seat}_action", "") or "").upper().split()
+            )
+            name = str(fields.get(f"{seat}_name", "") or seat)
+            amount = observed.get(seat, previous.get(seat, 0.0))
+            fuzzy_fold = (
+                fields.get(f"{seat}_cards_visible") != "visible"
+                and any(re.fullmatch(r"F[A-Z]{2,5}", token) for token in action_text.split())
+            )
+            if ((re.search(r"\bFOLDS?\b", action_text) or fuzzy_fold)
+                    and fields.get(f"{seat}_cards_visible") != "visible"):
+                events.append((seat, amount, f"{name} folds"))
+            elif re.search(r"\bCHECKS?\b", action_text):
+                events.append((seat, amount, f"{name} checks"))
+        events.sort(key=lambda event: order_index.get(_position_for_layout(event[0], dealer_owner, table_layout), 99))
+        return events, updated
 
     def _update_cached_live_context(self, snapshot: object) -> None:
         if snapshot is None:
@@ -1191,12 +1620,22 @@ class PokerTrackerApp:
             "hero_name": hero_name,
             "hero_cards": getattr(snapshot, "hero_cards", "") or "",
             "current_street": getattr(snapshot, "current_street", ""),
-            "visible_board": getattr(snapshot, "visible_board", ""),
+            "visible_board": self._valid_board_sequence(
+                str(getattr(snapshot, "visible_board", "") or "")
+            ),
+            "dealer_button": getattr(snapshot, "dealer_owner", "") or "",
             "top_left_name": (getattr(snapshot, "detected_fields", {}) or {}).get("top_left_name", ""),
             "top_right_name": (getattr(snapshot, "detected_fields", {}) or {}).get("top_right_name", ""),
             "left_name": (getattr(snapshot, "detected_fields", {}) or {}).get("left_name", ""),
             "right_name": (getattr(snapshot, "detected_fields", {}) or {}).get("right_name", ""),
         }
+
+    @staticmethod
+    def _valid_board_sequence(value: str) -> str:
+        cards = [card.strip().lower().replace("10", "t") for card in (value or "").split()]
+        if not cards or any(not re.fullmatch(r"[a23456789tjqk][shdc]", card) for card in cards):
+            return ""
+        return " ".join(cards[:5])
 
     def _same_live_hand(self, history_block_key: str, hero_signature: str) -> bool:
         """History is delayed; a changed hole-card image always starts a hand."""
@@ -1252,23 +1691,13 @@ class PokerTrackerApp:
             key = f"board_card_{index}"
             old_value = str(previous.get(key, "") or "")
             new_value = str(fields.get(key, "") or "")
-            # A newly dealt community card must be seen twice with the same
-            # rank/suit before it enters the decision engine.  It prevents a
-            # single OCR glitch (notably 9/Q and 7/J) from changing equity.
-            if not old_value and new_value:
-                candidate, count = self.pending_board_cards.get(key, ("", 0))
-                count = count + 1 if candidate == new_value else 1
-                self.pending_board_cards[key] = (new_value, count)
-                if count < 2:
-                    fields[key] = ""
-                    changed = True
-                    continue
-                self.pending_board_cards.pop(key, None)
-            elif old_value:
+            # Use a newly dealt card immediately.  Waiting for a second full
+            # OCR pass made first-to-act advice arrive one cycle too late.
+            if old_value:
                 self.pending_board_cards.pop(key, None)
             old_mask = self.cached_board_card_fingerprints.get(key, b"")
             new_mask = fingerprints.get(key, b"")
-            if not old_value or not new_mask or len(old_mask) != len(new_mask):
+            if not re.fullmatch(r"(?:10|[2-9TJQKA])[shdc]", old_value, re.IGNORECASE) or not new_mask or len(old_mask) != len(new_mask):
                 continue
             similarity = sum(left == right for left, right in zip(old_mask, new_mask)) / len(old_mask)
             if similarity >= 0.90 and new_value != old_value:
@@ -1281,7 +1710,11 @@ class PokerTrackerApp:
             for index in range(1, 6)
             if fields.get(f"board_card_{index}", "")
         )
-        count = len(board.split())
+        try:
+            physical_count = int(fields.get("board_visible_count", "") or 0)
+        except (TypeError, ValueError):
+            physical_count = 0
+        count = max(len(board.split()), physical_count)
         street = "river" if count >= 5 else "turn" if count == 4 else "flop" if count >= 3 else "preflop"
         return replace(snapshot, detected_fields=fields, visible_board=board, current_street=street)
 
@@ -1311,7 +1744,11 @@ class PokerTrackerApp:
         new_board = str(getattr(current, "visible_board", "") or "")
         board = new_board if len(new_board.split()) >= len(old_board.split()) else old_board
         hero_cards = str(getattr(current, "hero_cards", "") or getattr(previous, "hero_cards", "") or "")
-        board_count = len(board.split())
+        try:
+            physical_count = int(current_fields.get("board_visible_count", "") or 0)
+        except (TypeError, ValueError):
+            physical_count = 0
+        board_count = max(len(board.split()), physical_count)
         street = "river" if board_count >= 5 else "turn" if board_count == 4 else "flop" if board_count >= 3 else "preflop"
         return replace(
             current,
@@ -1320,6 +1757,50 @@ class PokerTrackerApp:
             current_street=street,
             detected_fields=current_fields,
         )
+
+    def _stabilize_players_in_hand(self, snapshot: object | None, *, same_hand: bool) -> object | None:
+        """Keep active seats through weak frames; remove only explicit folds."""
+        if snapshot is None or not is_dataclass(snapshot):
+            return snapshot
+        current = set(getattr(snapshot, "players_in_hand", []) or [])
+        current_villains = current - {"hero"}
+        if not same_hand:
+            self.live_seen_active_seats = set(current_villains)
+            self.live_folded_seats = set()
+
+        self.live_folded_seats.update(self._explicit_folded_seats(snapshot))
+        # Missing card backs in one screenshot are not proof of a fold. Seats
+        # seen earlier in this hand remain active until an action says folds.
+        active_villains = (self.live_seen_active_seats | current_villains) - self.live_folded_seats
+        self.live_seen_active_seats.update(current_villains)
+        stabilized = active_villains | ({"hero"} if "hero" in current else set())
+        if stabilized == current:
+            return snapshot
+        updated = replace(snapshot, players_in_hand=sorted(stabilized))
+        return recompute_snapshot_recommendation(updated)
+
+    @staticmethod
+    def _explicit_folded_seats(snapshot: object) -> set[str]:
+        fields = getattr(snapshot, "detected_fields", {}) or {}
+        actions = [str(value or "") for value in getattr(snapshot, "recent_actions", []) or []]
+        folded: set[str] = set()
+        for seat in ("top_left", "top_right", "left", "right"):
+            # A clean seat-local label is evidence even if name OCR failed.
+            # Reject contradictory visible card backs and fuzzy OCR guesses.
+            label = str(fields.get(f"{seat}_action", "") or "").strip()
+            if (re.fullmatch(r"FOLDS?", label, re.IGNORECASE)
+                    and fields.get(f"{seat}_cards_visible") != "visible"):
+                folded.add(seat)
+            name = str(fields.get(f"{seat}_name", "") or "").strip().casefold()
+            if not name:
+                continue
+            for action in actions:
+                normalized = " ".join(action.casefold().split())
+                match = re.match(r"^(.+?)\s+folds?\b", normalized)
+                if match and " ".join(name.split()) == match.group(1):
+                    folded.add(seat)
+                    break
+        return folded
 
     @staticmethod
     def _board_signature(image_path: str) -> str:
@@ -1411,6 +1892,7 @@ class PokerTrackerApp:
             hero_turn = bool(getattr(snapshot, "is_hero_turn", False))
             recommendation = getattr(snapshot, "recommendation", None)
             recommendation_text = getattr(recommendation, "summary", "") or "-"
+            recommendation_explanation = getattr(recommendation, "explanation", "") or recommendation_text
             recommendation_confidence = float(getattr(recommendation, "confidence", 0.0) or 0.0)
             hand_strength = getattr(recommendation, "hand_strength", "") or "-"
             villain_range = getattr(recommendation, "villain_range", "") or "-"
@@ -1501,6 +1983,7 @@ class PokerTrackerApp:
                 f"- Actions historique : {history_actions}\n\n"
                 "RECOMMANDATION\n"
                 f"- Decision : {recommendation_text}\n"
+                f"- Explication : {recommendation_explanation}\n"
                 f"- Strategie de base : {strategy_mix}\n"
                 f"- Confiance : {recommendation_confidence:.0%}\n"
                 f"- Force hero : {hand_strength}\n"
@@ -1533,12 +2016,21 @@ class PokerTrackerApp:
 
     def _render_table_decision_overlay(self, snapshot: object, *, full_ocr: bool) -> None:
         """Show the verified recommendation beside the hero seat, click-through."""
+        if snapshot is None:
+            self._hide_table_decision_overlay()
+            return
         recommendation = getattr(snapshot, "recommendation", None) if snapshot is not None else None
         hero_turn = bool(getattr(snapshot, "is_hero_turn", False)) if snapshot is not None else False
         action = str(getattr(recommendation, "action", "") or "").upper()
         window = self.last_live_window
-        if not full_ocr or not hero_turn or action in {"", "ATTENDRE"} or window is None:
+        # Keep the verified advice during fast scans while it is still the
+        # hero's turn, but remove it as soon as turn release is confirmed.
+        if not hero_turn:
             self._hide_table_decision_overlay()
+            return
+        if not full_ocr:
+            return
+        if not action or window is None:
             return
 
         overlay = self._ensure_table_decision_overlay()
@@ -1550,12 +2042,23 @@ class PokerTrackerApp:
         detail = sizing
         if action == "CALL" and call_amount is not None:
             detail = f"{call_amount:g} BB"
+        explanation = str(getattr(recommendation, "explanation", "") or "")
+        # Keep the table label compact; the complete sentence remains in the
+        # live debug panel.
+        if len(explanation) > 150:
+            explanation = explanation[:147].rstrip() + "..."
+        lines = [action]
+        if detail:
+            lines.append(detail)
+        if explanation:
+            lines.append(explanation)
         label.configure(
-            text=f"{action}\n{detail}" if detail else action,
-            fg={"FOLD": "#ff6b6b", "CALL": "#ffd166", "RAISE": "#69db7c", "BET": "#69db7c", "CHECK": "#74c0fc"}.get(action, "#ffffff"),
+            text="\n".join(lines),
+            fg={"FOLD": "#ff6b6b", "CALL": "#ffd166", "RAISE": "#69db7c", "BET": "#69db7c", "CHECK": "#74c0fc", "ATTENDRE": "#ffd166"}.get(action, "#ffffff"),
         )
         overlay.deiconify()
         overlay.update_idletasks()
+        self._exclude_window_from_capture(overlay)
         left, top, right, bottom = window.rect
         width, height = max(1, right - left), max(1, bottom - top)
         # To the right of the hero cards/name, above the native action bar.
@@ -1579,6 +2082,7 @@ class PokerTrackerApp:
                 background="#10151f",
                 font=("Segoe UI", 14, "bold"),
                 justify="center",
+                wraplength=420,
                 padx=12,
                 pady=6,
                 relief="solid",
@@ -1588,6 +2092,7 @@ class PokerTrackerApp:
             self.decision_overlay = overlay
             self.decision_overlay_label = label
             self._make_window_click_through(overlay)
+            self._exclude_window_from_capture(overlay)
             return overlay
         except tk.TclError:
             return None
@@ -1602,6 +2107,20 @@ class PokerTrackerApp:
             style = get_style(hwnd, -20)  # GWL_EXSTYLE
             set_style(hwnd, -20, style | 0x20 | 0x08000000)  # TRANSPARENT | NOACTIVATE
         except (AttributeError, OSError):
+            pass
+
+    @staticmethod
+    def _exclude_window_from_capture(window: tk.Toplevel) -> None:
+        """Keep an overlay visible locally while excluding it from OCR grabs."""
+        try:
+            # The native window must exist before display affinity is set.
+            window.update_idletasks()
+            child_hwnd = window.winfo_id()
+            hwnd = ctypes.windll.user32.GetAncestor(child_hwnd, 2) or child_hwnd
+            # WDA_EXCLUDEFROMCAPTURE (Windows 10 2004+). On older systems the
+            # call simply fails and the overlay remains otherwise functional.
+            ctypes.windll.user32.SetWindowDisplayAffinity(hwnd, 0x00000011)
+        except (AttributeError, OSError, tk.TclError):
             pass
 
     def _hide_table_decision_overlay(self) -> None:
@@ -1630,7 +2149,10 @@ class PokerTrackerApp:
                 range_by_seat[match.group(1)] = match.group(2).strip()
         probabilities_by_seat: dict[str, str] = {}
         for line in getattr(recommendation, "villain_hand_probabilities", []) or []:
-            match = re.search(r"\((top_left|top_right|left|right)\)\s*:\s*(.*)$", str(line))
+            match = re.search(
+                r"\((top_left|top_right|left|right)\)(?:\s*\[individuel\])?\s*:\s*(.*)$",
+                str(line),
+            )
             if match:
                 probabilities_by_seat[match.group(1)] = match.group(2).strip()
 
@@ -1657,6 +2179,7 @@ class PokerTrackerApp:
             )
             overlay.deiconify()
             overlay.update_idletasks()
+            self._exclude_window_from_capture(overlay)
             x_ratio, y_ratio = anchors[seat]
             overlay.geometry(f"+{left + int(width * x_ratio)}+{top + int(height * y_ratio)}")
             overlay.lift()
@@ -1691,6 +2214,7 @@ class PokerTrackerApp:
         label.pack()
         self.player_range_overlays[seat] = (overlay, label)
         self._make_window_click_through(overlay)
+        self._exclude_window_from_capture(overlay)
         return overlay, label
 
     def _hide_player_range_overlays(self) -> None:
