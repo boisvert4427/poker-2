@@ -232,6 +232,7 @@ class PokerTrackerApp:
         self.last_live_window: WinamaxWindow | None = None
         self.decision_overlay: tk.Toplevel | None = None
         self.decision_overlay_label: tk.Label | None = None
+        self.custom_action_overlay_until = 0.0
         self.player_range_overlays: dict[str, tuple[tk.Toplevel, tk.Label]] = {}
         self.live_action_memory: list[str] = []
         self.live_action_events: list[dict[str, object]] = []
@@ -856,7 +857,7 @@ class PokerTrackerApp:
             self.live_pot_by_street = {}
             self.live_seen_active_seats = set()
             self.live_folded_seats = set()
-            self._hide_table_decision_overlay()
+            self._hide_table_decision_overlay(force=True)
             self._hide_player_range_overlays()
             session_dir = self.session_recorder.ensure_session()
             self.auto_refresh_var.set(True)
@@ -869,7 +870,7 @@ class PokerTrackerApp:
             self.auto_refresh_var.set(False)
             self.live_history_baseline = {}
             self.live_bound_history_file = None
-            self._hide_table_decision_overlay()
+            self._hide_table_decision_overlay(force=True)
             self._hide_player_range_overlays()
             self.live_debug_button.configure(text="Lancer live debug")
             self.status_var.set("Live debug arrete.")
@@ -1285,6 +1286,63 @@ class PokerTrackerApp:
         self.full_ocr_thread = threading.Thread(target=worker, daemon=True)
         self.full_ocr_thread.start()
 
+    def custom_action(self, snapshot: object) -> None:
+        """Display the advised action and bring the Winamax table forward."""
+        recommendation = getattr(snapshot, "recommendation", None)
+        action = str(getattr(recommendation, "action", "") or "").upper()
+        window = self.last_live_window
+        hwnd = int(getattr(window, "hwnd", 0) or 0)
+        if not action or not hwnd:
+            return None
+
+        # Activate Winamax first. If this happens after displaying the Tk
+        # overlay, the full-screen table can immediately cover the advice.
+        try:
+            user32 = ctypes.windll.user32
+            hwnd = int(user32.GetAncestor(hwnd, 2) or hwnd)  # GA_ROOT
+            if user32.IsIconic(hwnd):
+                user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+            user32.SetForegroundWindow(hwnd)
+        except (AttributeError, OSError, ValueError):
+            # Keep the live loop running if Windows refuses focus stealing.
+            pass
+
+        overlay = self._ensure_table_decision_overlay()
+        label = self.decision_overlay_label
+        if overlay is not None and label is not None:
+            sizing = str(getattr(recommendation, "sizing", "") or "")
+            call_amount = getattr(recommendation, "call_amount", None)
+            detail = f"{call_amount:g} BB" if action == "CALL" and call_amount is not None else sizing
+            lines = [f"ACTION = {action}"]
+            if detail:
+                lines.append(detail)
+            label.configure(
+                text="\n".join(lines),
+                fg={
+                    "FOLD": "#ff6b6b",
+                    "CALL": "#ffd166",
+                    "RAISE": "#69db7c",
+                    "BET": "#69db7c",
+                    "CHECK": "#74c0fc",
+                    "ATTENDRE": "#ffd166",
+                }.get(action, "#ffffff"),
+            )
+            overlay.deiconify()
+            overlay.update_idletasks()
+            self._exclude_window_from_capture(overlay)
+            left, top, right, bottom = window.rect
+            overlay.geometry(
+                f"+{left + int((right - left) * 0.575)}"
+                f"+{top + int((bottom - top) * 0.685)}"
+            )
+            overlay.attributes("-topmost", True)
+            overlay.lift()
+            self.custom_action_overlay_until = time.monotonic() + 5.0
+            # Reassert once after Windows has processed the focus change.
+            overlay.after(100, lambda: overlay.lift() if overlay.winfo_exists() else None)
+
+        return None
+
     def _consume_pending_full_ocr(self) -> None:
         if self.pending_full_ocr_result is None:
             return
@@ -1364,6 +1422,7 @@ class PokerTrackerApp:
                     )
                 self._update_cached_live_context(self.current_live_snapshot)
                 self._render_live_decision(self.current_live_snapshot, full_ocr=True)
+                self.custom_action(self.current_live_snapshot)
                 audit_record = self.session_recorder.record_live_analysis(
                     image_path=ocr_snapshot.image_path,
                     history_file=history_file,
@@ -2026,11 +2085,23 @@ class PokerTrackerApp:
         # Keep the verified advice during fast scans while it is still the
         # hero's turn, but remove it as soon as turn release is confirmed.
         if not hero_turn:
+            if time.monotonic() < self.custom_action_overlay_until:
+                return
             self._hide_table_decision_overlay()
             return
         if not full_ocr:
             return
         if not action or window is None:
+            return
+        if (
+            time.monotonic() < self.custom_action_overlay_until
+            and self.decision_overlay is not None
+            and self.decision_overlay.winfo_exists()
+        ):
+            # ``custom_action`` owns the label for its minimum display time.
+            # Fast refreshes must not replace ``ACTION = ...`` after 200 ms.
+            self.decision_overlay.deiconify()
+            self.decision_overlay.lift()
             return
 
         overlay = self._ensure_table_decision_overlay()
@@ -2123,7 +2194,9 @@ class PokerTrackerApp:
         except (AttributeError, OSError, tk.TclError):
             pass
 
-    def _hide_table_decision_overlay(self) -> None:
+    def _hide_table_decision_overlay(self, *, force: bool = False) -> None:
+        if not force and time.monotonic() < self.custom_action_overlay_until:
+            return
         if self.decision_overlay is not None and self.decision_overlay.winfo_exists():
             self.decision_overlay.withdraw()
 
